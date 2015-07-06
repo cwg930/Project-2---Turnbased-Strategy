@@ -6,7 +6,7 @@ using System.Collections;
  * constructors: 
  * 		PriorityQueue(int)
  * public functions 
- * 		pop() : T 
+ * 		Remove() : Tuple<T,int> 
  * 		insert(T, int) : void
  *  
 */
@@ -22,20 +22,39 @@ public class PriorityQueue<T>
 		numItems = 0;
 	}
 
+	/* Insert an element of type T then 
+	 * 	rearrange the heap
+	 */
 	public void Insert(T element, int priority)
 	{
 		heap [numItems] = new Tuple<T,int>(element, priority);
-		PercolateUp (heap [numItems]);
+		PercolateUp (numItems);
 		numItems++;
 	}
-
+	/* Remove the head element then
+	 * 	rearrange the heap
+	 * Returns only the element
+	 */
 	public T Remove()
 	{
 		Tuple<T,int> top = heap [0];
 		heap [0] = heap [numItems];
 		numItems--;
 		PercolateDown ();
-
+		return top.first;
+	}
+	/* Remove the head element then
+	 * 	rearrange the heap
+	 * Returns the element and its
+	 * 	priority
+	 */
+	public Tuple<T,int> RemoveWithPriority()
+	{
+		Tuple<T,int> top = heap [0];
+		heap [0] = heap [numItems];
+		numItems--;
+		PercolateDown ();
+		return top;
 	}
 
 	public bool IsEmpty()
@@ -46,8 +65,8 @@ public class PriorityQueue<T>
 			return false;
 	}
 
-	/*
-	 * Percolates the top node down to it's proper position
+	/* Percolates the top node down 
+	 * 	to its proper position
 	 */
 	private void PercolateDown()
 	{
@@ -80,8 +99,7 @@ public class PriorityQueue<T>
 			}
 		}
 	}
-	/*
-	 *	Percolates the node at index up to it's 
+	/*	Percolates the node at <index> up to it's 
 	 *	proper position recursively  
 	 */
 	private void PercolateUp(int index)

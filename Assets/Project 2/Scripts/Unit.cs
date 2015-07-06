@@ -25,9 +25,9 @@ public abstract class Unit : MonoBehaviour {
 	{
 		Vector2 start = transform.position;
 		Vector2 end = new Vector2 (xLoc, yLoc);
-		int dist = Vector2.Distance (start, end);
+		int dist = (int)Vector2.Distance (start, end);
 		if (dist > moves) {
-			//tell user it's too far
+			//TODO: tell user target is too far for the unit
 			return false;
 		}
 
@@ -68,7 +68,11 @@ public abstract class Unit : MonoBehaviour {
 		return area;
 	}
 
-	//Finds path with A* algorithm
+	/* Finds path with A* algorithm
+	*  Heuristic Function: Manhattan Distance
+	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
+	* 
+	*/
 	private ArrayList FindPath (Vector2 start, Vector2 end)
 	{
 
@@ -77,24 +81,24 @@ public abstract class Unit : MonoBehaviour {
 		PriorityQueue<Vector2> frontier = new PriorityQueue<Vector2> (moveArea);
 		frontier.Insert (start, 0);
 
-		ArrayList prev_loc = new ArrayList();
+		LinkedList<Vector2> prev_loc = new LinkedList<Vector2>();
 		int[] currentCost = new int[moveArea];
-		prev_loc [start] = null;
-		currentCost [start] = 0;
+		prev_loc.AddFirst(null);
+		currentCost[0] = 0;
 
 		while (!frontier.IsEmpty()) {
-			Vector2 current = frontier.Remove();
+			Tuple<Vector2,int> current = frontier.RemoveWithPriority();
 
-			if(current == end)
+			if(current.Equals(end))
 				break;
 
 			foreach (Vector2 next in GetNeighbors(current)){
-				int cost = currentCost[current] + Vector2.Distance(current, next);
+				int cost = current.second + Vector2.Distance(current, next);
 				if(currentCost[next] == null || cost < currentCost[next]){
 					currentCost[next] = cost;
 					int priority = cost + (Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
 					frontier.Insert(next,priority);
-					prev_loc[next]  = current;
+					prev_loc.AddLast(current);
 				}
 
 			}
@@ -103,7 +107,11 @@ public abstract class Unit : MonoBehaviour {
 
 		return prev_loc;
 	}
-	//TODO: Check for occupied neighbors that block the path
+	/*
+	 * Get the list of <location>'s non-diagonal neighbors
+	 * 
+	 * TODO: Check for occupied neighbors that block the path
+	*/
 	protected ArrayList GetNeighbors(Vector2 location)
 	{
 		ArrayList neighbors = new ArrayList ();
