@@ -111,7 +111,7 @@ public abstract class Unit : MonoBehaviour {
 	/*
 	 * Get the list of <location>'s non-diagonal neighbors
 	 * 
-	 * TODO: Check for occupied neighbors that block the path
+	 * Occupied neighbors will not be added to the list
 	*/
 	protected ArrayList GetNeighbors(Vector2 location)
 	{
@@ -119,8 +119,15 @@ public abstract class Unit : MonoBehaviour {
 		for (int x = -1; x <= 1; x++) {
 			for(int y = -1; y <= 1; y++){
 				//Get only non-diagonal neighbors
-				if(((x == -1 || x == 1) && y == 0) || ((y == -1 || y == 1) && x == 0))
-					neighbors.Add(new Vector2(location.x+x,location.y+y));
+				if(((x == -1 || x == 1) && y == 0) || ((y == -1 || y == 1) && x == 0)){
+					Vector2 target = new Vector2(location.x+x,location.y+y);
+					circleCollider.enabled = false;
+					RaycastHit2D hit = Physics2D.Linecast(location,target,blockingLayer);
+					circleCollider.enabled = true;
+					if(hit.transform == null){
+						neighbors.Add();
+					}
+				}
 			}
 		}
 		return neighbors;
