@@ -80,33 +80,38 @@ public abstract class Unit : MonoBehaviour {
 		int moveArea = CalcMoveArea ();
 
 		PriorityQueue<Vector2> frontier = new PriorityQueue<Vector2> (moveArea);
-		frontier.Insert (start, 0);
+		frontier.Enqueue (start, 0);
 
-		LinkedList<Vector2> path = new LinkedList<Vector2>();
-		int[] currentCost = new int[moveArea];
-		path.AddFirst(null);
-		currentCost[0] = 0;
+		LinkedList<Vector2> cameFrom = new LinkedList<Vector2> ();
+		Dictionary<Vector2,int> costSoFar = new Dictionary<Vector2, int> ();
+		cameFrom.AddFirst(start);
+		costSoFar[start] = 0;
 
-		while (!frontier.IsEmpty()) {
-			Tuple<Vector2,int> current = frontier.RemoveWithPriority();
+		while (!frontier.Empty) {
+			Vector2 current = frontier.Dequeue();
 
-			if(current.first.Equals(end))
+			if(current.Equals(end))
 				break;
 
-			foreach (Vector2 next in GetNeighbors(current.first)){
-				int cost = current.second + (int)Vector2.Distance(current.first, next);
-
+			foreach (Vector2 next in GetNeighbors(current)){
+				int cost = costSoFar[current] + (int)Vector2.Distance(current, next);
+				if(!costSoFar.ContainsKey(next) || cost < costSoFar[next]){
+					costSoFar[next] = cost;
+					int priority = cost + (int)(Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
+					frontier.Enqueue(next,priority);
+					cameFrom.AddLast(current);
+				}
 
 			}
 
 		}
 
-		return path;
+		return cameFrom;
 	}
 	/*
 	 * Get the list of <location>'s non-diagonal neighbors
 	 * 
-	 * TODO: Check for occupied neighbors that block the path
+	 * Occupied neighbors will not be added to the list
 	*/
 	protected ArrayList GetNeighbors(Vector2 location)
 	{
@@ -114,8 +119,15 @@ public abstract class Unit : MonoBehaviour {
 		for (int x = -1; x <= 1; x++) {
 			for(int y = -1; y <= 1; y++){
 				//Get only non-diagonal neighbors
-				if(((x == -1 || x == 1) && y == 0) || ((y == -1 || y == 1) && x == 0))
-					neighbors.Add(new Vector2(location.x+x,location.y+y));
+				if(((x == -1 || x == 1) && y == 0) || ((y == -1 || y == 1) && x == 0)){
+					Vector2 target = new Vector2(location.x+x,location.y+y);
+					circleCollider.enabled = false;
+					RaycastHit2D hit = Physics2D.Linecast(location,target,blockingLayer);
+					circleCollider.enabled = true;
+					if(hit.transform == null){
+						neighbors.Add(target);
+					}
+				}
 			}
 		}
 		return neighbors;
