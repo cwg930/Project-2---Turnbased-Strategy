@@ -125,7 +125,7 @@ public abstract class Unit : MonoBehaviour {
 					RaycastHit2D hit = Physics2D.Linecast(location,target,blockingLayer);
 					circleCollider.enabled = true;
 					if(hit.transform == null){
-						neighbors.Add();
+						neighbors.Add(target);
 					}
 				}
 			}
