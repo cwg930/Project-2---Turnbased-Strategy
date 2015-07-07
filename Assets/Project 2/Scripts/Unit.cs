@@ -25,18 +25,19 @@ public abstract class Unit : MonoBehaviour {
 	{
 		Vector2 start = transform.position;
 		Vector2 end = new Vector2 (xLoc, yLoc);
-		int dist = (int)Vector2.Distance (start, end);
+		int dist = (int) Vector2.Distance (start, end);
 		if (dist > moves) {
 			//TODO: tell user target is too far for the unit
 			return false;
 		}
 
-		ArrayList path = FindPath (start, end);
-		Vector2 current = path [start];
+		LinkedList<Vector2> path = FindPath (start, end);
 		foreach (Vector2 next in path) {
 			StartCoroutine(SmoothMovement(next));
 
 		}
+
+		return true;
 	}
 	
 	protected IEnumerator SmoothMovement(Vector3 end)
@@ -73,7 +74,7 @@ public abstract class Unit : MonoBehaviour {
 	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
 	* 
 	*/
-	private ArrayList FindPath (Vector2 start, Vector2 end)
+	private LinkedList<Vector2> FindPath (Vector2 start, Vector2 end)
 	{
 
 		int moveArea = CalcMoveArea ();
@@ -81,31 +82,26 @@ public abstract class Unit : MonoBehaviour {
 		PriorityQueue<Vector2> frontier = new PriorityQueue<Vector2> (moveArea);
 		frontier.Insert (start, 0);
 
-		LinkedList<Vector2> prev_loc = new LinkedList<Vector2>();
+		LinkedList<Vector2> path = new LinkedList<Vector2>();
 		int[] currentCost = new int[moveArea];
-		prev_loc.AddFirst(null);
+		path.AddFirst(null);
 		currentCost[0] = 0;
 
 		while (!frontier.IsEmpty()) {
 			Tuple<Vector2,int> current = frontier.RemoveWithPriority();
 
-			if(current.Equals(end))
+			if(current.first.Equals(end))
 				break;
 
-			foreach (Vector2 next in GetNeighbors(current)){
-				int cost = current.second + Vector2.Distance(current, next);
-				if(currentCost[next] == null || cost < currentCost[next]){
-					currentCost[next] = cost;
-					int priority = cost + (Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
-					frontier.Insert(next,priority);
-					prev_loc.AddLast(current);
-				}
+			foreach (Vector2 next in GetNeighbors(current.first)){
+				int cost = current.second + (int)Vector2.Distance(current.first, next);
+
 
 			}
 
 		}
 
-		return prev_loc;
+		return path;
 	}
 	/*
 	 * Get the list of <location>'s non-diagonal neighbors
