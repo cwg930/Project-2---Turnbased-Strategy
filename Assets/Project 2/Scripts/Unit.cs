@@ -80,28 +80,33 @@ public abstract class Unit : MonoBehaviour {
 		int moveArea = CalcMoveArea ();
 
 		PriorityQueue<Vector2> frontier = new PriorityQueue<Vector2> (moveArea);
-		frontier.Insert (start, 0);
+		frontier.Enqueue (start, 0);
 
-		LinkedList<Vector2> path = new LinkedList<Vector2>();
-		int[] currentCost = new int[moveArea];
-		path.AddFirst(null);
-		currentCost[0] = 0;
+		LinkedList<Vector2> cameFrom = new LinkedList<Vector2> ();
+		Dictionary<Vector2,int> costSoFar = new Dictionary<Vector2, int> ();
+		cameFrom.AddFirst(start);
+		costSoFar[start] = 0;
 
-		while (!frontier.IsEmpty()) {
-			Tuple<Vector2,int> current = frontier.RemoveWithPriority();
+		while (!frontier.Empty) {
+			Vector2 current = frontier.Dequeue();
 
-			if(current.first.Equals(end))
+			if(current.Equals(end))
 				break;
 
-			foreach (Vector2 next in GetNeighbors(current.first)){
-				int cost = current.second + (int)Vector2.Distance(current.first, next);
-
+			foreach (Vector2 next in GetNeighbors(current)){
+				int cost = costSoFar[current] + (int)Vector2.Distance(current, next);
+				if(!costSoFar.ContainsKey(next) || cost < costSoFar[next]){
+					costSoFar[next] = cost;
+					int priority = cost + (int)(Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
+					frontier.Enqueue(next,priority);
+					cameFrom.AddLast(current);
+				}
 
 			}
 
 		}
 
-		return path;
+		return cameFrom;
 	}
 	/*
 	 * Get the list of <location>'s non-diagonal neighbors

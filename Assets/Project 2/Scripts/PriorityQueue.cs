@@ -13,8 +13,17 @@ using System.Collections;
 public class PriorityQueue<T>  
 {
 
-	Tuple<T,int>[] heap;
-	int numItems;
+	private Tuple<T,int>[] heap;
+	private int numItems;
+	public int Count
+	{
+		get { return numItems; }
+	}
+		
+	public bool Empty
+	{
+		get { return numItems == 0;}
+	}
 
 	public PriorityQueue(int size)
 	{
@@ -25,7 +34,7 @@ public class PriorityQueue<T>
 	/* Insert an element of type T then 
 	 * 	rearrange the heap
 	 */
-	public void Insert(T element, int priority)
+	public void Enqueue(T element, int priority)
 	{
 		heap [numItems] = new Tuple<T,int>(element, priority);
 		PercolateUp (numItems);
@@ -35,7 +44,7 @@ public class PriorityQueue<T>
 	 * 	rearrange the heap
 	 * Returns only the element
 	 */
-	public T Remove()
+	public T Dequeue()
 	{
 		Tuple<T,int> top = heap [0];
 		heap [0] = heap [numItems];
@@ -48,7 +57,7 @@ public class PriorityQueue<T>
 	 * Returns the element and its
 	 * 	priority
 	 */
-	public Tuple<T,int> RemoveWithPriority()
+	public Tuple<T,int> DequeueWithPriority()
 	{
 		Tuple<T,int> top = heap [0];
 		heap [0] = heap [numItems];
@@ -57,13 +66,6 @@ public class PriorityQueue<T>
 		return top;
 	}
 
-	public bool IsEmpty()
-	{
-		if (numItems == 0)
-			return true;
-		else
-			return false;
-	}
 
 	/* Percolates the top node down 
 	 * 	to its proper position
