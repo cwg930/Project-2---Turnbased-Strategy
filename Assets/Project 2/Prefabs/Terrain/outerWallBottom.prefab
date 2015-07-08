@@ -9,20 +9,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 484128}
   - 212: {fileID: 21204700}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  - 61: {fileID: 6111526}
-=======
-  - 61: {fileID: 6131230}
->>>>>>> origin/knight-features
-=======
-  - 61: {fileID: 6131230}
->>>>>>> origin/knight-features
-=======
-  - 61: {fileID: 6131230}
->>>>>>> origin/knight-features
-  m_Layer: 0
+  - 61: {fileID: 6154240}
+  m_Layer: 8
   m_Name: outerWallBottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,19 +29,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
---- !u!61 &6111526
-=======
---- !u!61 &6131230
->>>>>>> origin/knight-features
-=======
---- !u!61 &6131230
->>>>>>> origin/knight-features
-=======
---- !u!61 &6131230
->>>>>>> origin/knight-features
+--- !u!61 &6154240
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -65,19 +41,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  m_Size: {x: 1, y: 1}
-=======
   m_Size: {x: .899999976, y: .899999976}
->>>>>>> origin/knight-features
-=======
-  m_Size: {x: .899999976, y: .899999976}
->>>>>>> origin/knight-features
-=======
-  m_Size: {x: .899999976, y: .899999976}
->>>>>>> origin/knight-features
 --- !u!212 &21204700
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -100,7 +64,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
+  m_SortingLayerID: -1863096551
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8c8dfc168fded0e45972567bca396ef4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -118,6 +82,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Size.y
       value: .899999976
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_SortingLayerID
+      value: -1863096551
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

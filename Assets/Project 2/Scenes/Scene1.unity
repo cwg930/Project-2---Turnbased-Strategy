@@ -99,7 +99,6 @@ GameObject:
   - 92: {fileID: 94988363}
   - 124: {fileID: 94988362}
   - 81: {fileID: 94988361}
-  - 114: {fileID: 94988366}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -173,18 +172,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
---- !u!114 &94988366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 94988360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c92d330aa4bee143a9539f6095a1c37, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
 --- !u!1001 &113851822
 Prefab:
   m_ObjectHideFlags: 0
@@ -227,58 +214,30 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ecd2ac870ee05c147b6c2d111b8f6622, type: 2}
   m_IsPrefabParent: 0
-<<<<<<< HEAD
-=======
---- !u!1001 &1645271036
-Prefab:
+--- !u!1 &2086976259
+GameObject:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 11492310, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-      propertyPath: grass
-      value: 
-      objectReference: {fileID: 159838, guid: 46acca65a1a63a542bf3f1f18d24aa71, type: 2}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
-  m_IsPrefabParent: 0
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> origin/knight-features
-=======
->>>>>>> origin/knight-features
-=======
->>>>>>> origin/knight-features
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2086976260}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2086976260
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2086976259}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2

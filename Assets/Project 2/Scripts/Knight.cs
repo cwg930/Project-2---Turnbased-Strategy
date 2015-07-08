@@ -20,48 +20,6 @@ public class Knight : Unit {
 	
 	}
 
-	void grassMove()
-	{
-		if (Input.GetMouseButtonDown (0)) {
-
-			Debug.Log("Mouse is down");
-
-			RaycastHit hitInfo = new RaycastHit();
-			bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
-		
-
-			if (hit) 
-			{
-				Debug.Log("Hit " + hitInfo.transform.gameObject.name);
-				if (hitInfo.transform.gameObject.tag == "Construction")
-				{
-					Debug.Log ("It's working!");
-				}
-			}
-
-			Vector3 clickpos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			clickpos.z = 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-
-		}
-
-
-=======
-=======
->>>>>>> origin/knight-features
-
-
-		}
-
-
-<<<<<<< HEAD
->>>>>>> origin/knight-features
-=======
->>>>>>> origin/knight-features
-
-	}
 
 	void quickMove()
 	{
@@ -69,42 +27,11 @@ public class Knight : Unit {
 
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			new_pos.z = player.position.z;
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-			player.position = new_pos;
-=======
-			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
-			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
->>>>>>> origin/knight-features
-
-
-
-<<<<<<< HEAD
-			Vector2 myMove = getPosition(horizontal, vertical);
-			//player.position = myMove;
-=======
-			player.position = new_pos;
->>>>>>> origin/knight-features
-=======
 			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
 			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
 
-
-
-			player.position = new_pos;
->>>>>>> origin/knight-features
-
-=======
-			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
-			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
-
-
-
 			player.position = new_pos;
 
->>>>>>> origin/knight-features
 			//base.Move (horizontal2, vertical2); // move along path to target
 		}
 	}
