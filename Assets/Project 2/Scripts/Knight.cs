@@ -42,17 +42,23 @@ public class Knight : Unit {
 			Vector3 clickpos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			clickpos.z = 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 		}
 
 
 =======
+=======
+>>>>>>> origin/knight-features
 
 
 		}
 
 
+<<<<<<< HEAD
+>>>>>>> origin/knight-features
+=======
 >>>>>>> origin/knight-features
 
 	}
@@ -64,6 +70,7 @@ public class Knight : Unit {
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			new_pos.z = player.position.z;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 			player.position = new_pos;
@@ -89,6 +96,15 @@ public class Knight : Unit {
 			player.position = new_pos;
 >>>>>>> origin/knight-features
 
+=======
+			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
+			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
+
+
+
+			player.position = new_pos;
+
+>>>>>>> origin/knight-features
 			//base.Move (horizontal2, vertical2); // move along path to target
 		}
 	}
