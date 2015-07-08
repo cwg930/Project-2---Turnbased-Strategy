@@ -31,10 +31,22 @@ public abstract class Unit : MonoBehaviour {
 			return false;
 		}
 
-		LinkedList<Vector2> path = FindPath (start, end);
-		foreach (Vector2 next in path) {
-			StartCoroutine(SmoothMovement(next));
+		Dictionary<Vector2,Vector2> result = FindPath (start, end);
+		LinkedList<Vector2> path = new LinkedList<Vector2>();
+		path.AddLast (end);
+		if (result.ContainsKey (end)) {
+			var current = result [end];
+			while (current != (new Vector2(-1,-1))) {
+				path.AddFirst (current);
+				current = result [current];
+			}
+		} else {
+			//couldn't find a path to end
+			return false;
+		}
 
+		foreach (Vector2 loc in path) {
+			StartCoroutine(SmoothMovement(loc));
 		}
 
 		return true;
@@ -74,32 +86,33 @@ public abstract class Unit : MonoBehaviour {
 	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
 	* 
 	*/
-	private LinkedList<Vector2> FindPath (Vector2 start, Vector2 end)
+	private Dictionary<Vector2, Vector2> FindPath (Vector2 start, Vector2 end)
 	{
 
 		int moveArea = CalcMoveArea ();
 
 		PriorityQueue<Vector2> frontier = new PriorityQueue<Vector2> (moveArea);
-		frontier.Enqueue (start, 0);
+		frontier.Enqueue (start, 0f);
 
-		LinkedList<Vector2> cameFrom = new LinkedList<Vector2> ();
+		Dictionary<Vector2,Vector2> cameFrom = new Dictionary<Vector2, Vector2> ();
 		Dictionary<Vector2,int> costSoFar = new Dictionary<Vector2, int> ();
-		cameFrom.AddFirst(start);
-		costSoFar[start] = 0;
+		//invalid loc used as sentinel value to prevent loop overflow
+		cameFrom[start] = new Vector2(-1,-1);
+		costSoFar[start] = 0f;
 
 		while (!frontier.Empty) {
 			Vector2 current = frontier.Dequeue();
 
-			if(current.Equals(end))
+			if(current == end)
 				break;
 
 			foreach (Vector2 next in GetNeighbors(current)){
 				int cost = costSoFar[current] + (int)Vector2.Distance(current, next);
-				if(!costSoFar.ContainsKey(next) || cost < costSoFar[next]){
+				if(!costSoFar.ContainsKey(next)){
 					costSoFar[next] = cost;
 					int priority = cost + (int)(Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
 					frontier.Enqueue(next,priority);
-					cameFrom.AddLast(current);
+					cameFrom[next] = current;
 				}
 
 			}

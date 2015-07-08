@@ -9,9 +9,10 @@ public class Knight : Unit {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
-		
+	void OnMouseDown () {
+		Debug.Log ("mouse clicked");
+		Move (2, 1);
+		/*
 		int horizontal = 0;
 		int vertical = 0;
 
@@ -23,14 +24,8 @@ public class Knight : Unit {
 			
 			base.Move (horizontal2, vertical2);
 		}
-		
+		*/
 
-		wait ();
-	
 	}
 
-	IEnumerable wait ()
-	{
-		yield return new WaitForSeconds (10);
-	}
 }
