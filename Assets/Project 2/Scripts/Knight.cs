@@ -5,14 +5,18 @@ public class Knight : Unit {
 	private Transform player;
 	private float inverseMoveTime2;
 	private bool moving = false;
-	private CircleCollider2D circleCollider;
+	private CircleCollider2D circleCollider2;
+
+	private int rows = BoardManager.rows;
+	private int cols = BoardManager.columns;
+
 
 
 
 	// Use this for initialization
 	protected override void Start () {
 		player = GameObject.FindGameObjectWithTag("Player").transform;
-		circleCollider = GetComponent <CircleCollider2D> ();
+		circleCollider2 = GetComponent <CircleCollider2D> ();
 		inverseMoveTime2 = 1f / moveTime;
 		base.Start ();
 	}
@@ -33,24 +37,35 @@ public class Knight : Unit {
 	{
 		if (Input.GetMouseButtonDown (0) && !moving) {
 
-			RaycastHit2D hit;
+			//RaycastHit2D hit;
 
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			new_pos.z = player.position.z;
 			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
 			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
 
-			Vector2 start = transform.position;
-			Vector2 end = start + new Vector2 (new_pos.x, new_pos.y);
+			//Debug.Log("x ="+ new_pos.x + ", y=" + new_pos.y + "cols= "+ cols + "rows= " + rows);
 
-			circleCollider.enabled = false;
-			hit = Physics2D.Linecast (start, end, blockingLayer);
-			circleCollider.enabled = true;
-
-			if(hit.transform == null)
+			if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= cols || new_pos.y >= rows) // stays within bounds
 			{
-				StartCoroutine (SmoothMovement (new_pos)); // if path is clear then move
+				return;
 			}
+			StartCoroutine (SmoothMovement (new_pos));
+
+			/*
+			Vector2 start = transform.position;
+			Vector2 end = start + new Vector2 (new_pos.x, new_pos.y); //creates vector 2 object of start and end transform
+
+			circleCollider2.enabled = false; // disables the objects collider so the linecast doesnt hit it
+			hit = Physics2D.Linecast (start, end, blockingLayer); // checks for a collision along the line from start to end
+			circleCollider2.enabled = true;
+
+			 // if path is clear then move
+
+			if(hit.transform != null) // if linecast hit a collider
+			{
+				Debug.Log(hit.transform.ToString());
+			}*/
 
 			//StartCoroutine(slideMove(player.position, new_pos));
 			//slideMove(player.position, new_pos);
