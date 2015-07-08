@@ -10,7 +10,7 @@ public abstract class Unit : MonoBehaviour {
 
 	protected CircleCollider2D circleCollider;
 	private Rigidbody2D rb2D;
-	private float inverseMoveTime;
+	protected float inverseMoveTime;
 
 	enum Facing  {right, up, left , down};
 

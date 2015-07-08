@@ -7,6 +7,9 @@ public class NetworkManager : MonoBehaviour {
 	private RoomInfo[] roomsList;
 	public GameObject playerPrefab;
 
+	private int cols = BoardManager.columns;
+	private int rows = BoardManager.rows;
+
 	// Use this for initialization
 	void Start () {
 
@@ -53,6 +56,6 @@ public class NetworkManager : MonoBehaviour {
 	void OnJoinedRoom()
 	{
 		Debug.Log("Connected to Room");
-		PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * 0, Quaternion.identity, 0);
+		PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
 	}
 }
