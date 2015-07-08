@@ -10,7 +10,11 @@ GameObject:
   - 4: {fileID: 405704}
   - 212: {fileID: 21244392}
 <<<<<<< HEAD
+<<<<<<< HEAD
   - 61: {fileID: 6197500}
+=======
+  - 61: {fileID: 6132646}
+>>>>>>> origin/knight-features
 =======
   - 61: {fileID: 6132646}
 >>>>>>> origin/knight-features
@@ -34,7 +38,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!61 &6197500
+=======
+--- !u!61 &6132646
+>>>>>>> origin/knight-features
 =======
 --- !u!61 &6132646
 >>>>>>> origin/knight-features
@@ -50,7 +58,11 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Size: {x: 1, y: 1}
+=======
+  m_Size: {x: .899999976, y: .899999976}
+>>>>>>> origin/knight-features
 =======
   m_Size: {x: .899999976, y: .899999976}
 >>>>>>> origin/knight-features
