@@ -4,6 +4,8 @@ using System.Collections;
 public class Knight : Unit {
 	private Transform player; 
 
+	public GameObject grass;
+
 	// Use this for initialization
 	protected override void Start () {
 		player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -13,37 +15,64 @@ public class Knight : Unit {
 	// Update is called once per frame
 	void Update () {
 
-
-
-		if (Input.GetMouseButtonDown (0)) {
-
-			Vector3 movepos = Input.mousePosition;
-			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			new_pos.z = player.position.z;
-
-			player.position = new_pos;
-
-			movepos.z = 0f;
-			//player.position = Camera.main.ScreenToWorldPoint(movepos);
-			int horizontal = (int)Input.mousePosition.x;
-			int vertical = (int)Input.mousePosition.y;
-
-			Debug.Log (" horizontal: " + horizontal + " vertical " + vertical);
-
-			Vector2 myMove = getPosition(horizontal, vertical);
-			//player.position = myMove;
-
-			Debug.Log (" row: " + myMove.x + " column: " + myMove.y);
-			
-			//base.Move (horizontal2, vertical2);
-		}
-		
-
-		wait ();
+		//grassMove ();
+		quickMove ();
 	
 	}
 
-	Vector2 getPosition (int x, int y)
+	void grassMove()
+	{
+		if (Input.GetMouseButtonDown (0)) {
+
+			Debug.Log("Mouse is down");
+
+			RaycastHit hitInfo = new RaycastHit();
+			bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
+		
+
+			if (hit) 
+			{
+				Debug.Log("Hit " + hitInfo.transform.gameObject.name);
+				if (hitInfo.transform.gameObject.tag == "Construction")
+				{
+					Debug.Log ("It's working!");
+				}
+			}
+
+			Vector3 clickpos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			clickpos.z = 0;
+
+
+		}
+
+
+
+	}
+
+	void quickMove()
+	{
+		if (Input.GetMouseButtonDown (0)) {
+
+			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			new_pos.z = player.position.z;
+
+			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
+			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
+
+
+
+			player.position = new_pos;
+
+			//base.Move (horizontal2, vertical2); // move along path to target
+		}
+	}
+
+	private void OnTriggerEnter2D (Collider2D other)
+	{
+			
+	}
+
+	Vector2 getGridPosition (int x, int y)
 	{
 		// start pos = 288, 21 end pos = 586, 233
 		int startx = 288;
@@ -80,6 +109,6 @@ public class Knight : Unit {
 
 	IEnumerable wait ()
 	{
-		yield return new WaitForSeconds (10);
+		yield return new WaitForSeconds (1);
 	}
 }
