@@ -8,7 +8,7 @@ public abstract class Unit : MonoBehaviour {
 	public int moves;
 	public LayerMask blockingLayer;
 
-	private CircleCollider2D circleCollider;
+	protected CircleCollider2D circleCollider;
 	private Rigidbody2D rb2D;
 	private float inverseMoveTime;
 
@@ -45,25 +45,36 @@ public abstract class Unit : MonoBehaviour {
 			return false;
 		}
 
-		foreach (Vector2 loc in path) {
-			StartCoroutine(SmoothMovement(loc));
-		}
+		StartCoroutine (SmoothMovement (path));
 
 		return true;
 	}
 	
-	protected IEnumerator SmoothMovement(Vector3 end)
+	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path)
 	{
-		float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
 
-		while (sqrRemainingDistance > float.Epsilon) {
-			Vector3 newPosition = Vector3.MoveTowards(rb2D.position, end, inverseMoveTime * Time.deltaTime);
-			rb2D.MovePosition(newPosition);
-			sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+		foreach (Vector3 loc in path) {
 
-			yield return null;
+			float sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
+
+			while (sqrRemainingDistance > float.Epsilon) {
+				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, loc, inverseMoveTime * Time.deltaTime);
+				rb2D.MovePosition (newPosition);
+				sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
+
+				yield return null;
+			}
 		}
 	}
+
+	protected IEnumerator Wait (int seconds)
+	{
+		Debug.Log ("waiting");
+		yield return new WaitForSeconds (seconds);
+		
+		
+	}
+
 	/*	calculates the area of the circle that corresponds to
 		the unit's movement radius
 	 */

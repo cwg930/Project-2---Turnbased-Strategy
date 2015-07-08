@@ -5,9 +5,6 @@ public class Knight : Unit {
 	private Transform player;
 	private float inverseMoveTime2;
 	private bool moving = false;
-	private CircleCollider2D circleCollider;
-
-
 
 	// Use this for initialization
 	protected override void Start () {
@@ -79,15 +76,9 @@ public class Knight : Unit {
 	}
 
 
-	IEnumerator wait ()
-	{
-		Debug.Log ("waiting");
-		yield return new WaitForSeconds (1);
 
 
-	}
-
-	protected IEnumerator SmoothMovement (Vector3 end)
+	/*protected override IEnumerator SmoothMovement (Vector3 end)
 	{
 		moving = true;
 		//Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
@@ -112,5 +103,5 @@ public class Knight : Unit {
 			yield return null;
 		}
 		moving = false;
-	}
+	}*/
 }
