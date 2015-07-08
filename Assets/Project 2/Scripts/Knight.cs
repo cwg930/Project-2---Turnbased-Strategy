@@ -21,7 +21,7 @@ public class Knight : Unit {
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			new_pos.z = player.position.z;
 
-			//player.position = new_pos;
+			player.position = new_pos;
 
 			movepos.z = 0f;
 			//player.position = Camera.main.ScreenToWorldPoint(movepos);
@@ -31,7 +31,7 @@ public class Knight : Unit {
 			Debug.Log (" horizontal: " + horizontal + " vertical " + vertical);
 
 			Vector2 myMove = getPosition(horizontal, vertical);
-			player.position = myMove;
+			//player.position = myMove;
 
 			Debug.Log (" row: " + myMove.x + " column: " + myMove.y);
 			
@@ -77,6 +77,8 @@ public class Knight : Unit {
 		return curPos;
 
 	}
+
+
 
 	IEnumerable wait ()
 	{
