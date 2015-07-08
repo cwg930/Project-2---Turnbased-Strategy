@@ -9,7 +9,19 @@ GameObject:
   m_Component:
   - 4: {fileID: 455274}
   - 212: {fileID: 21248314}
+<<<<<<< HEAD
   - 61: {fileID: 6195788}
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+  - 61: {fileID: 6174732}
+=======
+  - 61: {fileID: 6195788}
+>>>>>>> origin/knight-features
+=======
+  - 61: {fileID: 6195788}
+>>>>>>> origin/knight-features
+>>>>>>> origin/multiplayer-features
   m_Layer: 0
   m_Name: outerWallBottomRight
   m_TagString: Untagged
@@ -29,7 +41,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+<<<<<<< HEAD
 --- !u!61 &6195788
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+--- !u!61 &6174732
+=======
+--- !u!61 &6195788
+>>>>>>> origin/knight-features
+=======
+--- !u!61 &6195788
+>>>>>>> origin/knight-features
+>>>>>>> origin/multiplayer-features
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -41,7 +65,19 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
+<<<<<<< HEAD
   m_Size: {x: .899999976, y: .899999976}
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+  m_Size: {x: 1, y: 1}
+=======
+  m_Size: {x: .899999976, y: .899999976}
+>>>>>>> origin/knight-features
+=======
+  m_Size: {x: .899999976, y: .899999976}
+>>>>>>> origin/knight-features
+>>>>>>> origin/multiplayer-features
 --- !u!212 &21248314
 SpriteRenderer:
   m_ObjectHideFlags: 1
