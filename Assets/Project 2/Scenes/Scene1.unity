@@ -227,3 +227,52 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ecd2ac870ee05c147b6c2d111b8f6622, type: 2}
   m_IsPrefabParent: 0
+<<<<<<< HEAD
+=======
+--- !u!1001 &1645271036
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 438106, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11492310, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+      propertyPath: grass
+      value: 
+      objectReference: {fileID: 159838, guid: 46acca65a1a63a542bf3f1f18d24aa71, type: 2}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: d8954a1685e7ec04aa73edfd90d7c5da, type: 2}
+  m_IsPrefabParent: 0
+>>>>>>> origin/knight-features
