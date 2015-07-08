@@ -23,21 +23,21 @@ public abstract class Unit : MonoBehaviour {
 	
 	protected bool Move(int xLoc, int yLoc)
 	{
-		Vector2 start = transform.position;
-		Vector2 end = new Vector2 (xLoc, yLoc);
-		int dist = (int) Vector2.Distance (start, end);
+		IntegerLocation start = new IntegerLocation(transform.position);
+		IntegerLocation end = new IntegerLocation (xLoc, yLoc);
+		int dist = IntegerLocation.Distance (start, end);
 		if (dist > moves) {
 			//TODO: tell user target is too far for the unit
 			return false;
 		}
 
-		Dictionary<Vector2,Vector2> result = FindPath (start, end);
+		Dictionary<IntegerLocation,IntegerLocation> result = FindPath (start, end);
 		LinkedList<Vector2> path = new LinkedList<Vector2>();
-		path.AddLast (end);
+		path.AddLast (new Vector2(end.x,end.y));
 		if (result.ContainsKey (end)) {
 			var current = result [end];
-			while (current != (new Vector2(-1,-1))) {
-				path.AddFirst (current);
+			while (current != (new IntegerLocation(-1,-1))) {
+				path.AddFirst (new Vector2(current.x,current.y));
 				current = result [current];
 			}
 		} else {
@@ -86,28 +86,29 @@ public abstract class Unit : MonoBehaviour {
 	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
 	* 
 	*/
-	private Dictionary<Vector2, Vector2> FindPath (Vector2 start, Vector2 end)
+	private Dictionary<IntegerLocation, IntegerLocation> FindPath (IntegerLocation start, IntegerLocation end)
 	{
 
 		int moveArea = CalcMoveArea ();
 
-		PriorityQueue<Vector2> frontier = new PriorityQueue<Vector2> (moveArea);
-		frontier.Enqueue (start, 0f);
+		PriorityQueue<IntegerLocation> frontier = new PriorityQueue<IntegerLocation> (moveArea);
+		frontier.Enqueue (start, 0);
 
-		Dictionary<Vector2,Vector2> cameFrom = new Dictionary<Vector2, Vector2> ();
-		Dictionary<Vector2,int> costSoFar = new Dictionary<Vector2, int> ();
+		Dictionary<IntegerLocation,IntegerLocation> cameFrom = new Dictionary<IntegerLocation, IntegerLocation> ();
+		Dictionary<IntegerLocation,int> costSoFar = new Dictionary<IntegerLocation, int> ();
 		//invalid loc used as sentinel value to prevent loop overflow
-		cameFrom[start] = new Vector2(-1,-1);
-		costSoFar[start] = 0f;
+		cameFrom[start] = new IntegerLocation(-1,-1);
+		costSoFar[start] = 0;
 
 		while (!frontier.Empty) {
-			Vector2 current = frontier.Dequeue();
+			var current = frontier.Dequeue();
 
-			if(current == end)
+			if(current == end){
+				cameFrom[end] = cameFrom[current];
 				break;
-
-			foreach (Vector2 next in GetNeighbors(current)){
-				int cost = costSoFar[current] + (int)Vector2.Distance(current, next);
+			}
+			foreach (IntegerLocation next in GetNeighbors(current)){
+				int cost = costSoFar[current] + IntegerLocation.Distance(current, next);
 				if(!costSoFar.ContainsKey(next)){
 					costSoFar[next] = cost;
 					int priority = cost + (int)(Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
@@ -126,7 +127,7 @@ public abstract class Unit : MonoBehaviour {
 	 * 
 	 * Occupied neighbors will not be added to the list
 	*/
-	protected ArrayList GetNeighbors(Vector2 location)
+	protected ArrayList GetNeighbors(IntegerLocation location)
 	{
 		ArrayList neighbors = new ArrayList ();
 		for (int x = -1; x <= 1; x++) {
@@ -135,10 +136,10 @@ public abstract class Unit : MonoBehaviour {
 				if(((x == -1 || x == 1) && y == 0) || ((y == -1 || y == 1) && x == 0)){
 					Vector2 target = new Vector2(location.x+x,location.y+y);
 					circleCollider.enabled = false;
-					RaycastHit2D hit = Physics2D.Linecast(location,target,blockingLayer);
+					RaycastHit2D hit = Physics2D.Linecast(new Vector2(location.x,location.y),target,blockingLayer);
 					circleCollider.enabled = true;
 					if(hit.transform == null){
-						neighbors.Add(target);
+						neighbors.Add(new IntegerLocation(target));
 					}
 				}
 			}

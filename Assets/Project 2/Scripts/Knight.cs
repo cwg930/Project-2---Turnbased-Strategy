@@ -11,7 +11,7 @@ public class Knight : Unit {
 	// Update is called once per frame
 	void OnMouseDown () {
 		Debug.Log ("mouse clicked");
-		Move (2, 1);
+		Move (1,2);
 		/*
 		int horizontal = 0;
 		int vertical = 0;

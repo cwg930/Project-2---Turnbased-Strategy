@@ -27,7 +27,7 @@ public class PriorityQueue<T>
 
 	public PriorityQueue(int size)
 	{
-		heap = new Tuple<T, double>[size];
+		heap = new Tuple<T, int>[size];
 		numItems = 0;
 	}
 
@@ -126,7 +126,7 @@ public class PriorityQueue<T>
 
 	private void Resize()
 	{
-		Tuple<T, double>[] newHeap = new Tuple<T, double>[heap.Length * 2];
+		Tuple<T, int>[] newHeap = new Tuple<T, int>[heap.Length * 2];
 		heap.CopyTo (newHeap,0);
 		heap = newHeap;
 	}
