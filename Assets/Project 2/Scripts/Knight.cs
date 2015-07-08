@@ -18,26 +18,23 @@ public class Knight : Unit {
 	}
 	
 	// Update is called once per frame
-<<<<<<< HEAD
 	void OnMouseDown () {
 		Debug.Log ("mouse clicked");
 		Move (1,2);
 		/*
 		int horizontal = 0;
 		int vertical = 0;
-=======
 	void Update () {
 
 		//StartCoroutine(wait ());
 		quickMove ();
->>>>>>> origin/develop
 
-	
+	*/
 	}
 
 
 
-
+	/*
 	void quickMove()
 	{
 		if (Input.GetMouseButtonDown (0) && !moving) {
@@ -67,13 +64,12 @@ public class Knight : Unit {
 
 			//base.Move (horizontal2, vertical2); // move along path to target
 		}
-<<<<<<< HEAD
-		*/
+
 
 	}
+	*/
 
-=======
-	}
+
 
 	private void OnTriggerEnter2D (Collider2D other)
 	{
@@ -117,5 +113,4 @@ public class Knight : Unit {
 		}
 		moving = false;
 	}
->>>>>>> origin/develop
 }
