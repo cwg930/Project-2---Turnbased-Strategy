@@ -133,6 +133,14 @@ public abstract class Unit : MonoBehaviour {
 		return neighbors;
 	}
 
+	public abstract Unit getUnitType <T> ()
+		where T : Component;
+
+	public Knight getKnight()
+	{
+		return new Knight ();
+	}
+
 		
 
 }

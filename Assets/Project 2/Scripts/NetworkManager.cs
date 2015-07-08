@@ -56,6 +56,16 @@ public class NetworkManager : MonoBehaviour {
 	void OnJoinedRoom()
 	{
 		Debug.Log("Connected to Room");
+		//AddUnit newUnits = new AddUnit ();
+		Team myTeam = new Team ();
+		//myTeam.AddUnit ();
+
+		//TODO set up team and spawn all team members
+
+		//Debug.Log (myTeam.GetType);
+
+
+
 		PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
 	}
 }

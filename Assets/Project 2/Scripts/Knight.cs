@@ -117,4 +117,9 @@ public class Knight : Unit {
 		}
 		moving = false;
 	}
+
+	public override Unit getUnitType <T> ()
+	{
+		return gameObject.GetComponent<Knight> ();
+	}
 }
