@@ -5,9 +5,6 @@ public class Knight : Unit {
 	private Transform player;
 	private float inverseMoveTime2;
 	private bool moving = false;
-	private CircleCollider2D circleCollider;
-
-
 
 	// Use this for initialization
 	protected override void Start () {
@@ -18,17 +15,23 @@ public class Knight : Unit {
 	}
 	
 	// Update is called once per frame
+	void OnMouseDown () {
+		Debug.Log ("mouse clicked");
+		Move (1,2);
+		/*
+		int horizontal = 0;
+		int vertical = 0;
 	void Update () {
 
 		//StartCoroutine(wait ());
 		quickMove ();
 
-	
+	*/
 	}
 
 
 
-
+	/*
 	void quickMove()
 	{
 		if (Input.GetMouseButtonDown (0) && !moving) {
@@ -58,7 +61,12 @@ public class Knight : Unit {
 
 			//base.Move (horizontal2, vertical2); // move along path to target
 		}
+
+
 	}
+	*/
+
+
 
 	private void OnTriggerEnter2D (Collider2D other)
 	{
@@ -68,15 +76,9 @@ public class Knight : Unit {
 	}
 
 
-	IEnumerator wait ()
-	{
-		Debug.Log ("waiting");
-		yield return new WaitForSeconds (1);
 
 
-	}
-
-	protected IEnumerator SmoothMovement (Vector3 end)
+	/*protected override IEnumerator SmoothMovement (Vector3 end)
 	{
 		moving = true;
 		//Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
@@ -101,5 +103,5 @@ public class Knight : Unit {
 			yield return null;
 		}
 		moving = false;
-	}
+	}*/
 }

@@ -8,7 +8,7 @@ public abstract class Unit : MonoBehaviour {
 	public int moves;
 	public LayerMask blockingLayer;
 
-	private CircleCollider2D circleCollider;
+	protected CircleCollider2D circleCollider;
 	private Rigidbody2D rb2D;
 	private float inverseMoveTime;
 
@@ -23,35 +23,58 @@ public abstract class Unit : MonoBehaviour {
 	
 	protected bool Move(int xLoc, int yLoc)
 	{
-		Vector2 start = transform.position;
-		Vector2 end = new Vector2 (xLoc, yLoc);
-		int dist = (int) Vector2.Distance (start, end);
+		IntegerLocation start = new IntegerLocation(transform.position);
+		IntegerLocation end = new IntegerLocation (xLoc, yLoc);
+		int dist = IntegerLocation.Distance (start, end);
 		if (dist > moves) {
 			//TODO: tell user target is too far for the unit
 			return false;
 		}
 
-		LinkedList<Vector2> path = FindPath (start, end);
-		foreach (Vector2 next in path) {
-			StartCoroutine(SmoothMovement(next));
-
+		Dictionary<IntegerLocation,IntegerLocation> result = FindPath (start, end);
+		LinkedList<Vector2> path = new LinkedList<Vector2>();
+		path.AddLast (new Vector2(end.x,end.y));
+		if (result.ContainsKey (end)) {
+			var current = result [end];
+			while (current != (new IntegerLocation(-1,-1))) {
+				path.AddFirst (new Vector2(current.x,current.y));
+				current = result [current];
+			}
+		} else {
+			//couldn't find a path to end
+			return false;
 		}
+
+		StartCoroutine (SmoothMovement (path));
 
 		return true;
 	}
 	
-	protected IEnumerator SmoothMovement(Vector3 end)
+	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path)
 	{
-		float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
 
-		while (sqrRemainingDistance > float.Epsilon) {
-			Vector3 newPosition = Vector3.MoveTowards(rb2D.position, end, inverseMoveTime * Time.deltaTime);
-			rb2D.MovePosition(newPosition);
-			sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+		foreach (Vector3 loc in path) {
 
-			yield return null;
+			float sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
+
+			while (sqrRemainingDistance > float.Epsilon) {
+				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, loc, inverseMoveTime * Time.deltaTime);
+				rb2D.MovePosition (newPosition);
+				sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
+
+				yield return null;
+			}
 		}
 	}
+
+	protected IEnumerator Wait (int seconds)
+	{
+		Debug.Log ("waiting");
+		yield return new WaitForSeconds (seconds);
+		
+		
+	}
+
 	/*	calculates the area of the circle that corresponds to
 		the unit's movement radius
 	 */
@@ -74,32 +97,34 @@ public abstract class Unit : MonoBehaviour {
 	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
 	* 
 	*/
-	private LinkedList<Vector2> FindPath (Vector2 start, Vector2 end)
+	private Dictionary<IntegerLocation, IntegerLocation> FindPath (IntegerLocation start, IntegerLocation end)
 	{
 
 		int moveArea = CalcMoveArea ();
 
-		PriorityQueue<Vector2> frontier = new PriorityQueue<Vector2> (moveArea);
+		PriorityQueue<IntegerLocation> frontier = new PriorityQueue<IntegerLocation> (moveArea);
 		frontier.Enqueue (start, 0);
 
-		LinkedList<Vector2> cameFrom = new LinkedList<Vector2> ();
-		Dictionary<Vector2,int> costSoFar = new Dictionary<Vector2, int> ();
-		cameFrom.AddFirst(start);
+		Dictionary<IntegerLocation,IntegerLocation> cameFrom = new Dictionary<IntegerLocation, IntegerLocation> ();
+		Dictionary<IntegerLocation,int> costSoFar = new Dictionary<IntegerLocation, int> ();
+		//invalid loc used as sentinel value to prevent loop overflow
+		cameFrom[start] = new IntegerLocation(-1,-1);
 		costSoFar[start] = 0;
 
 		while (!frontier.Empty) {
-			Vector2 current = frontier.Dequeue();
+			var current = frontier.Dequeue();
 
-			if(current.Equals(end))
+			if(current == end){
+				cameFrom[end] = cameFrom[current];
 				break;
-
-			foreach (Vector2 next in GetNeighbors(current)){
-				int cost = costSoFar[current] + (int)Vector2.Distance(current, next);
-				if(!costSoFar.ContainsKey(next) || cost < costSoFar[next]){
+			}
+			foreach (IntegerLocation next in GetNeighbors(current)){
+				int cost = costSoFar[current] + IntegerLocation.Distance(current, next);
+				if(!costSoFar.ContainsKey(next)){
 					costSoFar[next] = cost;
 					int priority = cost + (int)(Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
 					frontier.Enqueue(next,priority);
-					cameFrom.AddLast(current);
+					cameFrom[next] = current;
 				}
 
 			}
@@ -113,7 +138,7 @@ public abstract class Unit : MonoBehaviour {
 	 * 
 	 * Occupied neighbors will not be added to the list
 	*/
-	protected ArrayList GetNeighbors(Vector2 location)
+	protected ArrayList GetNeighbors(IntegerLocation location)
 	{
 		ArrayList neighbors = new ArrayList ();
 		for (int x = -1; x <= 1; x++) {
@@ -122,10 +147,10 @@ public abstract class Unit : MonoBehaviour {
 				if(((x == -1 || x == 1) && y == 0) || ((y == -1 || y == 1) && x == 0)){
 					Vector2 target = new Vector2(location.x+x,location.y+y);
 					circleCollider.enabled = false;
-					RaycastHit2D hit = Physics2D.Linecast(location,target,blockingLayer);
+					RaycastHit2D hit = Physics2D.Linecast(new Vector2(location.x,location.y),target,blockingLayer);
 					circleCollider.enabled = true;
 					if(hit.transform == null){
-						neighbors.Add(target);
+						neighbors.Add(new IntegerLocation(target));
 					}
 				}
 			}
