@@ -7,9 +7,15 @@ public abstract class Unit : MonoBehaviour {
 	public float moveTime = 0.1f;
 	public int moves;
 	public LayerMask blockingLayer;
+	public Transform player;
+
+
+	private Rigidbody2D rb2D;
+	private int rows = BoardManager.rows;
+	private int cols = BoardManager.columns;
+	private bool moving;
 
 	protected CircleCollider2D circleCollider;
-	private Rigidbody2D rb2D;
 	protected float inverseMoveTime;
 
 	enum Facing  {right, up, left , down};
@@ -19,6 +25,8 @@ public abstract class Unit : MonoBehaviour {
 		circleCollider = GetComponent<CircleCollider2D> ();
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
+		moving = false;
+		player = GameObject.FindGameObjectWithTag("Player").transform;
 	}
 	
 	protected bool Move(int xLoc, int yLoc)
@@ -48,6 +56,24 @@ public abstract class Unit : MonoBehaviour {
 		StartCoroutine (SmoothMovement (path));
 
 		return true;
+	}
+
+	public void makeMove() 
+	{
+		if (Input.GetMouseButtonDown (0) && !moving) {
+			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			new_pos.z = player.position.z;
+			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
+			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
+			
+			if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= cols || new_pos.y >= rows) // stays within bounds
+			{
+				return;
+			}
+			
+			Move ((int)new_pos.x, (int)new_pos.y);
+			
+		}
 	}
 	
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path)

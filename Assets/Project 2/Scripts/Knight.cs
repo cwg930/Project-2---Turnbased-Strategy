@@ -2,17 +2,17 @@
 using System.Collections;
 
 public class Knight : Unit {
-	private Transform player;
-	private bool moving = false;
+	//private Transform player; //moving to unit
+	//private bool moving = false; //moving to unit
 	private float inverseMoveTime2;
 
-	private int rows = BoardManager.rows;
-	private int cols = BoardManager.columns;
+	//private int rows = BoardManager.rows;
+	//private int cols = BoardManager.columns; // moving both to unit
 
 	// Use this for initialization
 	protected override void Start () {
-		player = GameObject.FindGameObjectWithTag("Player").transform;
-		inverseMoveTime2 = 1f / moveTime;
+		 //player = GameObject.FindGameObjectWithTag("Player").transform; // moving ot unit
+		//inverseMoveTime2 = 1f / moveTime; // set for deletion
 		base.Start ();
 	}
 
@@ -21,11 +21,10 @@ public class Knight : Unit {
 		//StartCoroutine(wait ());
 		makeMove ();
 		
-		
 	}
 
 
-	void makeMove()
+	/*void makeMove() --MOVING TO UNIT SCRIPT
 	{
 		if (Input.GetMouseButtonDown (0) && !moving) {
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -41,7 +40,7 @@ public class Knight : Unit {
 			Move ((int)new_pos.x, (int)new_pos.y);
 
 		}
-	}
+	} */
 	
 	//when the Unit is clicked
 	/*void OnMouseDown () {
