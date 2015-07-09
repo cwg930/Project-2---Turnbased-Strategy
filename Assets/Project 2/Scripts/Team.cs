@@ -4,32 +4,50 @@ using System.Collections.Generic;
 
 public class Team  {
 
-	private List<Unit> myTeam;
+	private LinkedList<GameObject> myTeam;
+	private LinkedListNode<GameObject> head;
+
+	public GameObject myUnit;
 
 	public Team ()
 	{
-		myTeam = new List<Unit> ();
+		myTeam = new LinkedList<GameObject> ();
+		head = null;
+		head = myTeam.First;
 	}
 
-	// Use this for initialization
-	void Start () {
-		myTeam = new List<Unit> ();
-	}
-
-	public Unit getUnit()
+	public GameObject getUnit()
 	{
 		 //TODO get unit from list and then remove that unit from the list
-		return new Knight();
+		return myUnit;
 	}
 
-	public Knight getKnight()
+	public void AddUnit (GameObject unit)
 	{
-		return new Knight();
+		myTeam.AddLast (unit);
+		myUnit = unit;
 	}
 
-	public void AddUnit (Unit unit)
+	public void addKnight ()
 	{
-		myTeam.Add(unit);
+
 	}
 
+	public void removeUnit()
+	{
+		myTeam.RemoveFirst ();
+	}
+
+	public bool isEmpty()
+	{
+		Debug.Log (myTeam.ToString());
+		if (myTeam.Contains (myUnit)) {
+
+			return false;
+		}
+			
+		else 
+			return true;
+
+	}
 }

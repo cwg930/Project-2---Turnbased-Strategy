@@ -6,6 +6,7 @@ public class NetworkManager : MonoBehaviour {
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
 	public GameObject playerPrefab;
+	public GameObject UnitManager;
 
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
@@ -55,10 +56,23 @@ public class NetworkManager : MonoBehaviour {
 	}
 	void OnJoinedRoom()
 	{
+		Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
 		Debug.Log("Connected to Room");
 		//AddUnit newUnits = new AddUnit ();
 		Team myTeam = new Team ();
-		//myTeam.AddUnit ();
+		myTeam.AddUnit (playerPrefab);
+		myTeam.AddUnit (playerPrefab);
+
+
+
+		while (!myTeam.isEmpty()) {
+			PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
+			myTeam.removeUnit();
+			//playerPrefab.tag = "Player2";
+
+		}
+
+
 
 		//TODO set up team and spawn all team members
 
@@ -66,6 +80,6 @@ public class NetworkManager : MonoBehaviour {
 
 
 
-		PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
+		//PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
 	}
 }

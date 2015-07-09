@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Player
-  - Wall
+  - Player1
+  - Player2
   layers:
   - Default
   - TransparentFX
