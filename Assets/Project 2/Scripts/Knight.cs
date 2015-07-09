@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Knight : Unit {
 
+
 	/*private GameObject [] Team1;
 	private GameObject [] Team2;
 	private int teamIndex; */
@@ -73,9 +74,6 @@ public class Knight : Unit {
 	} */
 
 
-
-
-
 /*	private void quickMove()
 =======
 	void makeMove() --MOVING TO UNIT SCRIPT
@@ -90,6 +88,7 @@ public class Knight : Unit {
 			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 			//player.position = new_pos;
 
 			//Debug.Log("x ="+ new_pos.x + ", y=" + new_pos.y + "cols= "+ cols + "rows= " + rows);
@@ -102,13 +101,35 @@ public class Knight : Unit {
 				return;
 			}
 <<<<<<< HEAD
+=======
+			//Debug.Log("x ="+ new_pos.x + ", y=" + new_pos.y + "cols= "+ cols + "rows= " + rows);
 
-			player = Team1[teamIndex].transform;
+			if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= cols || new_pos.y >= rows) // stays within bounds
+			{
+				return;
+			}
+			StartCoroutine (SmoothMovement (new_pos));
+
+			/*
+			Vector2 start = transform.position;
+			Vector2 end = start + new Vector2 (new_pos.x, new_pos.y); //creates vector 2 object of start and end transform
+
+			circleCollider2.enabled = false; // disables the objects collider so the linecast doesnt hit it
+			hit = Physics2D.Linecast (start, end, blockingLayer); // checks for a collision along the line from start to end
+			circleCollider2.enabled = true;
+
+			 // if path is clear then move
+
+			if(hit.transform != null) // if linecast hit a collider
+			{
+				Debug.Log(hit.transform.ToString());
+			}*/
+
+		/*	player = Team1[teamIndex].transform; 
 			teamIndex++;
 			if (teamIndex == Team1.Length)
-				teamIndex = 0;
+				teamIndex = 0; */
 
-			StartCoroutine (SmoothMovement (new_pos));
 
 			/*
 			Vector2 start = transform.position;
