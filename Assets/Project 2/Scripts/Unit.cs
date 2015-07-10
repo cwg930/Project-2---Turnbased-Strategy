@@ -14,6 +14,9 @@ public abstract class Unit : MonoBehaviour {
 	private int rows = BoardManager.rows;
 	private int cols = BoardManager.columns;
 	private bool moving;
+	/*private GameObject [] Team1;
+	private GameObject [] Team2;
+	private int teamIndex; */
 
 	protected CircleCollider2D circleCollider;
 	protected float inverseMoveTime;
@@ -27,6 +30,14 @@ public abstract class Unit : MonoBehaviour {
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
 		player = GameObject.FindGameObjectWithTag("Player").transform;
+		
+		/*Team1 = GameObject.FindGameObjectsWithTag ("Player1");
+		teamIndex = 0;*/
+		
+		//Debug.Log (Team1[0].transform.name);
+		
+		
+		//player = Team1[0].transform;
 	}
 	
 	protected bool Move(int xLoc, int yLoc)
@@ -70,13 +81,19 @@ public abstract class Unit : MonoBehaviour {
 			{
 				return;
 			}
+
+			/*	player = Team1[teamIndex].transform; 
+			teamIndex++;
+			if (teamIndex == Team1.Length)
+				teamIndex = 0; */
 			
-			Move ((int)new_pos.x, (int)new_pos.y);
+			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
+			StartCoroutine (SmoothMovement (new_pos));
 			
 		}
 	}
 	
-	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path)
+	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
 	{
 
 		foreach (Vector3 loc in path) {
@@ -91,6 +108,20 @@ public abstract class Unit : MonoBehaviour {
 				yield return null;
 			}
 		}
+	}
+
+	protected virtual IEnumerator SmoothMovement(Vector3 path) // using vector3
+	{
+			
+			float sqrRemainingDistance = (transform.position - path).sqrMagnitude;
+			
+			while (sqrRemainingDistance > float.Epsilon) {
+				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, path, inverseMoveTime * Time.deltaTime);
+				rb2D.MovePosition (newPosition);
+				sqrRemainingDistance = (transform.position - path).sqrMagnitude;
+				
+				yield return null;
+			}
 	}
 
 	protected IEnumerator Wait (int seconds)

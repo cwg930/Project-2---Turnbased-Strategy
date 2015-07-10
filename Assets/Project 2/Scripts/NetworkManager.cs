@@ -6,7 +6,6 @@ public class NetworkManager : MonoBehaviour {
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
 	public GameObject playerPrefab;
-	public GameObject UnitManager;
 
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
@@ -57,7 +56,7 @@ public class NetworkManager : MonoBehaviour {
 	}
 	void OnJoinedRoom()
 	{
-		Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
+		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
 		Debug.Log("Connected to Room");
 		//AddUnit newUnits = new AddUnit ();
 		Team myTeam = new Team ();
