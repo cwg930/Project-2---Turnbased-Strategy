@@ -94,7 +94,7 @@ public class Unit : MonoBehaviour {
 			
 			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
 			StartCoroutine (SmoothMovement (new_pos));
-			Debug.Log ("move made");
+
 			moved = true;
 		}
 	}
@@ -118,6 +118,7 @@ public class Unit : MonoBehaviour {
 
 	protected virtual IEnumerator SmoothMovement(Vector3 path) // using vector3
 	{
+		moving = true;
 			
 			float sqrRemainingDistance = (transform.position - path).sqrMagnitude;
 			
@@ -128,6 +129,8 @@ public class Unit : MonoBehaviour {
 				
 				yield return null;
 			}
+		moving = false;
+		Debug.Log ("move made");
 	}
 
 	protected IEnumerator Wait ()
