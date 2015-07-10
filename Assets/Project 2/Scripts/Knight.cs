@@ -80,12 +80,12 @@ public class Knight : Unit {
 				heroSelected = true;
 			}
 		
-		} */
+		} 
 
 		Debug.Log ("Unit was clicked");
 		//StartCoroutine ("wait");
 
-	}
+	} */
 
 	private void OnTriggerEnter2D (Collider2D other)
 	{
@@ -99,5 +99,5 @@ public class Knight : Unit {
 		return gameObject.GetComponent<Knight> ();
 	} */
 
-	*/
+
 }
