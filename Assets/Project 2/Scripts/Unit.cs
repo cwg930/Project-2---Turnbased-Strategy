@@ -45,7 +45,7 @@ public class Unit : MonoBehaviour {
 	{
 		Debug.Log ("Mouse Clicked");
 		moved = false;
-		StartCoroutine ("Wait");
+		StartCoroutine ("WaitForMove");
 	}
 	
 	protected bool Move(int xLoc, int yLoc)
@@ -140,16 +140,18 @@ public class Unit : MonoBehaviour {
 		Debug.Log ("move made");
 	}
 
-	protected IEnumerator Wait ()
+	protected IEnumerator WaitForMove ()
 	{
-		Debug.Log ("waiting");
+		Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
 
 
 		while (!moved) {
 			if (Input.GetMouseButtonDown (0))
 			{
-				makeMove ();
+				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				var validMoves = FindPath(new IntegerLocation(transform.position), new IntegerLocation(target));
+
 			}
 				
 			yield return null;
