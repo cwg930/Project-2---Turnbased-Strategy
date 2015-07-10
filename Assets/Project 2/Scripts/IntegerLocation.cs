@@ -42,6 +42,10 @@ public class IntegerLocation
 		IntegerLocation other = obj as IntegerLocation;
 		return (this == other);
 	}
+	public override int GetHashCode ()
+	{
+		return (x + y) * (x + y + 1) / 2 + x;
+	}
 
 	public static int Distance(IntegerLocation a, IntegerLocation b)
 	{
