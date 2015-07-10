@@ -11,6 +11,8 @@ public class Knight : Unit {
 	//when the Unit is clicked
 	void OnMouseDown () {
 		Debug.Log ("mouse clicked");
+
+		/*
 		IntegerLocation loc = new IntegerLocation (transform.position);
 		int tarX = Random.Range (loc.x - moves, loc.x + moves);
 		int tarY = Random.Range (loc.y - moves, loc.y + moves);
@@ -18,7 +20,10 @@ public class Knight : Unit {
 			Debug.Log ("moved");
 		} else {
 			Debug.Log("nope");
-		}
+		} */
+		moved = false;
+		StartCoroutine ("Wait");
+			
 	}
 
 

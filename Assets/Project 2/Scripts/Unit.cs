@@ -72,7 +72,10 @@ public class Unit : MonoBehaviour {
 
 	public void makeMove() 
 	{
-		if (Input.GetMouseButtonDown (0) && !moving) {
+		//StartCoroutine(Wait (1));
+		Debug.Log ("making move");
+		/*Input.GetMouseButtonDown (0)*/
+		if (!moving) {
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			new_pos.z = player.position.z;
 			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
@@ -80,6 +83,7 @@ public class Unit : MonoBehaviour {
 			
 			if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= cols || new_pos.y >= rows) // stays within bounds
 			{
+				Debug.Log ("move was out of bounds, returning...");
 				return;
 			}
 
@@ -90,6 +94,7 @@ public class Unit : MonoBehaviour {
 			
 			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
 			StartCoroutine (SmoothMovement (new_pos));
+			Debug.Log ("move made");
 			moved = true;
 		}
 	}
@@ -125,11 +130,22 @@ public class Unit : MonoBehaviour {
 			}
 	}
 
-	protected IEnumerator Wait (int seconds)
+	protected IEnumerator Wait ()
 	{
 		Debug.Log ("waiting");
-		yield return new WaitForSeconds (seconds);
-		
+		yield return new WaitForSeconds (.1f);
+
+
+		while (!moved) {
+			if (Input.GetMouseButtonDown (0))
+			{
+				makeMove ();
+			}
+				
+			yield return null;
+		}
+			
+
 		
 	}
 
