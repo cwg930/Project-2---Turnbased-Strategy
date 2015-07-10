@@ -12,8 +12,6 @@ public class Unit : MonoBehaviour {
 
 
 	private Rigidbody2D rb2D;
-	private int rows = BoardManager.rows;
-	private int cols = BoardManager.columns;
 	private bool moving;
 	/*private GameObject [] Team1;
 	private GameObject [] Team2;
@@ -31,7 +29,6 @@ public class Unit : MonoBehaviour {
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
 		player = GameObject.FindGameObjectWithTag("Player1").transform;
-		
 		/*Team1 = GameObject.FindGameObjectsWithTag ("Player1");
 		teamIndex = 0;*/
 		
@@ -48,24 +45,23 @@ public class Unit : MonoBehaviour {
 		StartCoroutine ("WaitForMove");
 	}
 	
-	protected bool Move(int xLoc, int yLoc)
+	protected bool Move(Dictionary<IntegerLocation,IntegerLocation> locations, IntegerLocation end)
 	{
 		IntegerLocation start = new IntegerLocation(transform.position);
-		IntegerLocation end = new IntegerLocation (xLoc, yLoc);
 		int dist = IntegerLocation.Distance (start, end);
 		if (dist > moves) {
 			//TODO: tell user target is too far for the unit
 			return false;
 		}
 
-		Dictionary<IntegerLocation,IntegerLocation> result = FindPath (start, end);
+//		Dictionary<IntegerLocation,IntegerLocation> result = FindPath (start, end);
 		LinkedList<Vector2> path = new LinkedList<Vector2>();
-		path.AddLast (new Vector2(end.x,end.y));
-		if (result.ContainsKey (end)) {
-			var current = result [end];
+		path.AddLast (end.toVector2());
+		if (locations.ContainsKey (end)) {
+			var current = locations [end];
 			while (current != (new IntegerLocation(-1,-1))) {
-				path.AddFirst (new Vector2(current.x,current.y));
-				current = result [current];
+				path.AddFirst (current.toVector2());
+				current = locations [current];
 			}
 		} else {
 			//couldn't find a path to end
@@ -76,36 +72,25 @@ public class Unit : MonoBehaviour {
 
 		return true;
 	}
-
+/*
 	public void makeMove() 
 	{
 		//StartCoroutine(Wait (1));
 		Debug.Log ("making move");
-		/*Input.GetMouseButtonDown (0)*/
+
 		if (!moving) {
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			new_pos.z = player.position.z;
 			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
 			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
-			
-			if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= cols || new_pos.y >= rows) // stays within bounds
-			{
-				Debug.Log ("move was out of bounds, returning...");
-				return;
-			}
-
-			/*	player = Team1[teamIndex].transform; 
-			teamIndex++;
-			if (teamIndex == Team1.Length)
-				teamIndex = 0; */
-			
+						
 			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
 			//StartCoroutine (SmoothMovement (new_pos));
 			var tmp = new IntegerLocation(new_pos);
 			moved = Move(tmp.x,tmp.y);
 		}
 	}
-	
+*/	
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
 	{
 
@@ -122,7 +107,7 @@ public class Unit : MonoBehaviour {
 			}
 		}
 	}
-
+/*
 	protected virtual IEnumerator SmoothMovement(Vector3 path) // using vector3
 	{
 		moving = true;
@@ -139,25 +124,26 @@ public class Unit : MonoBehaviour {
 		moving = false;
 		Debug.Log ("move made");
 	}
-
+*/
 	protected IEnumerator WaitForMove ()
 	{
 		Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
-
+		var validMoves = FindPath(new IntegerLocation(transform.position));
+		HighlightMoveArea(validMoves, Color.cyan);
 
 		while (!moved) {
 			if (Input.GetMouseButtonDown (0))
 			{
 				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				var validMoves = FindPath(new IntegerLocation(transform.position), new IntegerLocation(target));
+				moved = Move(validMoves,new IntegerLocation (target));
 
 			}
 				
 			yield return null;
 		}
-			
 
+		HighlightMoveArea (validMoves, Color.white);
 		
 	}
 
@@ -183,7 +169,7 @@ public class Unit : MonoBehaviour {
 	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
 	* 
 	*/
-	private Dictionary<IntegerLocation, IntegerLocation> FindPath (IntegerLocation start, IntegerLocation end)
+	private Dictionary<IntegerLocation, IntegerLocation> FindPath (IntegerLocation start)
 	{
 
 		int moveArea = CalcMoveArea ();
@@ -202,13 +188,9 @@ public class Unit : MonoBehaviour {
 			var current = frontier.Dequeue();
 
 			if(Mathf.CeilToInt(Vector2.Distance(start.toVector2(),current.toVector2())) >= moves){
-				return null;
+				return cameFrom;
 			}
 
-			if(current == end){
-				cameFrom[end] = cameFrom[current];
-				break;
-			}
 			foreach (IntegerLocation next in GetNeighbors(current)){
 				if(!discovered.Contains(next)){
 					frontier.Enqueue(next);
@@ -220,6 +202,18 @@ public class Unit : MonoBehaviour {
 		}
 
 		return cameFrom;
+	}
+
+	void HighlightMoveArea(Dictionary<IntegerLocation, IntegerLocation> area, Color color)
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+		foreach(GameObject loc in board)
+		{
+			if(area.ContainsKey(new IntegerLocation(loc.transform.position))){
+				var img = loc.GetComponent<SpriteRenderer>();
+				img.color = color;
+			}
+		}
 	}
 	/*
 	 * Get the list of <location>'s non-diagonal neighbors

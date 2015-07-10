@@ -11,7 +11,7 @@ GameObject:
   - 212: {fileID: 21299908}
   m_Layer: 0
   m_Name: grass2
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -53,7 +53,7 @@ SpriteRenderer:
   m_SortingLayerID: -1863096551
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a63bce2f986d7104abc60f652b923302, type: 3}
-  m_Color: {r: .742647052, g: .744421899, b: 1, a: 1}
+  m_Color: {r: .746348917, g: .698529422, b: 1, a: 1}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -63,11 +63,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: m_Color.r
-      value: .742647052
+      value: .746348917
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Color.g
-      value: .744421899
+      value: .698529422
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Color.b
@@ -76,6 +76,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Color.a
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Floor
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
