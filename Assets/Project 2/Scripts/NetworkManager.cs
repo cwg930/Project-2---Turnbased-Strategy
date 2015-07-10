@@ -10,6 +10,7 @@ public class NetworkManager : MonoBehaviour {
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
 
+
 	// Use this for initialization
 	void Start () {
 
@@ -55,7 +56,24 @@ public class NetworkManager : MonoBehaviour {
 	}
 	void OnJoinedRoom()
 	{
+		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
 		Debug.Log("Connected to Room");
-		PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
+		//AddUnit newUnits = new AddUnit ();
+		Team myTeam = new Team ();
+		myTeam.AddUnit (playerPrefab);
+		myTeam.AddUnit (playerPrefab);
+
+		while (!myTeam.isEmpty()) {
+			PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
+			myTeam.removeUnit();
+			//playerPrefab.tag = "Player2";
+
+		}
+
+		//TODO set up team and spawn all team members
+
+		//Debug.Log (myTeam.GetType);
+
+		//PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
 	}
 }

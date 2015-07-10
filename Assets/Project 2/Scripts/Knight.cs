@@ -2,12 +2,9 @@
 using System.Collections;
 
 public class Knight : Unit {
-	private Transform player;
-	private bool moving = false;
 
-	// Use this for initialization
 	protected override void Start () {
-		player = GameObject.FindGameObjectWithTag("Player").transform;
+
 		base.Start ();
 	}
 	
@@ -22,15 +19,6 @@ public class Knight : Unit {
 		} else {
 			Debug.Log("nope");
 		}
-		/*
-		int horizontal = 0;
-		int vertical = 0;
-	void Update () {
-
-		//StartCoroutine(wait ());
-		quickMove ();
-
-	*/
 	}
 
 
@@ -66,17 +54,45 @@ public class Knight : Unit {
 			//base.Move (horizontal2, vertical2); // move along path to target
 		}
 
+/*
+	// Update is called once per frame
 
->>>>>>> origin/pathfinding-features
+	void Update () {
+
+		makeMove ();
 	}
 
+	void OnMouseDown()
+	{
+		/*bool heroSelected = false;
+
+		while (!heroSelected) {
+			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+			if(Physics.Raycast(ray,out hit)){
+				Debug.Log("Hero was hit by ray");
+				player = hit.collider.gameObject.transform;
+				heroSelected = true;
+			}
+		
+		} */
+
+		Debug.Log ("Unit was clicked");
+		//StartCoroutine ("wait");
+
+	}
 
 	private void OnTriggerEnter2D (Collider2D other)
 	{
+		//if (other.tag == "Player1")
 		// used for collision detection	
-
 
 	}
 
+	 /*public override Unit getUnitType <T> ()
+	{
+		return gameObject.GetComponent<Knight> ();
+	} */
 
+	*/
 }

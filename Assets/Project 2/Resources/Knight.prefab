@@ -121,13 +121,12 @@ GameObject:
   - 4: {fileID: 471630}
   - 212: {fileID: 21282218}
   - 95: {fileID: 9565670}
-  - 50: {fileID: 5028734}
   - 58: {fileID: 5867954}
-  - 114: {fileID: 11455796}
   - 114: {fileID: 11490108}
+  - 50: {fileID: 5097054}
   m_Layer: 8
   m_Name: Knight
-  m_TagString: Player
+  m_TagString: Player1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -260,11 +259,11 @@ Transform:
   m_GameObject: {fileID: 149906}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: -.11868453, z: 0}
-  m_LocalScale: {x: 6.15897751, y: 6.15897751, z: 6.15897751}
+  m_LocalScale: {x: 1, y: 1, z: 6.15897751}
   m_Children: []
   m_Father: {fileID: 471630}
   m_RootOrder: 3
---- !u!50 &5028734
+--- !u!50 &5097054
 Rigidbody2D:
   serializedVersion: 2
   m_ObjectHideFlags: 1
@@ -274,12 +273,12 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: .0500000007
-  m_GravityScale: 0
-  m_IsKinematic: 0
+  m_GravityScale: 1
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!58 &5828266
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -316,9 +315,9 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -.100000001}
   serializedVersion: 2
-  m_Radius: .5
+  m_Radius: .300000012
 --- !u!95 &9565670
 Animator:
   serializedVersion: 3
@@ -336,22 +335,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11455796
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 198216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bf46719e55e1fb4fb9ddfe37393b58b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveTime: .100000001
-  moves: 5
-  blockingLayer:
-    serializedVersion: 2
-    m_Bits: 256
 --- !u!114 &11490108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -548,6 +531,30 @@ Prefab:
       propertyPath: ObservedComponents.Array.data[0]
       value: 
       objectReference: {fileID: 471630}
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Player1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Radius
+      value: .300000012
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Offset.y
+      value: -.100000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 198216}
