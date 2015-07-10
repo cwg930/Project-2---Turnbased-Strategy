@@ -179,31 +179,33 @@ public class Unit : MonoBehaviour {
 
 		int moveArea = CalcMoveArea ();
 
-		PriorityQueue<IntegerLocation> frontier = new PriorityQueue<IntegerLocation> (moveArea);
-		frontier.Enqueue (start, 0);
+		Queue<IntegerLocation> frontier = new Queue<IntegerLocation> (moveArea);
+		ArrayList discovered = new ArrayList();
+		frontier.Enqueue (start);
+		discovered.Add(start);
 
 		Dictionary<IntegerLocation,IntegerLocation> cameFrom = new Dictionary<IntegerLocation, IntegerLocation> ();
-		Dictionary<IntegerLocation,int> costSoFar = new Dictionary<IntegerLocation, int> ();
+
 		//invalid loc used as sentinel value to prevent loop overflow
 		cameFrom[start] = new IntegerLocation(-1,-1);
-		costSoFar[start] = 0;
 
-		while (!frontier.Empty) {
+		while (frontier.Count > 0) {
 			var current = frontier.Dequeue();
+
+			if(Mathf.CeilToInt(Vector2.Distance(start.toVector2(),current.toVector2())) >= moves){
+				return null;
+			}
 
 			if(current == end){
 				cameFrom[end] = cameFrom[current];
 				break;
 			}
 			foreach (IntegerLocation next in GetNeighbors(current)){
-				int cost = costSoFar[current] + IntegerLocation.Distance(current, next);
-				if(!costSoFar.ContainsKey(next)){
-					costSoFar[next] = cost;
-					int priority = cost + (int)(Mathf.Abs(current.x - next.x) + Mathf.Abs(current.y - next.y));
-					frontier.Enqueue(next,priority);
+				if(!discovered.Contains(next)){
+					frontier.Enqueue(next);
+					discovered.Add(next);
 					cameFrom[next] = current;
 				}
-
 			}
 
 		}

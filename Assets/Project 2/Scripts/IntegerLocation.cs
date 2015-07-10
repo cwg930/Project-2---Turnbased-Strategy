@@ -52,5 +52,10 @@ public class IntegerLocation
 		return (int)Math.Round(Math.Sqrt ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)));
 	}
 
+	public Vector2 toVector2()
+	{
+		return new Vector2 (x, y);
+	}
+
 }
 
