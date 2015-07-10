@@ -17,7 +17,14 @@ public class Knight : Unit {
 	// Update is called once per frame
 	void OnMouseDown () {
 		Debug.Log ("mouse clicked");
-		Move (1,2);
+		IntegerLocation loc = new IntegerLocation (transform.position);
+		int tarX = Random.Range (loc.x - moves, loc.x + moves);
+		int tarY = Random.Range (loc.y - moves, loc.y + moves);
+		if (Move (tarX, tarY)) {
+			Debug.Log ("moved");
+		} else {
+			Debug.Log("nope");
+		}
 		/*
 		int horizontal = 0;
 		int vertical = 0;
