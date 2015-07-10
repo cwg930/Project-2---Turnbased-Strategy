@@ -93,9 +93,9 @@ public class Unit : MonoBehaviour {
 				teamIndex = 0; */
 			
 			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
-			StartCoroutine (SmoothMovement (new_pos));
-
-			moved = true;
+			//StartCoroutine (SmoothMovement (new_pos));
+			var tmp = new IntegerLocation(new_pos);
+			moved = Move(tmp.x,tmp.y);
 		}
 	}
 	
