@@ -1,21 +1,24 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class NetworkManager : MonoBehaviour {
 
+
+	public GameObject Knight;//moved to player class
+	public GameObject playerPrefab;
+
+	//private int cols = BoardManager.columns;
+	//private int rows = BoardManager.rows;//moved to player class
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
-	public GameObject playerPrefab;
-	public GameObject UnitManager;
-
-	private int cols = BoardManager.columns;
-	private int rows = BoardManager.rows;
+	private int count;
 
 
 	// Use this for initialization
 	void Start () {
 
 			PhotonNetwork.ConnectUsingSettings("0.1");
+		count = 1;
 		
 	}
 	
@@ -57,17 +60,31 @@ public class NetworkManager : MonoBehaviour {
 	}
 	void OnJoinedRoom()
 	{
-		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
-		Debug.Log("Connected to Room");
-		//AddUnit newUnits = new AddUnit ();
-		Team myTeam = new Team ();
-		myTeam.AddUnit (playerPrefab);
-		myTeam.AddUnit (playerPrefab);
 
-		while (!myTeam.isEmpty()) {
+		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
+		Debug.Log("Connected to Room" + count);
+		//AddUnit newUnits = new AddUnit ();
+		//Player p1 = gameObject.AddComponent<Player> ();
+		//p1 ("Player1");
+		Player player1 = new Player("Player1");
+		PhotonNetwork.Instantiate (playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0);
+		//GameObject instance = PhotonNetwork.Instantiate(Knight.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
+		player1.addUnit (Knight);
+		//PhotonNetwork.Instantiate(player1.getUnitatIndex(0).name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0);
+
+		//player1.SelectKnight ();
+		Debug.Log("which player is added next?" + count);
+
+	
+
+		//Team myTeam = new Team ();
+		//myTeam.AddUnit (Knight);
+		//myTeam.AddUnit (playerPrefab);
+
+		/*while (!myTeam.isEmpty()) {
 			PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
 			myTeam.removeUnit();
-			//playerPrefab.tag = "Player2";
+			playerPrefab.tag = "Player2"; */
 
 		}
 
@@ -76,5 +93,5 @@ public class NetworkManager : MonoBehaviour {
 		//Debug.Log (myTeam.GetType);
 
 		//PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
-	}
+
 }

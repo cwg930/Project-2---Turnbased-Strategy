@@ -185,8 +185,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c92d330aa4bee143a9539f6095a1c37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
-  UnitManager: {fileID: 190836, guid: aa042b032a545c5418cd6fc3882431a2, type: 2}
+  Knight: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+  playerPrefab: {fileID: 123772, guid: ef3d9bd82315084458c606bfcb122056, type: 2}
 --- !u!114 &94988367
 MonoBehaviour:
   m_ObjectHideFlags: 0
