@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Unit : MonoBehaviour {
+public class Unit : MonoBehaviour {
 
 	public float moveTime = 0.1f;
 	public int moves;
 	public LayerMask blockingLayer;
 	public Transform player;
+	public bool moved;
 
 
 	private Rigidbody2D rb2D;
@@ -29,7 +30,7 @@ public abstract class Unit : MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
-		player = GameObject.FindGameObjectWithTag("Player").transform;
+		player = GameObject.FindGameObjectWithTag("Player1").transform;
 		
 		/*Team1 = GameObject.FindGameObjectsWithTag ("Player1");
 		teamIndex = 0;*/
@@ -89,7 +90,7 @@ public abstract class Unit : MonoBehaviour {
 			
 			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
 			StartCoroutine (SmoothMovement (new_pos));
-			
+			moved = true;
 		}
 	}
 	

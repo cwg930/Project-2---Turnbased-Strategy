@@ -59,11 +59,16 @@ public class Knight : Unit {
 
 	void Update () {
 
-		makeMove ();
 	}
 
 	void OnMouseDown()
 	{
+
+		player = this.gameObject.transform;
+		Debug.Log ("object: " + this.gameObject.name);
+		moved = false;
+		while (!moved)
+			makeMove ();
 		/*bool heroSelected = false;
 
 		while (!heroSelected) {
