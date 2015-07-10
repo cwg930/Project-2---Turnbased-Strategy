@@ -6,6 +6,7 @@ public class NetworkManager : MonoBehaviour {
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
 	public GameObject playerPrefab;
+	public GameObject UnitManager;
 
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;

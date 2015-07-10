@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Unit : MonoBehaviour {
+public class Unit : MonoBehaviour {
 
 	public float moveTime = 0.1f;
 	public int moves;
 	public LayerMask blockingLayer;
 	public Transform player;
+	public bool moved;
 
 
 	private Rigidbody2D rb2D;
@@ -29,7 +30,7 @@ public abstract class Unit : MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
-		player = GameObject.FindGameObjectWithTag("Player").transform;
+		player = GameObject.FindGameObjectWithTag("Player1").transform;
 		
 		/*Team1 = GameObject.FindGameObjectsWithTag ("Player1");
 		teamIndex = 0;*/
@@ -71,7 +72,10 @@ public abstract class Unit : MonoBehaviour {
 
 	public void makeMove() 
 	{
-		if (Input.GetMouseButtonDown (0) && !moving) {
+		//StartCoroutine(Wait (1));
+		Debug.Log ("making move");
+		/*Input.GetMouseButtonDown (0)*/
+		if (!moving) {
 			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			new_pos.z = player.position.z;
 			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
@@ -79,6 +83,7 @@ public abstract class Unit : MonoBehaviour {
 			
 			if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= cols || new_pos.y >= rows) // stays within bounds
 			{
+				Debug.Log ("move was out of bounds, returning...");
 				return;
 			}
 
@@ -89,7 +94,8 @@ public abstract class Unit : MonoBehaviour {
 			
 			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
 			StartCoroutine (SmoothMovement (new_pos));
-			
+
+			moved = true;
 		}
 	}
 	
@@ -112,6 +118,7 @@ public abstract class Unit : MonoBehaviour {
 
 	protected virtual IEnumerator SmoothMovement(Vector3 path) // using vector3
 	{
+		moving = true;
 			
 			float sqrRemainingDistance = (transform.position - path).sqrMagnitude;
 			
@@ -122,13 +129,26 @@ public abstract class Unit : MonoBehaviour {
 				
 				yield return null;
 			}
+		moving = false;
+		Debug.Log ("move made");
 	}
 
-	protected IEnumerator Wait (int seconds)
+	protected IEnumerator Wait ()
 	{
 		Debug.Log ("waiting");
-		yield return new WaitForSeconds (seconds);
-		
+		yield return new WaitForSeconds (.1f);
+
+
+		while (!moved) {
+			if (Input.GetMouseButtonDown (0))
+			{
+				makeMove ();
+			}
+				
+			yield return null;
+		}
+			
+
 		
 	}
 

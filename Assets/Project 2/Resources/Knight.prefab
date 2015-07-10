@@ -124,6 +124,7 @@ GameObject:
   - 58: {fileID: 5867954}
   - 114: {fileID: 11490108}
   - 50: {fileID: 5097054}
+  - 114: {fileID: 11491124}
   m_Layer: 8
   m_Name: Knight
   m_TagString: Player1
@@ -360,6 +361,23 @@ MonoBehaviour:
   viewIdField: 0
   instantiationId: -1
   isRuntimeInstantiated: 0
+--- !u!114 &11491124
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 198216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bf46719e55e1fb4fb9ddfe37393b58b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveTime: .100000001
+  moves: 0
+  blockingLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  player: {fileID: 471630}
 --- !u!212 &21230752
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -555,6 +573,14 @@ Prefab:
       propertyPath: m_IsKinematic
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: blockingLayer.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 471630}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 198216}
