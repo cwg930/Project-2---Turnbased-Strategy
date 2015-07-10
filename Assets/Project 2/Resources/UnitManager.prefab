@@ -41,11 +41,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTime: .100000001
-  moves: 0
+  moves: 4
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
   player: {fileID: 471630, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+  moved: 0
 --- !u!114 &11483258
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -77,7 +78,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: moves
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 190836}

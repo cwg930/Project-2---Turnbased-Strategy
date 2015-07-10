@@ -40,6 +40,13 @@ public class Unit : MonoBehaviour {
 		
 		//player = Team1[0].transform;
 	}
+
+	void OnMouseDown()
+	{
+		Debug.Log ("Mouse Clicked");
+		moved = false;
+		StartCoroutine ("Wait");
+	}
 	
 	protected bool Move(int xLoc, int yLoc)
 	{
