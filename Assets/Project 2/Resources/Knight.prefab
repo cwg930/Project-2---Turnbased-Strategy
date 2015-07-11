@@ -373,7 +373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTime: .100000001
-  moves: 0
+  moves: 4
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -582,6 +582,10 @@ Prefab:
       propertyPath: player
       value: 
       objectReference: {fileID: 471630}
+    - target: {fileID: 0}
+      propertyPath: moves
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 198216}

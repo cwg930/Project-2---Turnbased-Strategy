@@ -3,6 +3,7 @@
 # =============== #
 Temp/
 Library/
+Project2_Data/
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -13,11 +14,13 @@ obj/
 *.userprefs
 /*.csproj
 *.pidb
+*.pdb
 *.suo
 /*.sln
 *.user
 *.unityproj
 *.booproj
+*.exe
 
 # ============ #
 # OS generated #
