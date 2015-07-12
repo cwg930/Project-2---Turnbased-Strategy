@@ -15,7 +15,7 @@ MonoBehaviour:
   Protocol: 0
   ServerAddress: 
   ServerPort: 5055
-  AppID: 18b07bad-f757-4383-99b3-7a94fe918419
+  AppID: 2da04004-f28a-4b2d-bda5-e9d0c4317edb
   PreferredRegion: 1
   EnabledRegions: -1
   RpcList:
@@ -28,4 +28,10 @@ MonoBehaviour:
   - PunPickupSimple
   - PunRespawn
   - RequestForPickupTimes
+  - sendMove
+  - updateMovement
+  - updateUnit
+  - madeMove
+  - makingMove
+  - setMyParent
   DisableAutoOpenWizard: 1

@@ -186,7 +186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Knight: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
-  playerPrefab: {fileID: 123772, guid: ef3d9bd82315084458c606bfcb122056, type: 2}
+  playerPrefab: {fileID: 107430, guid: ef3d9bd82315084458c606bfcb122056, type: 2}
 --- !u!114 &94988367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,3 +241,45 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ecd2ac870ee05c147b6c2d111b8f6622, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &212935791
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 212935792}
+  - 114: {fileID: 212935793}
+  m_Layer: 0
+  m_Name: TurnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &212935792
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 212935791}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: .198393881, y: 1.0839318, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+--- !u!114 &212935793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 212935791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffba4997e42493c448a4b3f1c2b92d49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movesPerTurn: 2
+  player1Team: []
+  player2Team: []

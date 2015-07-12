@@ -1,8 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class NetworkManager : MonoBehaviour {
-
+public class NetworkManager : Photon.MonoBehaviour {
 
 	public GameObject Knight;//moved to player class
 	public GameObject playerPrefab;
@@ -14,9 +13,9 @@ public class NetworkManager : MonoBehaviour {
 	private int count;
 
 
+
 	// Use this for initialization
 	void Start () {
-
 			PhotonNetwork.ConnectUsingSettings("0.1");
 		count = 1;
 		
@@ -58,40 +57,33 @@ public class NetworkManager : MonoBehaviour {
 	{
 		roomsList = PhotonNetwork.GetRoomList();
 	}
+	
 	void OnJoinedRoom()
 	{
-
+		GameObject turnManager = GameObject.Find("TurnManager");
 		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
 		Debug.Log("Connected to Room" + count);
 		//AddUnit newUnits = new AddUnit ();
 		//Player p1 = gameObject.AddComponent<Player> ();
 		//p1 ("Player1");
-		Player player1 = new Player("Player1");
-		PhotonNetwork.Instantiate (playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0);
-		//GameObject instance = PhotonNetwork.Instantiate(Knight.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
-		player1.addUnit (Knight);
+		//Player player1 = new Player("Player1");
+		//Instantiate (playerPrefab, new Vector3(0f,0f,0f), Quaternion.identity);
+		GameObject instance = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
+		instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player
+		//player1.addUnit (Knight);
 		//PhotonNetwork.Instantiate(player1.getUnitatIndex(0).name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0);
 
 		//player1.SelectKnight ();
-		Debug.Log("which player is added next?" + count);
+		Debug.Log("player" + count + " has joined");
+		count++;
 
 	
+	}
 
-		//Team myTeam = new Team ();
-		//myTeam.AddUnit (Knight);
-		//myTeam.AddUnit (playerPrefab);
 
-		/*while (!myTeam.isEmpty()) {
-			PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
-			myTeam.removeUnit();
-			playerPrefab.tag = "Player2"; */
 
-		}
 
-		//TODO set up team and spawn all team members
-
-		//Debug.Log (myTeam.GetType);
-
-		//PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
-
+	
 }
+
+

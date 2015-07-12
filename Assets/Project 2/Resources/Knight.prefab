@@ -122,9 +122,9 @@ GameObject:
   - 212: {fileID: 21282218}
   - 95: {fileID: 9565670}
   - 58: {fileID: 5867954}
-  - 114: {fileID: 11490108}
   - 50: {fileID: 5097054}
   - 114: {fileID: 11491124}
+  - 114: {fileID: 11486586}
   m_Layer: 8
   m_Name: Knight
   m_TagString: Player1
@@ -336,7 +336,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11490108
+--- !u!114 &11486586
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -377,8 +377,8 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
-  player: {fileID: 471630}
   moved: 0
+  newMove: 0
 --- !u!212 &21230752
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -585,6 +585,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: moves
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

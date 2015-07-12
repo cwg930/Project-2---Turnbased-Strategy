@@ -1,18 +1,21 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Unit : MonoBehaviour {
+public class Unit : Photon.MonoBehaviour {
 
 	public float moveTime = 0.1f;
 	public int moves;
 	public LayerMask blockingLayer;
-	public Transform player;
+
 	public bool moved;
 
-
+	public bool newMove;
+	private Transform player;
 	private Rigidbody2D rb2D;
 	private bool moving;
+	private Player myPlayer;
+
 	/*private GameObject [] Team1;
 	private GameObject [] Team2;
 	private int teamIndex; */
@@ -28,7 +31,12 @@ public class Unit : MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
-		player = GameObject.FindGameObjectWithTag("Player1").transform;
+		newMove = false;
+		player = transform;
+		myPlayer = this.GetComponentInParent<Player> (); // gets the photon view of parent player class
+		if (myPlayer == null) // a copy of unit is created locally which has no parent so delete these game objects
+			//Destroy (gameObject, 20);
+		gameObject.transform.SetParent (GameObject.FindGameObjectWithTag ("Player").transform);
 		/*Team1 = GameObject.FindGameObjectsWithTag ("Player1");
 		teamIndex = 0;*/
 		
@@ -38,12 +46,58 @@ public class Unit : MonoBehaviour {
 		//player = Team1[0].transform;
 	}
 
+	void Update ()
+	{
+		if (newMove && moved) {
+			Debug.Log("Updated move");
+			newMove = false;
+			myPlayer.photonView.RPC("updateMovement", PhotonTargets.OthersBuffered, player.position);
+
+		}
+	}
+
 	void OnMouseDown()
 	{
 		Debug.Log ("Mouse Clicked");
 		moved = false;
-		StartCoroutine ("WaitForMove");
+		moving = false;
+		newMove = true;
+		Debug.Log ("player who is trying to move: " + myPlayer.turn);
+		Debug.Log ("player whos turn it is: " + myPlayer.myTurn.getTurn ());
+
+		if (myPlayer != null && myPlayer.myTurn.getTurn() == myPlayer.turn) {
+			Debug.Log ("it is my turn");
+			if ( myPlayer.photonView.isMine ) {
+				StartCoroutine ("WaitForMove");
+			}
+			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered);
+		}
+			
+		else
+			Debug.Log ("it is not my turn");
+		// myPlayer != null &&
+		/*
+		else
+			myPlayer = this.GetComponentInParent<Player> (); // sets oponents player to your player (not useful)
+		*/
+
+			
 	}
+
+	[PunRPC] void updateMovement(Vector3 newPosition)
+	{
+
+		transform.position = newPosition;
+		//renderer.material.color = new Color(color.x, color.y, color.z, 1f);
+		/*if (myPlayer.photonView.isMine) {
+			photonView.RPC("sendMove", PhotonTargets.OthersBuffered);
+		}*/
+		
+		//if (photonView.isMine)
+		//photonView.RPC("sendMove", PhotonTargets.OthersBuffered, color);
+	}
+
+
 	
 	protected bool Move(Dictionary<IntegerLocation,IntegerLocation> locations, IntegerLocation end)
 	{
@@ -105,6 +159,8 @@ public class Unit : MonoBehaviour {
 
 				yield return null;
 			}
+			moved = true;
+			Debug.Log("move has been made");
 		}
 	}
 /*
@@ -132,13 +188,15 @@ public class Unit : MonoBehaviour {
 		var validMoves = FindPath(new IntegerLocation(transform.position));
 		HighlightMoveArea(validMoves, Color.cyan);
 
-		while (!moved) {
+		while (!moving) {
 			if (Input.GetMouseButtonDown (0))
 			{
 				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				moved = Move(validMoves,new IntegerLocation (target));
+				moving = Move(validMoves,new IntegerLocation (target));
 
 			}
+
+
 				
 			yield return null;
 		}
