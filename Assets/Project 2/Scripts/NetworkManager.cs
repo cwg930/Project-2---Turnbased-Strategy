@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Facebook;
 
 public class NetworkManager : MonoBehaviour {
 
@@ -11,12 +12,20 @@ public class NetworkManager : MonoBehaviour {
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
 
+	enum NetworkStates {
+		NotLoggedIn,
+		InLobby,
+		InRoom,
+		Unknown
+	}
+
+	private NetworkStates networkState;
+
 
 	// Use this for initialization
 	void Start () {
-
-			PhotonNetwork.ConnectUsingSettings("0.1");
-		
+		FB.Init (SetInit, OnHideUnity);
+		networkState = NetworkStates.NotLoggedIn;
 	}
 	
 	// Update is called once per frame
@@ -24,28 +33,107 @@ public class NetworkManager : MonoBehaviour {
 	
 	}
 
+	private void SetInit()
+	{
+		if (FB.IsLoggedIn) {
+			Debug.Log ("SetInit()");
+			OnLoggedIn ();
+		}
+	}
+
+	void LoginCallback(FBResult result)
+	{
+		if (FB.IsLoggedIn)
+		{
+			OnLoggedIn();
+		}
+	}
+
+	void OnLoggedIn()
+	{
+		PhotonNetwork.AuthValues = new AuthenticationValues();
+		PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.Facebook;
+		PhotonNetwork.AuthValues.AddAuthParameter("username", FB.UserId);
+		PhotonNetwork.AuthValues.AddAuthParameter("token", FB.AccessToken);
+		PhotonNetwork.playerName = FB.UserId;
+		PhotonNetwork.ConnectUsingSettings("1.0");
+	}
+
+	private void OnHideUnity(bool isGameShown)
+	{
+		Debug.Log("OnHideUnity()");
+	}
+
 	void OnGUI()
 	{
-		if (!PhotonNetwork.connected)
-		{
-			GUILayout.Label(PhotonNetwork.connectionStateDetailed.ToString());
-		}
-		else if (PhotonNetwork.room == null)
-		{
-			// Create Room
-			if (GUI.Button(new Rect(100, 100, 250, 100), "Start Server"))
+		GUI.Label(new Rect(10, 10, 500, 30), PhotonNetwork.connectionStateDetailed.ToString());
 
-				PhotonNetwork.CreateRoom(roomName , true, true, 5);
-			// Guid.NewGuid().ToString("N") this was added to room name
-			
-			// Join Room
-			if (roomsList != null)
+		if (!PhotonNetwork.connected)
+			networkState = NetworkStates.NotLoggedIn;
+		else if (PhotonNetwork.room == null)
+			networkState = NetworkStates.InLobby;
+		else if (PhotonNetwork.room != null)
+			networkState = NetworkStates.InRoom;
+		else
+			networkState = NetworkStates.Unknown;
+
+		// Network state machine
+		switch (networkState) {
+			case NetworkStates.NotLoggedIn:
 			{
-				for (int i = 0; i < roomsList.Length; i++)
-				{
-					if (GUI.Button(new Rect(100, 250 + (110 * i), 250, 100), "Join " + roomsList[i].name))
-						PhotonNetwork.JoinRoom(roomsList[i].name);
+				if (GUI.Button (new Rect (10, 10, 150, 30), "Login to Facebook")) {
+					FB.Login ("email", LoginCallback);
 				}
+				if (GUI.Button(new Rect (10, 50, 150, 30), "Login")) {
+					PhotonNetwork.playerName = "Player " + (int)(Random.value*100);
+					PhotonNetwork.ConnectUsingSettings("1.0");
+				}
+				break;
+			}
+			case NetworkStates.InLobby:
+			{
+				// Create game button
+				if (GUI.Button (new Rect (10, 30, 150, 30), "Create Game"))
+					PhotonNetwork.CreateRoom (roomName, true, true, 5);
+
+				// Join existing game button
+				if (roomsList != null) {
+					for (int i = 0; i < roomsList.Length; i++) {
+						if (GUI.Button (new Rect (10, 70 + (110 * i), 150, 30), "Join " + roomsList [i].name))
+							PhotonNetwork.JoinRoom (roomsList [i].name);
+					}
+				}
+				break;
+			}
+			case NetworkStates.InRoom:
+			{
+				GUILayout.Label("Your name: " + PhotonNetwork.playerName);
+				GUILayout.Label(PhotonNetwork.playerList.Length + " players in this room.");
+				GUILayout.Label("The others are:");
+				foreach (PhotonPlayer player in PhotonNetwork.otherPlayers)
+				{
+					GUILayout.Label(player.ToString());
+				}
+				
+				if (GUI.Button(new Rect (10, 70, 150, 30), "Leave"))
+				{
+					PhotonNetwork.LeaveRoom();
+				}
+				break;
+			}
+			case NetworkStates.Unknown:
+			{
+				GUILayout.Label("Unknown network state!");
+				break;
+			}
+		}
+		
+		if (PhotonNetwork.connected) {
+			if (GUI.Button(new Rect(10, 200, 150, 30), "Logout")) 
+			{
+				if (FB.IsLoggedIn)
+					FB.Logout();
+				PhotonNetwork.Disconnect();
 			}
 		}
 	}
@@ -55,6 +143,7 @@ public class NetworkManager : MonoBehaviour {
 	{
 		roomsList = PhotonNetwork.GetRoomList();
 	}
+
 	void OnJoinedRoom()
 	{
 		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);

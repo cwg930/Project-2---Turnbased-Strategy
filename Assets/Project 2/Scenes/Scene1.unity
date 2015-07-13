@@ -101,6 +101,7 @@ GameObject:
   - 81: {fileID: 94988361}
   - 114: {fileID: 94988366}
   - 114: {fileID: 94988367}
+  - 114: {fileID: 94988368}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -180,7 +181,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 94988360}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c92d330aa4bee143a9539f6095a1c37, type: 3}
   m_Name: 
@@ -199,6 +200,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menu: {fileID: 142684, guid: 3226428f5d4e66d48914172ccc74b798, type: 2}
+--- !u!114 &94988368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 94988360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f04d28800d84e44c9ac546347daf83cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GuiRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  RootOf3dButtons: {fileID: 142684, guid: 3226428f5d4e66d48914172ccc74b798, type: 2}
 --- !u!1001 &113851822
 Prefab:
   m_ObjectHideFlags: 0
