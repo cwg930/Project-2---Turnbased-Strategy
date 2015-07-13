@@ -1,21 +1,16 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Unit : MonoBehaviour {
+public class Unit : Photon.MonoBehaviour {
 
 	public float moveTime = 0.1f;
 	public int moves;
 	public LayerMask blockingLayer;
-	public Transform player;
-	public bool moved;
-
 
 	private Rigidbody2D rb2D;
 	private bool moving;
-	/*private GameObject [] Team1;
-	private GameObject [] Team2;
-	private int teamIndex; */
+	private Player myPlayer;
 
 	protected CircleCollider2D circleCollider;
 	protected float inverseMoveTime;
@@ -28,23 +23,43 @@ public class Unit : MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
-		player = GameObject.FindGameObjectWithTag("Player1").transform;
-		/*Team1 = GameObject.FindGameObjectsWithTag ("Player1");
-		teamIndex = 0;*/
-		
-		//Debug.Log (Team1[0].transform.name);
-		
-		
-		//player = Team1[0].transform;
+		myPlayer = this.GetComponentInParent<Player> (); // gets the photon view of parent player class
+		if (myPlayer == null) { // Player2 denotes enemy, still unused but can be changed later
+			transform.gameObject.tag = "Player2";
+		}
+	}
+
+	void Update ()
+	{
+		// unused
 	}
 
 	void OnMouseDown()
 	{
-		Debug.Log ("Mouse Clicked");
-		moved = false;
-		StartCoroutine ("WaitForMove");
+		moving = false;
+		if (myPlayer == null) {
+			Debug.Log ("This is not your unit");
+			return;
+		}
+
+		if (myPlayer != null && myPlayer.myTurn.getTurn() == myPlayer.turn) {
+			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
+				StartCoroutine ("WaitForMove");
+			}
+			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move and his turn is over
+		}
+			
+		else
+			Debug.Log ("it is not my turn"); // if unit has not parent that means it is not the players unit	
 	}
-	
+
+	/* // updated movement of unit over network (not used but possibly useful)
+	[PunRPC] void updateMovement(Vector3 newPosition)
+	{
+		transform.position = newPosition;
+	}
+	*/
+
 	protected bool Move(Dictionary<IntegerLocation,IntegerLocation> locations, IntegerLocation end)
 	{
 		IntegerLocation start = new IntegerLocation(transform.position);
@@ -72,25 +87,7 @@ public class Unit : MonoBehaviour {
 
 		return true;
 	}
-/*
-	public void makeMove() 
-	{
-		//StartCoroutine(Wait (1));
-		Debug.Log ("making move");
 
-		if (!moving) {
-			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			new_pos.z = player.position.z;
-			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
-			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
-						
-			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
-			//StartCoroutine (SmoothMovement (new_pos));
-			var tmp = new IntegerLocation(new_pos);
-			moved = Move(tmp.x,tmp.y);
-		}
-	}
-*/	
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
 	{
 
@@ -107,39 +104,20 @@ public class Unit : MonoBehaviour {
 			}
 		}
 	}
-/*
-	protected virtual IEnumerator SmoothMovement(Vector3 path) // using vector3
-	{
-		moving = true;
-			
-			float sqrRemainingDistance = (transform.position - path).sqrMagnitude;
-			
-			while (sqrRemainingDistance > float.Epsilon) {
-				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, path, inverseMoveTime * Time.deltaTime);
-				rb2D.MovePosition (newPosition);
-				sqrRemainingDistance = (transform.position - path).sqrMagnitude;
-				
-				yield return null;
-			}
-		moving = false;
-		Debug.Log ("move made");
-	}
-*/
+
 	protected IEnumerator WaitForMove ()
 	{
-		Debug.Log ("waiting for move target");
+		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
 		var validMoves = FindPath(new IntegerLocation(transform.position));
 		HighlightMoveArea(validMoves, Color.cyan);
 
-		while (!moved) {
+		while (!moving) {
 			if (Input.GetMouseButtonDown (0))
 			{
 				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				moved = Move(validMoves,new IntegerLocation (target));
-
-			}
-				
+				moving = Move(validMoves,new IntegerLocation (target));
+			}	
 			yield return null;
 		}
 
@@ -239,15 +217,4 @@ public class Unit : MonoBehaviour {
 		}
 		return neighbors;
 	}
-
-	/*public abstract Unit getUnitType <T> ()
-		where T : Component;
-
-	public Knight getKnight()
-	{
-		return new Knight ();
-	} */
-
-		
-
 }

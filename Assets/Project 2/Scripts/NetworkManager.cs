@@ -1,16 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Facebook;
 
-public class NetworkManager : MonoBehaviour {
+public class NetworkManager : Photon.MonoBehaviour {
+
+	public GameObject playerPrefab;
 
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
-	public GameObject playerPrefab;
-	public GameObject UnitManager;
-
-	private int cols = BoardManager.columns;
-	private int rows = BoardManager.rows;
 
 	enum NetworkStates {
 		NotLoggedIn,
@@ -21,11 +18,11 @@ public class NetworkManager : MonoBehaviour {
 
 	private NetworkStates networkState;
 
-
 	// Use this for initialization
 	void Start () {
 		FB.Init (SetInit, OnHideUnity);
 		networkState = NetworkStates.NotLoggedIn;
+		//PhotonNetwork.ConnectUsingSettings("0.1");
 	}
 	
 	// Update is called once per frame
@@ -146,24 +143,11 @@ public class NetworkManager : MonoBehaviour {
 
 	void OnJoinedRoom()
 	{
-		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
-		Debug.Log("Connected to Room");
-		//AddUnit newUnits = new AddUnit ();
-		Team myTeam = new Team ();
-		myTeam.AddUnit (playerPrefab);
-		myTeam.AddUnit (playerPrefab);
-
-		while (!myTeam.isEmpty()) {
-			PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
-			myTeam.removeUnit();
-			//playerPrefab.tag = "Player2";
-
-		}
-
-		//TODO set up team and spawn all team members
-
-		//Debug.Log (myTeam.GetType);
-
-		//PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
+		GameObject turnManager = GameObject.Find("TurnManager");
+		GameObject instance = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
+		instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player
 	}
+
 }
+
+
