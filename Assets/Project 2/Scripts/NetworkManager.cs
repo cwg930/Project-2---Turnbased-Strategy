@@ -10,15 +10,12 @@ public class NetworkManager : Photon.MonoBehaviour {
 	//private int rows = BoardManager.rows;//moved to player class
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
-	private int count;
 
 
 
 	// Use this for initialization
 	void Start () {
 			PhotonNetwork.ConnectUsingSettings("0.1");
-		count = 1;
-		
 	}
 	
 	// Update is called once per frame
@@ -61,29 +58,10 @@ public class NetworkManager : Photon.MonoBehaviour {
 	void OnJoinedRoom()
 	{
 		GameObject turnManager = GameObject.Find("TurnManager");
-		//Instantiate (UnitManager, new Vector3(0f,0f,0f), Quaternion.identity);
-		Debug.Log("Connected to Room" + count);
-		//AddUnit newUnits = new AddUnit ();
-		//Player p1 = gameObject.AddComponent<Player> ();
-		//p1 ("Player1");
-		//Player player1 = new Player("Player1");
-		//Instantiate (playerPrefab, new Vector3(0f,0f,0f), Quaternion.identity);
 		GameObject instance = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
 		instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player
-		//player1.addUnit (Knight);
-		//PhotonNetwork.Instantiate(player1.getUnitatIndex(0).name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0);
-
-		//player1.SelectKnight ();
-		Debug.Log("player" + count + " has joined");
-		count++;
-
-	
 	}
 
-
-
-
-	
 }
 
 

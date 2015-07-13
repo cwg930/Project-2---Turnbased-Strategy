@@ -8,17 +8,9 @@ public class Unit : Photon.MonoBehaviour {
 	public int moves;
 	public LayerMask blockingLayer;
 
-	public bool moved;
-
-	public bool newMove;
-	private Transform player;
 	private Rigidbody2D rb2D;
 	private bool moving;
 	private Player myPlayer;
-
-	/*private GameObject [] Team1;
-	private GameObject [] Team2;
-	private int teamIndex; */
 
 	protected CircleCollider2D circleCollider;
 	protected float inverseMoveTime;
@@ -31,74 +23,43 @@ public class Unit : Photon.MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
-		newMove = false;
-		player = transform;
 		myPlayer = this.GetComponentInParent<Player> (); // gets the photon view of parent player class
-		if (myPlayer == null) // a copy of unit is created locally which has no parent so delete these game objects
-			//Destroy (gameObject, 20);
-		gameObject.transform.SetParent (GameObject.FindGameObjectWithTag ("Player").transform);
-		/*Team1 = GameObject.FindGameObjectsWithTag ("Player1");
-		teamIndex = 0;*/
-		
-		//Debug.Log (Team1[0].transform.name);
-		
-		
-		//player = Team1[0].transform;
+		if (myPlayer == null) { // Player2 denotes enemy, still unused but can be changed later
+			transform.gameObject.tag = "Player2";
+		}
 	}
 
 	void Update ()
 	{
-		if (newMove && moved) {
-			Debug.Log("Updated move");
-			newMove = false;
-			myPlayer.photonView.RPC("updateMovement", PhotonTargets.OthersBuffered, player.position);
-
-		}
+		// unused
 	}
 
 	void OnMouseDown()
 	{
-		Debug.Log ("Mouse Clicked");
-		moved = false;
 		moving = false;
-		newMove = true;
-		Debug.Log ("player who is trying to move: " + myPlayer.turn);
-		Debug.Log ("player whos turn it is: " + myPlayer.myTurn.getTurn ());
+		if (myPlayer == null) {
+			Debug.Log ("This is not your unit");
+			return;
+		}
 
 		if (myPlayer != null && myPlayer.myTurn.getTurn() == myPlayer.turn) {
-			Debug.Log ("it is my turn");
-			if ( myPlayer.photonView.isMine ) {
+			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
 				StartCoroutine ("WaitForMove");
 			}
-			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered);
+			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move and his turn is over
 		}
 			
 		else
-			Debug.Log ("it is not my turn");
-		// myPlayer != null &&
-		/*
-		else
-			myPlayer = this.GetComponentInParent<Player> (); // sets oponents player to your player (not useful)
-		*/
-
-			
+			Debug.Log ("it is not my turn"); // if unit has not parent that means it is not the players unit	
 	}
 
+	/* // updated movement of unit over network (not used but possibly useful)
 	[PunRPC] void updateMovement(Vector3 newPosition)
 	{
-
 		transform.position = newPosition;
-		//renderer.material.color = new Color(color.x, color.y, color.z, 1f);
-		/*if (myPlayer.photonView.isMine) {
-			photonView.RPC("sendMove", PhotonTargets.OthersBuffered);
-		}*/
-		
-		//if (photonView.isMine)
-		//photonView.RPC("sendMove", PhotonTargets.OthersBuffered, color);
 	}
+	*/
 
-
-	
 	protected bool Move(Dictionary<IntegerLocation,IntegerLocation> locations, IntegerLocation end)
 	{
 		IntegerLocation start = new IntegerLocation(transform.position);
@@ -126,25 +87,7 @@ public class Unit : Photon.MonoBehaviour {
 
 		return true;
 	}
-/*
-	public void makeMove() 
-	{
-		//StartCoroutine(Wait (1));
-		Debug.Log ("making move");
 
-		if (!moving) {
-			Vector3 new_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			new_pos.z = player.position.z;
-			new_pos.x = Mathf.Round(new_pos.x / 1) * 1;
-			new_pos.y = Mathf.Round(new_pos.y / 1) * 1;
-						
-			//Move ((int)new_pos.x, (int)new_pos.y); //used when move function works properly
-			//StartCoroutine (SmoothMovement (new_pos));
-			var tmp = new IntegerLocation(new_pos);
-			moved = Move(tmp.x,tmp.y);
-		}
-	}
-*/	
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
 	{
 
@@ -159,31 +102,12 @@ public class Unit : Photon.MonoBehaviour {
 
 				yield return null;
 			}
-			moved = true;
-			Debug.Log("move has been made");
 		}
 	}
-/*
-	protected virtual IEnumerator SmoothMovement(Vector3 path) // using vector3
-	{
-		moving = true;
-			
-			float sqrRemainingDistance = (transform.position - path).sqrMagnitude;
-			
-			while (sqrRemainingDistance > float.Epsilon) {
-				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, path, inverseMoveTime * Time.deltaTime);
-				rb2D.MovePosition (newPosition);
-				sqrRemainingDistance = (transform.position - path).sqrMagnitude;
-				
-				yield return null;
-			}
-		moving = false;
-		Debug.Log ("move made");
-	}
-*/
+
 	protected IEnumerator WaitForMove ()
 	{
-		Debug.Log ("waiting for move target");
+		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
 		var validMoves = FindPath(new IntegerLocation(transform.position));
 		HighlightMoveArea(validMoves, Color.cyan);
@@ -193,11 +117,7 @@ public class Unit : Photon.MonoBehaviour {
 			{
 				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 				moving = Move(validMoves,new IntegerLocation (target));
-
-			}
-
-
-				
+			}	
 			yield return null;
 		}
 
@@ -297,15 +217,4 @@ public class Unit : Photon.MonoBehaviour {
 		}
 		return neighbors;
 	}
-
-	/*public abstract Unit getUnitType <T> ()
-		where T : Component;
-
-	public Knight getKnight()
-	{
-		return new Knight ();
-	} */
-
-		
-
 }
