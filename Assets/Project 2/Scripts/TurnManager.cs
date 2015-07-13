@@ -23,7 +23,7 @@ public class TurnManager : Photon.MonoBehaviour {
 
 	void Start()
 	{
-		Debug.Log ("Turn Manager initialized");
+		//Debug.Log ("Turn Manager initialized");
 	}
 
 	public int getTurn()
