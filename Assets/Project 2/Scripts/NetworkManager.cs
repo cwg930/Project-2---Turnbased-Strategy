@@ -102,7 +102,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 				}
 				break;
 			}
-			case NetworkStates.InRoom:
+			case NetworkStates.InRoom: // in room so instantiate player
 			{
 				GUILayout.Label("Your name: " + PhotonNetwork.playerName);
 				GUILayout.Label(PhotonNetwork.playerList.Length + " players in this room.");
@@ -117,6 +117,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 					PhotonNetwork.LeaveRoom();
 				}
 				break;
+
 			}
 			case NetworkStates.Unknown:
 			{
@@ -141,12 +142,14 @@ public class NetworkManager : Photon.MonoBehaviour {
 		roomsList = PhotonNetwork.GetRoomList();
 	}
 
+
 	void OnJoinedRoom()
 	{
-		GameObject turnManager = GameObject.Find("TurnManager");
-		GameObject instance = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
-		instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player
+			GameObject turnManager = GameObject.Find("TurnManager");
+			GameObject instance = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
+			instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player
 	}
+
 
 }
 
