@@ -9,7 +9,22 @@ public class Player : Photon.MonoBehaviour {
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
 
-	public GameObject Knight;
+	private bool selectedLocation; // checks to see if you have chosen a placement for spawned unit
+	public bool ready; // checks to see if you have spawned all units and are ready to start the game
+	private int unitChoice; // keeps track of which unit is chosen
+
+	public GameObject blueKnight;
+	public GameObject redKnight;
+	public GameObject greenKnight;
+
+	public GameObject bluePaladin;
+	public GameObject redPaladin;
+	public GameObject greenPaladin;
+
+	public GameObject blueMage;
+	public GameObject redMage;
+	public GameObject greenMage;
+	
 	public TurnManager myTurn;
 	public int turn;
 
@@ -25,17 +40,66 @@ public class Player : Photon.MonoBehaviour {
 	{
 		photonView.RPC("setMyParent", PhotonTargets.AllBuffered);
 		turn = photonView.owner.ID;
+		Debug.Log ("Player " + turn);
 		index = 0;
 		units = new GameObject[6];
+		selectedLocation = true;
+		ready = false;
+		unitChoice = 0;
 	}
+
+	void OnGUI()
+	{
+		if (GUI.Button (new Rect (10, 240, 150, 30), "Add Knight")) {
+			Debug.Log("button pressed");
+			SelectKnight();
+		}
+
+		if (GUI.Button (new Rect (10, 280, 150, 30), "Add Paladin")) {
+			Debug.Log("button pressed");
+			SelectPaladin();
+		}
+
+		if (GUI.Button (new Rect (10, 320, 150, 30), "Add Mage")) {
+			Debug.Log("button pressed");
+			SelectMage();
+		}
+
+		if (GUI.Button (new Rect (10, 360, 150, 30), "Ready")) {
+			Debug.Log("button pressed");
+			PlayerReady();
+		}
+
+		if (!selectedLocation) {
+			GUIStyle myStyle = new GUIStyle();
+			myStyle.fontSize = 36;
+			GUI.Label(new Rect(200,10, 100, 30), "Place your Unit", myStyle);
+		}
+
+		if (myTurn.getTurn () == turn) {
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 36;
+			GUI.Label (new Rect (200, 550, 100, 30), "It is your turn", myStyle);
+		} else {
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 36;
+			GUI.Label (new Rect (200, 550, 100, 30), "It is not your turn", myStyle);
+		}
+			
+	}
+
 	
 
 	void Update()
 	{
+		//Debug.Log ("turn :" + turn);
 		//adds a knight to current player's team. will be replaced by ui unit selection
-		if (Input.GetKeyDown("k") && photonView.isMine) {
-			addUnit(Knight);
-		}
+		/*if (Input.GetKeyDown ("k") && myTurn.getTurn() == turn && photonView.isMine) { // player 1 recieves blue knight
+			if (turn == 1)
+				addUnit (redKnight);
+			else if (turn == 2)
+				addUnit (greenKnight);
+		} */
 	}
 
 	[PunRPC] public void setMyParent()
@@ -73,7 +137,7 @@ public class Player : Photon.MonoBehaviour {
 	} */
 		
 	//TODO give user option to select where new unit will be placed
-	public void addUnit(GameObject newUnit)
+	public void addUnit(GameObject newUnit, Vector3 loc)
 	{
 		if (index >= 6)
 			return;
@@ -81,19 +145,117 @@ public class Player : Photon.MonoBehaviour {
 		units [index] = newUnit; // adds unit to game object array
 		index++;
 		//Debug.Log ("index =" + index);
-		GameObject instance = PhotonNetwork.Instantiate(newUnit.name, Vector3.right * Random.Range(2,cols) + Vector3.up * Random.Range(2, rows), Quaternion.identity, 0) as GameObject;
+		GameObject instance = PhotonNetwork.Instantiate(newUnit.name, loc, Quaternion.identity, 0) as GameObject;
+		//GameObject instance = PhotonNetwork.Instantiate(newUnit.name, Vector3.right * Random.Range(2,cols) + Vector3.up * Random.Range(2, rows), Quaternion.identity, 0) as GameObject;
 		instance.transform.SetParent (transform); // sets new unit as child of the player
 	}
 
-	// TODO create a button that will add a knight to a player's team
 	public void SelectKnight() 
 	{
-		addUnit (Knight);
+		unitChoice = 1;
+		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+			StartCoroutine ("WaitForClick");
+	}
+
+	public void SelectPaladin() 
+	{
+		unitChoice = 2;
+		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+			StartCoroutine ("WaitForClick");
+	}
+
+	public void SelectMage() 
+	{
+		unitChoice = 3;
+		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+			StartCoroutine ("WaitForClick");
+	}
+
+	public void PlayerReady()
+	{
+		ready = true;
 	}
 
 	public GameObject getUnitatIndex(int i)
 	{
 		return units[i];
+	}
+
+	protected IEnumerator WaitForClick ()
+	{
+		yield return new WaitForSeconds (.1f);
+		selectedLocation = false;
+		Debug.Log ("waiting");
+
+		while (!selectedLocation) {
+			bool blocked = false;
+			if (Input.GetMouseButtonDown(0))
+			{
+				Debug.Log ("clicked");
+				Vector3 loc = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				loc.x = (int) Mathf.Round(loc.x*1)/1;
+				loc.y = (int) Mathf.Round(loc.y*1)/1;
+				loc.z = 0;
+				if (loc.x < 0 || loc.y < 0 || loc.x >= cols || loc.y >= rows) // check if click is within bounds
+				{
+					yield return new WaitForSeconds (.1f);
+					continue;
+				}
+				GameObject [] unit1Map = GameObject.FindGameObjectsWithTag("Player1");
+				GameObject [] unit2Map = GameObject.FindGameObjectsWithTag("Player2");
+
+				for (int i=0; i< unit1Map.Length; i++)
+				{
+					if (unit1Map[i].transform.position == loc) // check if click is at same coordinates as unit from player 1
+					{
+						Debug.Log("you tried placing a unit where one already exists");
+						blocked = true;
+						break;
+					}
+						
+				}
+
+				for (int i=0; i<unit2Map.Length; i++)
+				{
+					if (unit2Map[i].transform.position == loc) // check if click is at same coordinates as unit from player 2
+					{
+						blocked = true;
+						break;
+					}
+				}
+					
+				
+				if (!blocked)
+				{
+					if (turn == 1)
+					{
+						if (unitChoice == 1)
+							addUnit (redKnight, loc);
+						else if (unitChoice == 2)
+							addUnit (redPaladin, loc);
+						else if (unitChoice == 3)
+							addUnit(redMage, loc);
+					}
+						
+					else if (turn == 2)
+					{
+						if (unitChoice == 1)
+							addUnit (greenKnight, loc);
+						else if (unitChoice == 2)
+							addUnit (greenPaladin, loc);
+						else if (unitChoice == 3)
+							addUnit(greenMage, loc);
+					}
+					
+					selectedLocation = true;
+				}
+
+
+
+			}
+
+			yield return null;
+		}
 	}
 
 

@@ -126,7 +126,7 @@ GameObject:
   - 114: {fileID: 11491124}
   - 114: {fileID: 11486586}
   m_Layer: 8
-  m_Name: Knight
+  m_Name: Knight-Blue
   m_TagString: Player1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -377,8 +377,6 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
-  moved: 0
-  newMove: 0
 --- !u!212 &21230752
 SpriteRenderer:
   m_ObjectHideFlags: 1

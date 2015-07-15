@@ -26,6 +26,8 @@ public class Unit : Photon.MonoBehaviour {
 		myPlayer = this.GetComponentInParent<Player> (); // gets the photon view of parent player class
 		if (myPlayer == null) { // Player2 denotes enemy, still unused but can be changed later
 			transform.gameObject.tag = "Player2";
+			//transform.SetParent(GameObject.FindGameObjectWithTag("Player").transform);
+			transform.SetParent(GameObject.FindGameObjectsWithTag("Player")[1].transform);
 		}
 	}
 
@@ -36,11 +38,15 @@ public class Unit : Photon.MonoBehaviour {
 
 	void OnMouseDown()
 	{
+
 		moving = false;
 		if (myPlayer == null) {
 			Debug.Log ("This is not your unit");
 			return;
 		}
+
+		if (!myPlayer.ready) // player's team is not set up/ready, do not move selected unit
+			return;
 
 		if (myPlayer != null && myPlayer.myTurn.getTurn() == myPlayer.turn) {
 			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case

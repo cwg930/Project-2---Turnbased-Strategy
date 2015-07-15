@@ -40,7 +40,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b275dd71bc711f540a3375807f4058e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Knight: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+  ready: 0
+  blueKnight: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+  redKnight: {fileID: 143780, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
+  greenKnight: {fileID: 127666, guid: 10ce3a61f4fb2424db6e8089638e06f2, type: 2}
+  bluePaladin: {fileID: 131248, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
+  redPaladin: {fileID: 198664, guid: 260cd668f6cd6244a80d92d296f6563f, type: 2}
+  greenPaladin: {fileID: 125834, guid: f56fc476a89209e4d9345bce4f157bd7, type: 2}
+  blueMage: {fileID: 182612, guid: f157bc8141baf7f4698604c4aecce80b, type: 2}
+  redMage: {fileID: 173300, guid: 90c0b9be98611b642a9bad799d9e5904, type: 2}
+  greenMage: {fileID: 128728, guid: 9f4eb730869e9aa4dab93e2165aed099, type: 2}
+  myTurn: {fileID: 0}
   turn: 0
 --- !u!114 &11461048
 MonoBehaviour:
@@ -73,7 +83,43 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: blueKnight
+      value: 
+      objectReference: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+    - target: {fileID: 0}
+      propertyPath: greenKnight
+      value: 
+      objectReference: {fileID: 127666, guid: 10ce3a61f4fb2424db6e8089638e06f2, type: 2}
+    - target: {fileID: 0}
+      propertyPath: redKnight
+      value: 
+      objectReference: {fileID: 143780, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
+    - target: {fileID: 0}
+      propertyPath: bluePaladin
+      value: 
+      objectReference: {fileID: 131248, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
+    - target: {fileID: 0}
+      propertyPath: redPaladin
+      value: 
+      objectReference: {fileID: 198664, guid: 260cd668f6cd6244a80d92d296f6563f, type: 2}
+    - target: {fileID: 0}
+      propertyPath: greenPaladin
+      value: 
+      objectReference: {fileID: 125834, guid: f56fc476a89209e4d9345bce4f157bd7, type: 2}
+    - target: {fileID: 0}
+      propertyPath: redMage
+      value: 
+      objectReference: {fileID: 173300, guid: 90c0b9be98611b642a9bad799d9e5904, type: 2}
+    - target: {fileID: 0}
+      propertyPath: greenMage
+      value: 
+      objectReference: {fileID: 128728, guid: 9f4eb730869e9aa4dab93e2165aed099, type: 2}
+    - target: {fileID: 0}
+      propertyPath: blueMage
+      value: 
+      objectReference: {fileID: 182612, guid: f157bc8141baf7f4698604c4aecce80b, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 107430}
