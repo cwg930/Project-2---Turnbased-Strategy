@@ -50,25 +50,24 @@ public class Player : Photon.MonoBehaviour {
 
 	void OnGUI()
 	{
-		if (GUI.Button (new Rect (10, 240, 150, 30), "Add Knight")) {
-			Debug.Log("button pressed");
-			SelectKnight();
+		if (!ready) {
+			if (GUI.Button (new Rect (10, 240, 150, 30), "Add Knight")) {
+				SelectKnight();
+			}
+			
+			if (GUI.Button (new Rect (10, 280, 150, 30), "Add Paladin")) {
+				SelectPaladin();
+			}
+			
+			if (GUI.Button (new Rect (10, 320, 150, 30), "Add Mage")) {
+				SelectMage();
+			}
+			
+			if (GUI.Button (new Rect (10, 360, 150, 30), "Ready")) {
+				PlayerReady();
+			}
 		}
 
-		if (GUI.Button (new Rect (10, 280, 150, 30), "Add Paladin")) {
-			Debug.Log("button pressed");
-			SelectPaladin();
-		}
-
-		if (GUI.Button (new Rect (10, 320, 150, 30), "Add Mage")) {
-			Debug.Log("button pressed");
-			SelectMage();
-		}
-
-		if (GUI.Button (new Rect (10, 360, 150, 30), "Ready")) {
-			Debug.Log("button pressed");
-			PlayerReady();
-		}
 
 		if (!selectedLocation) {
 			GUIStyle myStyle = new GUIStyle();
