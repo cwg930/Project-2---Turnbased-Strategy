@@ -77,6 +77,7 @@ GameObject:
   - 50: {fileID: 5040144}
   - 114: {fileID: 11498428}
   - 114: {fileID: 11490824}
+  - 95: {fileID: 9563374}
   m_Layer: 8
   m_Name: Knight-Red
   m_TagString: Player1
@@ -318,6 +319,23 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: .5
+--- !u!95 &9563374
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 143780}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8bd3310468a2984458d4ced088a43f3e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &11490824
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -359,6 +377,8 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
+  myDirection: 
+  stopped: 0
 --- !u!212 &21216032
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -521,7 +541,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 8bd3310468a2984458d4ced088a43f3e, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 143780}

@@ -4,18 +4,30 @@ using System.Collections.Generic;
 
 public class Unit : Photon.MonoBehaviour {
 
-	public float moveTime = 0.1f;
+	public float moveTime = 1f;
 	public int moves;
 	public LayerMask blockingLayer;
+	public bool newAnimation;
 
 	private Rigidbody2D rb2D;
 	private bool moving;
-	private Player myPlayer;
+	public Player myPlayer;
 
 	protected CircleCollider2D circleCollider;
 	protected float inverseMoveTime;
+	public string myDirection;
+	public bool stopped;
 
+	private string [] directions = {"right", "up", "left" , "down" , "attack"};
 	enum Facing  {right, up, left , down};
+	//enum String  facing {"right", "up", "left" , "down"};
+
+	private float lastSynchronizationTime = 0f;
+	private float syncDelay = 0f;
+	private float syncTime = 0f;
+	private Vector3 syncStartPosition = Vector3.zero;
+	private Vector3 syncEndPosition = Vector3.zero;
+
 
 	protected virtual void Start()
 	{
@@ -23,16 +35,21 @@ public class Unit : Photon.MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moving = false;
+		stopped = true;
+		newAnimation = false;
+		myDirection = directions [0];
 		myPlayer = this.GetComponentInParent<Player> (); // gets the photon view of parent player class
 		if (myPlayer == null) { // Player2 denotes enemy, still unused but can be changed later
 			transform.gameObject.tag = "Player2";
 			//transform.SetParent(GameObject.FindGameObjectWithTag("Player").transform);
 			transform.SetParent(GameObject.FindGameObjectsWithTag("Player")[1].transform);
+			myPlayer = this.GetComponentInParent<Player> ();
 		}
 	}
 
 	void Update ()
 	{
+	
 		// unused
 	}
 
@@ -40,15 +57,15 @@ public class Unit : Photon.MonoBehaviour {
 	{
 
 		moving = false;
-		if (myPlayer == null) {
-			Debug.Log ("This is not your unit");
+		if (!myPlayer.photonView.isMine) {
+			Debug.Log ("This is not your unit to move buddy");
 			return;
 		}
 
 		if (!myPlayer.ready) // player's team is not set up/ready, do not move selected unit
 			return;
 
-		if (myPlayer != null && myPlayer.myTurn.getTurn() == myPlayer.turn) {
+		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn) {
 			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
 				StartCoroutine ("WaitForMove");
 			}
@@ -88,8 +105,12 @@ public class Unit : Photon.MonoBehaviour {
 			//couldn't find a path to end
 			return false;
 		}
-
+		/*
+		foreach (Vector3 loc in path)
+			transform.position = loc;
+			*/
 		StartCoroutine (SmoothMovement (path));
+		//photonView.RPC("makeSmoothMovement", PhotonTargets.MasterClient, path);
 
 		return true;
 	}
@@ -97,18 +118,85 @@ public class Unit : Photon.MonoBehaviour {
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
 	{
 
+
+		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, false);
 		foreach (Vector3 loc in path) {
+			newAnimation = true;
+
+			if (rb2D.position.x > loc.x) // if next location is left of starting location
+				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[2]);
+				
+			if ( rb2D.position.x < loc.x ) // right
+				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[0]);
+
+			if ( rb2D.position.y > loc.y ) // down
+				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[3]);
+
+			if ( rb2D.position.y < loc.y ) // up
+				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[1]);
+
+			//Debug.Log(myDirection);
+			
+
+
+
 
 			float sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
 
 			while (sqrRemainingDistance > float.Epsilon) {
-				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, loc, inverseMoveTime * Time.deltaTime);
-				rb2D.MovePosition (newPosition);
-				sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
 
+				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, loc, inverseMoveTime * Time.deltaTime);
+				transform.position = newPosition;
+				sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
+				//yield return new WaitForSeconds(.05f);
 				yield return null;
 			}
 		}
+		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, true);
+		yield return new WaitForSeconds(.1f);
+		newAnimation = false;
+	}
+
+	[PunRPC] public void makeSmoothMovement(LinkedList<Vector2> path)
+	{
+		StartCoroutine (SmoothMovement (path));
+	}
+
+	[PunRPC] public void setDirection(string newDirection)
+	{
+		Debug.Log ("new direction: " + newDirection);
+		myDirection = newDirection;
+	}
+
+	[PunRPC] public void setStopped(bool hasStopped)
+	{
+		Debug.Log ("has unit stopped ?: " + hasStopped);
+		stopped = hasStopped;
+	}
+
+	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		if (stream.isWriting) {
+			stream.SendNext (GetComponent<Rigidbody2D> ().transform.position);
+		}
+		
+		else {
+			
+			syncEndPosition = (Vector3)stream.ReceiveNext();
+			syncStartPosition = GetComponent<Rigidbody2D>().transform.position;
+			syncTime = 0f;
+			syncDelay = Time.time - lastSynchronizationTime;
+			lastSynchronizationTime = Time.time;
+			
+			//GetComponentInChildren<Rigidbody2D>().transform.position = (Vector3)stream.ReceiveNext();
+		}
+		
+	}
+
+	private void SyncedMovement()
+	{
+		syncTime += Time.deltaTime;
+		GetComponent<Rigidbody2D>().transform.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
 	}
 
 	protected IEnumerator WaitForMove ()

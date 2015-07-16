@@ -25,7 +25,7 @@ public class Player : Photon.MonoBehaviour {
 	public GameObject redMage;
 	public GameObject greenMage;
 	
-	public TurnManager myTurn;
+	[HideInInspector]	public TurnManager myTurn;
 	public int turn;
 
 	/*
@@ -50,7 +50,9 @@ public class Player : Photon.MonoBehaviour {
 
 	void OnGUI()
 	{
-		if (!ready) {
+		if (turn > 2)
+			return;
+		if (!ready && myTurn.getTurn () == turn) {
 			if (GUI.Button (new Rect (10, 240, 150, 30), "Add Knight")) {
 				SelectKnight();
 			}
@@ -75,14 +77,15 @@ public class Player : Photon.MonoBehaviour {
 			GUI.Label(new Rect(200,10, 100, 30), "Place your Unit", myStyle);
 		}
 
-		if (myTurn.getTurn () == turn) {
+		if (myTurn.getTurn () == turn && photonView.isMine) {
 			GUIStyle myStyle = new GUIStyle ();
 			myStyle.fontSize = 36;
-			GUI.Label (new Rect (200, 550, 100, 30), "It is your turn", myStyle);
-		} else {
+			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "It is your turn", myStyle);
+		} 
+		if (myTurn.getTurn () != turn && photonView.isMine){
 			GUIStyle myStyle = new GUIStyle ();
 			myStyle.fontSize = 36;
-			GUI.Label (new Rect (200, 550, 100, 30), "It is not your turn", myStyle);
+			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "It is not your turn", myStyle);
 		}
 			
 	}
@@ -119,21 +122,28 @@ public class Player : Photon.MonoBehaviour {
 	}
 	*/
 
-	/* // possibly useful, didn't actually do anything. tried to smooth the movement over the server
-	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	 // possibly useful, didn't actually do anything. tried to smooth the movement over the server
+	/*void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 	{
-		if (stream.isWriting)
-				stream.SendNext (GetComponentInChildren<Rigidbody2D> ().transform.position);
+		if (stream.isWriting) {
+			//stream.SendNext (GetComponentInChildren<Rigidbody2D> ().transform.position);
+			stream.SendNext (GetComponentInChildren<Animator> ());
+		}
+				
 		else {
+
 			syncEndPosition = (Vector2)stream.ReceiveNext();
 			syncStartPosition = GetComponent<Rigidbody2D>().transform.position;
 			syncTime = 0f;
 			syncDelay = Time.time - lastSynchronizationTime;
 			lastSynchronizationTime = Time.time;
-			//GetComponent<Rigidbody2D>().transform.position = (Vector2)stream.ReceiveNext();
+
+			//GetComponentInChildren<Rigidbody2D>().transform.position = (Vector3)stream.ReceiveNext();
+			GetComponentInChildren<Animator> () = (Animator) stream.ReceiveNext();
 		}
 		
-	} */
+	}
+	*/
 		
 	//TODO give user option to select where new unit will be placed
 	public void addUnit(GameObject newUnit, Vector3 loc)
