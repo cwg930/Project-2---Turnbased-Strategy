@@ -69,7 +69,7 @@ public class Unit : Photon.MonoBehaviour {
 			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
 				StartCoroutine ("WaitForMove");
 			}
-			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move and his turn is over
+
 		}
 			
 		else
@@ -148,11 +148,12 @@ public class Unit : Photon.MonoBehaviour {
 				Vector3 newPosition = Vector3.MoveTowards (rb2D.position, loc, inverseMoveTime * Time.deltaTime);
 				transform.position = newPosition;
 				sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
-				//yield return new WaitForSeconds(.05f);
+				yield return new WaitForSeconds(.01f);
 				yield return null;
 			}
 		}
-		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, true);
+		myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
+		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, true); // update animation on server to stop animating when stopped
 		yield return new WaitForSeconds(.1f);
 		newAnimation = false;
 	}

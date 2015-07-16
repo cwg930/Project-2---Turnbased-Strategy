@@ -52,7 +52,7 @@ public class Player : Photon.MonoBehaviour {
 	{
 		if (turn > 2)
 			return;
-		if (!ready && myTurn.getTurn () == turn) {
+		if (!ready && myTurn.getTurn () == turn && photonView.isMine) {
 			if (GUI.Button (new Rect (10, 240, 150, 30), "Add Knight")) {
 				SelectKnight();
 			}
@@ -181,6 +181,12 @@ public class Player : Photon.MonoBehaviour {
 	}
 
 	public void PlayerReady()
+	{
+		photonView.RPC("setPlayerReady", PhotonTargets.AllBufferedViaServer);
+
+	}
+
+	[PunRPC] public void setPlayerReady()
 	{
 		ready = true;
 	}

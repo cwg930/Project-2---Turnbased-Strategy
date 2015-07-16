@@ -41,15 +41,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ready: 0
-  blueKnight: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+  blueKnight: {fileID: 108840, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
   redKnight: {fileID: 143780, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
   greenKnight: {fileID: 170362, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
-  bluePaladin: {fileID: 131248, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
-  redPaladin: {fileID: 198664, guid: 260cd668f6cd6244a80d92d296f6563f, type: 2}
-  greenPaladin: {fileID: 125834, guid: f56fc476a89209e4d9345bce4f157bd7, type: 2}
-  blueMage: {fileID: 182612, guid: f157bc8141baf7f4698604c4aecce80b, type: 2}
-  redMage: {fileID: 173300, guid: 90c0b9be98611b642a9bad799d9e5904, type: 2}
-  greenMage: {fileID: 128728, guid: 9f4eb730869e9aa4dab93e2165aed099, type: 2}
+  bluePaladin: {fileID: 151914, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
+  redPaladin: {fileID: 131298, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
+  greenPaladin: {fileID: 121800, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
+  blueMage: {fileID: 190674, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
+  redMage: {fileID: 107518, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
+  greenMage: {fileID: 126002, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
   myTurn: {fileID: 0}
   turn: 0
 --- !u!114 &11461048
@@ -72,7 +72,7 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
   ObservedComponents:
-  - {fileID: 471630, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+  - {fileID: 0}
   - {fileID: 467058, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
   - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
@@ -93,7 +93,7 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: blueKnight
       value: 
-      objectReference: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+      objectReference: {fileID: 108840, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
     - target: {fileID: 0}
       propertyPath: greenKnight
       value: 
@@ -105,27 +105,27 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: bluePaladin
       value: 
-      objectReference: {fileID: 131248, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
+      objectReference: {fileID: 151914, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
     - target: {fileID: 0}
       propertyPath: redPaladin
       value: 
-      objectReference: {fileID: 198664, guid: 260cd668f6cd6244a80d92d296f6563f, type: 2}
+      objectReference: {fileID: 131298, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
     - target: {fileID: 0}
       propertyPath: greenPaladin
       value: 
-      objectReference: {fileID: 125834, guid: f56fc476a89209e4d9345bce4f157bd7, type: 2}
+      objectReference: {fileID: 121800, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
     - target: {fileID: 0}
       propertyPath: redMage
       value: 
-      objectReference: {fileID: 173300, guid: 90c0b9be98611b642a9bad799d9e5904, type: 2}
+      objectReference: {fileID: 107518, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
     - target: {fileID: 0}
       propertyPath: greenMage
       value: 
-      objectReference: {fileID: 128728, guid: 9f4eb730869e9aa4dab93e2165aed099, type: 2}
+      objectReference: {fileID: 126002, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
     - target: {fileID: 0}
       propertyPath: blueMage
       value: 
-      objectReference: {fileID: 182612, guid: f157bc8141baf7f4698604c4aecce80b, type: 2}
+      objectReference: {fileID: 190674, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
     - target: {fileID: 0}
       propertyPath: ObservedComponents.Array.data[1]
       value: 

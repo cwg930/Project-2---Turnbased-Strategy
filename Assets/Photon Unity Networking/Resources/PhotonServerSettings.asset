@@ -38,4 +38,5 @@ MonoBehaviour:
   - makeSmoothMovement
   - setDirection
   - setStopped
+  - setPlayerReady
   DisableAutoOpenWizard: 1
