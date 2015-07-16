@@ -24,7 +24,26 @@ public class ActionMenu : MonoBehaviour {
 
 	public void OnMoveClicked()
 	{
-		actingUnit.StartAction ('M');
+		actingUnit.StartAction (Unit.Action.move);
 		gameObject.SetActive (false);
 	}
+
+	public void OnAttackClicked()
+	{
+		actingUnit.StartAction (Unit.Action.attack);
+		gameObject.SetActive (false);
+	}
+
+	public void OnAbilityClicked()
+	{
+		actingUnit.StartAction (Unit.Action.ability);
+		gameObject.SetActive (false);
+	}
+
+	public void OnWaitClicked()
+	{
+		actingUnit.StartAction (Unit.Action.wait);
+		gameObject.SetActive (false);
+	}
+
 }

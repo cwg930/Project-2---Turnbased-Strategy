@@ -22,7 +22,7 @@ public class Unit : Photon.MonoBehaviour {
 	private string [] directions = {"right", "up", "left" , "down" , "attack"};
 	enum Facing  {right, up, left , down};
 	//enum String  facing {"right", "up", "left" , "down"};
-
+	public enum Action {move, attack, ability, wait};
 	private float lastSynchronizationTime = 0f;
 	private float syncDelay = 0f;
 	private float syncTime = 0f;
@@ -57,10 +57,17 @@ public class Unit : Photon.MonoBehaviour {
 		// unused
 	}
 
-	public void StartAction(char action)
+	public void StartAction(Action action)
 	{
-		if (action == 'M') {
+		switch (action) {
+		case Action.move:
 			StartCoroutine("WaitForMove");
+			break;
+		case Action.attack:
+		case Action.ability:
+		case Action.wait:
+		default:
+			break;
 		}
 	}
 
