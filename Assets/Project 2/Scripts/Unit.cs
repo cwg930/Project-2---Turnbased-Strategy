@@ -10,7 +10,7 @@ public class Unit : Photon.MonoBehaviour {
 	public bool newAnimation;
 
 	private Rigidbody2D rb2D;
-	private bool moving;
+	private bool moved;
 	public Player myPlayer;
 
 	protected CircleCollider2D circleCollider;
@@ -34,7 +34,7 @@ public class Unit : Photon.MonoBehaviour {
 		circleCollider = GetComponent<CircleCollider2D> ();
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
-		moving = false;
+		moved = false;
 		stopped = true;
 		newAnimation = false;
 		myDirection = directions [0];
@@ -56,7 +56,6 @@ public class Unit : Photon.MonoBehaviour {
 	void OnMouseDown()
 	{
 
-		moving = false;
 		if (!myPlayer.photonView.isMine) {
 			Debug.Log ("This is not your unit to move buddy");
 			return;
@@ -65,7 +64,7 @@ public class Unit : Photon.MonoBehaviour {
 		if (!myPlayer.ready) // player's team is not set up/ready, do not move selected unit
 			return;
 
-		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn) {
+		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn && !myPlayer.unitIsMoving) { // if it is player's unit and is player's turn and a unit is not already moving
 			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
 				StartCoroutine ("WaitForMove");
 			}
@@ -120,6 +119,7 @@ public class Unit : Photon.MonoBehaviour {
 
 
 		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, false);
+		myPlayer.unitIsMoving = true;
 		foreach (Vector3 loc in path) {
 			newAnimation = true;
 
@@ -156,6 +156,7 @@ public class Unit : Photon.MonoBehaviour {
 		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, true); // update animation on server to stop animating when stopped
 		yield return new WaitForSeconds(.1f);
 		newAnimation = false;
+		myPlayer.unitIsMoving = false;
 	}
 
 	[PunRPC] public void makeSmoothMovement(LinkedList<Vector2> path)
@@ -206,12 +207,13 @@ public class Unit : Photon.MonoBehaviour {
 		yield return new WaitForSeconds (.1f);
 		var validMoves = FindPath(new IntegerLocation(transform.position));
 		HighlightMoveArea(validMoves, Color.cyan);
+		moved = false;
 
-		while (!moving) {
+		while (!moved) {
 			if (Input.GetMouseButtonDown (0))
 			{
 				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				moving = Move(validMoves,new IntegerLocation (target));
+				moved = Move(validMoves,new IntegerLocation (target));
 			}	
 			yield return null;
 		}

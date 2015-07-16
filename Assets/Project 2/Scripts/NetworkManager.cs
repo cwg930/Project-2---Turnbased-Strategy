@@ -9,6 +9,9 @@ public class NetworkManager : Photon.MonoBehaviour {
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
 
+	private bool inRoom;
+	private string stringToEdit;
+
 	enum NetworkStates {
 		NotLoggedIn,
 		InLobby,
@@ -20,6 +23,8 @@ public class NetworkManager : Photon.MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		stringToEdit = "Enter a Room Name";
+		inRoom = false;
 		FB.Init (SetInit, OnHideUnity);
 		networkState = NetworkStates.NotLoggedIn;
 		//PhotonNetwork.ConnectUsingSettings("0.1");
@@ -81,7 +86,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 				if (GUI.Button (new Rect (10, 10, 150, 30), "Login to Facebook")) {
 					FB.Login ("email", LoginCallback);
 				}
-				if (GUI.Button(new Rect (10, 50, 150, 30), "Login")) { // TODO connect normal login to our database
+				if (GUI.Button(new Rect (10, 100, 300, 50), "Login")) { // TODO connect normal login to our database
 					PhotonNetwork.playerName = "Player " + (int)(Random.value*100);
 					PhotonNetwork.ConnectUsingSettings("1.0");
 				}
@@ -89,14 +94,20 @@ public class NetworkManager : Photon.MonoBehaviour {
 			}
 			case NetworkStates.InLobby:
 			{
-				// Create game button
-				if (GUI.Button (new Rect (10, 30, 150, 30), "Create Game"))
-					PhotonNetwork.CreateRoom (roomName, true, true, 5);
+				inRoom = false;
+				stringToEdit = GUI.TextField (new Rect (10, 10, 200, 20), stringToEdit);
+			// Create game button
+				if (GUI.Button (new Rect (10, 50, 150, 50), "Create Game"))
+				{
+				Debug.Log("room name ="+ stringToEdit);
+					PhotonNetwork.CreateRoom (stringToEdit, true, true, 5);
+				}
+					
 
 				// Join existing game button
 				if (roomsList != null) {
 					for (int i = 0; i < roomsList.Length; i++) {
-						if (GUI.Button (new Rect (10, 70 + (110 * i), 150, 30), "Join " + roomsList [i].name))
+						if (GUI.Button (new Rect (10, 110 + (60 * i), 150, 50), "Join " + roomsList [i].name))
 							PhotonNetwork.JoinRoom (roomsList [i].name);
 					}
 				}
@@ -104,6 +115,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 			}
 			case NetworkStates.InRoom: // in room so instantiate player
 			{
+				inRoom = true;
 				GUILayout.Label("Your name: " + PhotonNetwork.playerName);
 				GUILayout.Label(PhotonNetwork.playerList.Length + " players in this room.");
 				GUILayout.Label("The others are:");
@@ -126,14 +138,19 @@ public class NetworkManager : Photon.MonoBehaviour {
 			}
 		}
 		
-		if (PhotonNetwork.connected) {
-			if (GUI.Button(new Rect(10, 200, 150, 30), "Logout")) 
+		if (PhotonNetwork.connected && !inRoom) {
+			if (GUI.Button(new Rect(10, Screen.height - 30, 150, 30), "Logout")) 
 			{
 				if (FB.IsLoggedIn)
 					FB.Logout();
 				PhotonNetwork.Disconnect();
 			}
 		}
+	}
+
+	public void getRoomName()
+	{
+		GUI.TextField (new Rect (10, 10, 200, 20), stringToEdit);
 	}
 	
 
