@@ -32,3 +32,8 @@ obj/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# ============== #
+# Specific files #
+# ============== #
+Assets/Photon\ Unity\ Networking/Resources/
