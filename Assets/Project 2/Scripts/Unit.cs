@@ -9,7 +9,7 @@ public class Unit : Photon.MonoBehaviour {
 	public LayerMask blockingLayer;
 	public bool newAnimation;
 
-	public GameObject actionMenu;
+	private ActionMenu actionMenu;
 	private Rigidbody2D rb2D;
 	private bool moving;
 	public Player myPlayer;
@@ -46,12 +46,22 @@ public class Unit : Photon.MonoBehaviour {
 			transform.SetParent(GameObject.FindGameObjectsWithTag("Player")[1].transform);
 			myPlayer = this.GetComponentInParent<Player> ();
 		}
+
+		GameObject go = GameObject.FindGameObjectWithTag ("Canvas");
+		actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu(Clone)").GetComponent<ActionMenu>();
 	}
 
 	void Update ()
 	{
 	
 		// unused
+	}
+
+	public void StartAction(char action)
+	{
+		if (action == 'M') {
+			StartCoroutine("WaitForMove");
+		}
 	}
 
 	void OnMouseDown()
@@ -69,7 +79,7 @@ public class Unit : Photon.MonoBehaviour {
 		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn) {
 			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
 //				StartCoroutine ("WaitForMove");
-				actionMenu.SetActive(true);
+				actionMenu.ShowMenu(this);
 			}
 
 		}
@@ -202,7 +212,7 @@ public class Unit : Photon.MonoBehaviour {
 		GetComponent<Rigidbody2D>().transform.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
 	}
 
-	public IEnumerator WaitForMove ()
+	protected IEnumerator WaitForMove ()
 	{
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
@@ -222,10 +232,29 @@ public class Unit : Photon.MonoBehaviour {
 		
 	}
 
-	/*	calculates the area of the circle that corresponds to
-		the unit's movement radius
+/*	protected IEnumerator WaitForAttack()
+	{
+		yield return new WaitForSeconds (.1f);
+		var validTargets = FindTargets(attackRange);
+		HighlightMoveArea(validMoves, Color.red);
+		
+		while (!moving) {
+			if (Input.GetMouseButtonDown (0))
+			{
+				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				//moving = Move(validMoves,new IntegerLocation (target));
+			}	
+			yield return null;
+		}
+		
+		HighlightMoveArea (validMoves, Color.white);
+	}
+*/
+	/*	--may not be needed anymore
+	 *  calculates the area of the circle that corresponds to
+		the unit's movement radius 
 	 */
-	private int CalcMoveArea()
+/*	private int CalcMoveArea()
 	{
 		//straight line distance all around plus origin
 		int area = 4 * moves + 1;
@@ -238,7 +267,7 @@ public class Unit : Photon.MonoBehaviour {
 
 		return area;
 	}
-
+*/
 	/* Finds path with A* algorithm
 	*  Heuristic Function: Manhattan Distance
 	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
@@ -247,9 +276,7 @@ public class Unit : Photon.MonoBehaviour {
 	private Dictionary<IntegerLocation, IntegerLocation> FindPath (IntegerLocation start)
 	{
 
-		int moveArea = CalcMoveArea ();
-
-		Queue<IntegerLocation> frontier = new Queue<IntegerLocation> (moveArea);
+		Queue<IntegerLocation> frontier = new Queue<IntegerLocation> ();
 		ArrayList discovered = new ArrayList();
 		frontier.Enqueue (start);
 		discovered.Add(start);
@@ -278,7 +305,7 @@ public class Unit : Photon.MonoBehaviour {
 
 		return cameFrom;
 	}
-
+	
 	void HighlightMoveArea(Dictionary<IntegerLocation, IntegerLocation> area, Color color)
 	{
 		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
@@ -314,4 +341,5 @@ public class Unit : Photon.MonoBehaviour {
 		}
 		return neighbors;
 	}
+
 }

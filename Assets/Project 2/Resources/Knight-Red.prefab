@@ -377,6 +377,8 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
+  newAnimation: 0
+  myPlayer: {fileID: 0}
   myDirection: 
   stopped: 0
 --- !u!212 &21216032
@@ -546,6 +548,10 @@ Prefab:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 8bd3310468a2984458d4ced088a43f3e, type: 2}
+    - target: {fileID: 0}
+      propertyPath: actionMenu
+      value: 
+      objectReference: {fileID: 181478, guid: b39c258620f451746b8a8b08fb5f12d9, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 143780}

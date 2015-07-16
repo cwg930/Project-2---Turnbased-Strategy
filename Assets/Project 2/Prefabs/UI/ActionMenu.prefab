@@ -45,13 +45,25 @@ GameObject:
   - 224: {fileID: 22471968}
   - 222: {fileID: 22220442}
   - 114: {fileID: 11469880}
+  - 114: {fileID: 11409770}
   m_Layer: 5
   m_Name: ActionMenu
-  m_TagString: Untagged
+  m_TagString: UIElement
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &11409770
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd90293d4950c64f87d172a57784da9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11447636
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -91,7 +103,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11489856, guid: e4b99b845c490ce4890b78a594cb163d, type: 2}
+      - m_Target: {fileID: 11409770}
         m_MethodName: OnMoveClicked
         m_Mode: 1
         m_Arguments:
@@ -257,8 +269,7 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 11489856, guid: e4b99b845c490ce4890b78a594cb163d,
-        type: 2}
+      objectReference: {fileID: 11409770}
     - target: {fileID: 0}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnMoveClicked
@@ -274,6 +285,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: UIElement
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

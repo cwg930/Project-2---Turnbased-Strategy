@@ -543,7 +543,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: actionMenu
+      value: 
+      objectReference: {fileID: 181478, guid: b39c258620f451746b8a8b08fb5f12d9, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 107518}

@@ -8,6 +8,8 @@ TagManager:
   - Player2
   - Wall
   - Floor
+  - Canvas
+  - UIActionMenu
   layers:
   - Default
   - TransparentFX

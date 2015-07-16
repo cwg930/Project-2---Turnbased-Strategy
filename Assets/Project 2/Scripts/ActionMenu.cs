@@ -3,17 +3,19 @@ using System.Collections;
 
 public class ActionMenu : MonoBehaviour {
 
-	public GameObject actionMenu;
-	public Unit actingUnit;
+	private GameObject canvas;
+	private Unit actingUnit;
 	// Use this for initialization
 	void Start ()
 	{
-
+		canvas = GameObject.FindGameObjectWithTag ("Canvas");
+		gameObject.transform.SetParent (canvas.transform);
+		gameObject.SetActive (false);
 	}
 	public void ShowMenu(Unit unit)
 	{
 		actingUnit = unit;
-
+		gameObject.SetActive (true);
 	}
 	// Update is called once per frame
 	void Update () {
@@ -22,6 +24,7 @@ public class ActionMenu : MonoBehaviour {
 
 	public void OnMoveClicked()
 	{
-		StartCoroutine (actingUnit.WaitForMove ());
+		actingUnit.StartAction ('M');
+		gameObject.SetActive (false);
 	}
 }

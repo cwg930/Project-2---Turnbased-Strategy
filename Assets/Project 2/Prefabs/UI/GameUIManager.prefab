@@ -36,7 +36,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 187282}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cd90293d4950c64f87d172a57784da9, type: 3}
+  m_Script: {fileID: 11500000, guid: aa46f147dd9728f46aaf93a2a7bce80f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   actionMenu: {fileID: 181478, guid: b39c258620f451746b8a8b08fb5f12d9, type: 2}
@@ -46,7 +46,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: actionMenu
+      value: 
+      objectReference: {fileID: 181478, guid: b39c258620f451746b8a8b08fb5f12d9, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 187282}
