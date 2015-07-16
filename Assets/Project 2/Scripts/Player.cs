@@ -12,6 +12,7 @@ public class Player : Photon.MonoBehaviour {
 	private bool selectedLocation; // checks to see if you have chosen a placement for spawned unit
 	public bool ready; // checks to see if you have spawned all units and are ready to start the game
 	private int unitChoice; // keeps track of which unit is chosen
+	public bool unitIsMoving;
 
 	public GameObject blueKnight;
 	public GameObject redKnight;
@@ -24,6 +25,10 @@ public class Player : Photon.MonoBehaviour {
 	public GameObject blueMage;
 	public GameObject redMage;
 	public GameObject greenMage;
+
+	public GameObject blueRogue;
+	public GameObject greenRogue;
+	public GameObject redRogue;
 	
 	[HideInInspector]	public TurnManager myTurn;
 	public int turn;
@@ -46,6 +51,7 @@ public class Player : Photon.MonoBehaviour {
 		selectedLocation = true;
 		ready = false;
 		unitChoice = 0;
+		unitIsMoving = false;
 	}
 
 	void OnGUI()
@@ -53,19 +59,23 @@ public class Player : Photon.MonoBehaviour {
 		if (turn > 2)
 			return;
 		if (!ready && myTurn.getTurn () == turn && photonView.isMine) {
-			if (GUI.Button (new Rect (10, 240, 150, 30), "Add Knight")) {
+			if (GUI.Button (new Rect (10, 120, 150, 50), "Add Knight")) {
 				SelectKnight();
 			}
 			
-			if (GUI.Button (new Rect (10, 280, 150, 30), "Add Paladin")) {
+			if (GUI.Button (new Rect (10, 190, 150, 50), "Add Paladin")) {
 				SelectPaladin();
 			}
 			
-			if (GUI.Button (new Rect (10, 320, 150, 30), "Add Mage")) {
+			if (GUI.Button (new Rect (10, 260, 150, 50), "Add Mage")) {
 				SelectMage();
 			}
+
+			if (GUI.Button (new Rect (10, 330, 150, 50), "Add Rogue")) {
+				SelectRogue();
+			}
 			
-			if (GUI.Button (new Rect (10, 360, 150, 30), "Ready")) {
+			if (GUI.Button (new Rect (10, 400, 150, 50), "Ready")) {
 				PlayerReady();
 			}
 		}
@@ -179,6 +189,12 @@ public class Player : Photon.MonoBehaviour {
 		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
 			StartCoroutine ("WaitForClick");
 	}
+	public void SelectRogue() 
+	{
+		unitChoice = 4;
+		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+			StartCoroutine ("WaitForClick");
+	}
 
 	public void PlayerReady()
 	{
@@ -250,6 +266,8 @@ public class Player : Photon.MonoBehaviour {
 							addUnit (redPaladin, loc);
 						else if (unitChoice == 3)
 							addUnit(redMage, loc);
+						else if (unitChoice == 4)
+							addUnit(redRogue, loc);
 					}
 						
 					else if (turn == 2)
@@ -260,6 +278,8 @@ public class Player : Photon.MonoBehaviour {
 							addUnit (greenPaladin, loc);
 						else if (unitChoice == 3)
 							addUnit(greenMage, loc);
+						else if (unitChoice == 4)
+							addUnit(greenRogue, loc);
 					}
 					
 					selectedLocation = true;

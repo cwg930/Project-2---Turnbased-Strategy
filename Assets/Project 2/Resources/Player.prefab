@@ -50,6 +50,9 @@ MonoBehaviour:
   blueMage: {fileID: 190674, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
   redMage: {fileID: 107518, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
   greenMage: {fileID: 126002, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
+  blueRogue: {fileID: 112510, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
+  greenRogue: {fileID: 143752, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
+  redRogue: {fileID: 190700, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
   myTurn: {fileID: 0}
   turn: 0
 --- !u!114 &11461048
@@ -134,6 +137,18 @@ Prefab:
       propertyPath: ObservedComponents.Array.data[2]
       value: 
       objectReference: {fileID: 460214, guid: 10ce3a61f4fb2424db6e8089638e06f2, type: 2}
+    - target: {fileID: 0}
+      propertyPath: blueRogue
+      value: 
+      objectReference: {fileID: 112510, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
+    - target: {fileID: 0}
+      propertyPath: greenRogue
+      value: 
+      objectReference: {fileID: 143752, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
+    - target: {fileID: 0}
+      propertyPath: redRogue
+      value: 
+      objectReference: {fileID: 190700, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 107430}
