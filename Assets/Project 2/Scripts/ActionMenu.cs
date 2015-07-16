@@ -22,6 +22,6 @@ public class ActionMenu : MonoBehaviour {
 
 	public void OnMoveClicked()
 	{
-		
+		StartCoroutine (actingUnit.WaitForMove ());
 	}
 }

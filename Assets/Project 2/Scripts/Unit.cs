@@ -8,7 +8,7 @@ public class Unit : Photon.MonoBehaviour {
 	public int moves;
 	public LayerMask blockingLayer;
 
-	private GameObject actionMenu;
+	public GameObject actionMenu;
 	private Rigidbody2D rb2D;
 	private bool moving;
 	private Player myPlayer;
@@ -46,7 +46,7 @@ public class Unit : Photon.MonoBehaviour {
 		if (myPlayer != null && myPlayer.myTurn.getTurn() == myPlayer.turn) {
 			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
 //				StartCoroutine ("WaitForMove");
-//				actionMenu.SetActive(true);
+				actionMenu.SetActive(true);
 			}
 			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move and his turn is over
 		}
@@ -107,7 +107,7 @@ public class Unit : Photon.MonoBehaviour {
 		}
 	}
 
-	protected IEnumerator WaitForMove ()
+	public IEnumerator WaitForMove ()
 	{
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
