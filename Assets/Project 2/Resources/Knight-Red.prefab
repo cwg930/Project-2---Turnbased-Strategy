@@ -372,11 +372,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bf46719e55e1fb4fb9ddfe37393b58b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveTime: .100000001
+  moveTime: .300000012
   moves: 4
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
+  newAnimation: 0
+  myPlayer: {fileID: 0}
   myDirection: 
   stopped: 0
 --- !u!212 &21216032
@@ -546,6 +548,10 @@ Prefab:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 8bd3310468a2984458d4ced088a43f3e, type: 2}
+    - target: {fileID: 0}
+      propertyPath: moveTime
+      value: .300000012
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 143780}

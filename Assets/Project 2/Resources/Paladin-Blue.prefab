@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d15579643cb9394399a01ae55275dc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveTime: .100000001
+  moveTime: .300000012
   moves: 5
   blockingLayer:
     serializedVersion: 2
@@ -543,7 +543,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: moveTime
+      value: .300000012
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 151914}
