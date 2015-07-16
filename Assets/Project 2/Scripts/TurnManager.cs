@@ -28,15 +28,22 @@ public class TurnManager : Photon.MonoBehaviour {
 
 	public int getTurn()
 	{
-		Debug.Log ("it is player"+currentPlayer+"'s turn");
+		//Debug.Log ("it is player"+currentPlayer+"'s turn");
 		return currentPlayer;
 	}
 
 	public void madeMove()
 	{
-		currentPlayer++;
-		if (currentPlayer > 2)
-			currentPlayer = 1;
+		Debug.Log ("player "+currentPlayer+" has made a move");
+		movesPerTurn--;
+		if (movesPerTurn == 0) {
+			currentPlayer++;
+			movesPerTurn = 2;
+			if (currentPlayer > 2)
+				currentPlayer = 1;
+		}
+
+
 		Debug.Log ("it is player"+currentPlayer+"'s turn");
 	}
 

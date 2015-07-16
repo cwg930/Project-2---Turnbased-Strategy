@@ -81,7 +81,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 				if (GUI.Button (new Rect (10, 10, 150, 30), "Login to Facebook")) {
 					FB.Login ("email", LoginCallback);
 				}
-				if (GUI.Button(new Rect (10, 50, 150, 30), "Login")) {
+				if (GUI.Button(new Rect (10, 50, 150, 30), "Login")) { // TODO connect normal login to our database
 					PhotonNetwork.playerName = "Player " + (int)(Random.value*100);
 					PhotonNetwork.ConnectUsingSettings("1.0");
 				}

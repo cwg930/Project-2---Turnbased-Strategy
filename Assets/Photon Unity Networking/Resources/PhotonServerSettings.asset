@@ -34,4 +34,9 @@ MonoBehaviour:
   - madeMove
   - makingMove
   - setMyParent
+  - updateAnimation
+  - makeSmoothMovement
+  - setDirection
+  - setStopped
+  - setPlayerReady
   DisableAutoOpenWizard: 1

@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: b275dd71bc711f540a3375807f4058e2
-timeCreated: 1436127794
+timeCreated: 1436914514
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - blueKnight: {fileID: 198216, guid: 67cceb37a57e3a34cbfd2c1f50d10143, type: 2}
+  - redKnight: {fileID: 143780, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
+  - greenKnight: {fileID: 127666, guid: 10ce3a61f4fb2424db6e8089638e06f2, type: 2}
+  - myTurn: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

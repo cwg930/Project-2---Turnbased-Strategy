@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Knight : Unit {
-
+public class Mage : Unit {
+	
 	private Animator animator;
 	private bool facingRight;
-
+	
 	private string newDirection;
 	private bool attack;
-
+	
 	protected override void Start () {
-
+		
 		base.Start ();
 		animator = GetComponent<Animator> ();
 		animator.SetBool ("walk", false);
@@ -22,37 +22,37 @@ public class Knight : Unit {
 		facingRight = true;
 		attack = false;
 		newDirection = "right";
-
+		
 	}
-
+	
 	private void setColor()
 	{
-		if (gameObject.name.Equals("Knight-Red(Clone)")) { // red
+		if (gameObject.name.Equals("Mage-Red(Clone)")) { // red
 			animator.SetLayerWeight (2, 1f);
 			animator.SetLayerWeight (1, 0f);
 			animator.SetLayerWeight (0, 0f);
-		} else if (gameObject.name.Equals("Knight-Green(Clone)")) { // green
+		} else if (gameObject.name.Equals("Mage-Green(Clone)")) { // green
 			animator.SetLayerWeight (1, 1f);
 			animator.SetLayerWeight (0, 0f);
 			animator.SetLayerWeight (2, 0f);
-		} else if (gameObject.name.Equals("Knight-Blue(Clone)")){// blue
+		} else if (gameObject.name.Equals("Mage-Blue(Clone)")){// blue
 			animator.SetLayerWeight (0, 1f);
 			animator.SetLayerWeight (1, 0f);
 			animator.SetLayerWeight (2, 0f);
 		}
-			
-
-
+		
+		
+		
 	}
-
+	
 	void Update()
-
+		
 	{
 		if (!myPlayer.photonView.isMine)
 			Debug.Log ("This is not your unit");
-
+		
 		Debug.Log ("my direction: "+myDirection+ "new direction: " + newDirection + "move? "+ base.newAnimation);
-
+		
 		// myPlayer.turn == myPlayer.myTurn.getTurn() &&
 		if (base.newAnimation && myPlayer.photonView.isMine) { // updates server with new animation
 			Debug.Log ("update animation here");
@@ -60,8 +60,8 @@ public class Knight : Unit {
 			newDirection = myDirection;
 			//updateAnimation();
 		} else if (myPlayer.photonView.isMine && Input.GetKeyDown ("f")) { // can attack with sword 'f'
-				attack = true;
-				photonView.RPC("updateAnimation", PhotonTargets.AllBufferedViaServer);
+			attack = true;
+			photonView.RPC("updateAnimation", PhotonTargets.AllBufferedViaServer);
 		}
 		else if (myPlayer.photonView.isMine && Input.GetKeyDown ("s")) { // stop it with 's'
 			animator.SetBool ("attack", false);
@@ -71,12 +71,12 @@ public class Knight : Unit {
 		else if (myPlayer.photonView.isMine && Input.GetKeyDown ("r")) { // refresh with 'r' (debugging for now)
 			photonView.RPC("updateAnimation", PhotonTargets.AllBufferedViaServer);
 		}
-			
-			
-			
-
+		
+		
+		
+		
 	}
-
+	
 	[PunRPC] public void updateAnimation()
 	{
 		Debug.Log ("updating");
@@ -133,5 +133,5 @@ public class Knight : Unit {
 			attack = false;
 		}
 	}
-
+	
 }
