@@ -373,7 +373,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTime: .200000003
-  moves: 5
+  moves: 6
+  attackRange: 1
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -546,11 +547,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: moves
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: moveTime
       value: .200000003
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: attackRange
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

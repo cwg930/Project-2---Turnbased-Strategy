@@ -366,21 +366,23 @@ public class Unit : Photon.MonoBehaviour {
 
 	private Dictionary<IntegerLocation,Unit> FindTargets(int range, bool hostile)
 	{
-		GameObject turnManagerObject = GameObject.FindGameObjectWithTag ("TurnManager");
-		TurnManager turnManagerScript = (TurnManager)turnManagerObject.GetComponent<TurnManager> ();
+		GameObject[] unitObjects;
+		if (hostile)
+			unitObjects = GameObject.FindGameObjectsWithTag ("Player2");
+		else
+			unitObjects = GameObject.FindGameObjectsWithTag("Player1");
+
 		ArrayList units = new ArrayList ();
+		foreach (GameObject go in unitObjects) {
+			units.Add((Unit)go.GetComponent<Unit>());
+		}
+
+
 		Dictionary<IntegerLocation, Unit> targets = new Dictionary<IntegerLocation, Unit> ();
 		//Get enemies for attacks, friends for heals
-		if (myPlayer.photonView.isMine && hostile || myPlayer.tag == "Player1" && !hostile) {
-			foreach (GameObject go in turnManagerScript.player1Team) {
-				units.Add ((Unit)go.GetComponent<Unit> ());
-			}
-		} else if (myPlayer.tag == "Player1" && hostile || myPlayer.tag == "Player2" && !hostile) {
-			foreach (GameObject go in turnManagerScript.player2Team) {
-				units.Add ((Unit)go.GetComponent<Unit> ());
-			}
+
 		foreach (Unit u in units){
-			if(Vector2.Distance(transform.position,u.transform.position) <= range)
+			if(Mathf.CeilToInt(Vector2.Distance(transform.position,u.transform.position)) <= range)
 			{
 				targets.Add(new IntegerLocation(u.transform.position),u);
 			}
