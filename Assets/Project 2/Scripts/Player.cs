@@ -161,6 +161,11 @@ public class Player : Photon.MonoBehaviour {
 		myTurn.endGame();
 	}
 
+	[PunRPC] public void updateAdditionalUnit()
+	{
+		StartingUnitCount++;
+	}
+
 	[PunRPC] public void setMyParent()
 	{
 		transform.SetParent (GameObject.Find ("TurnManager").transform);

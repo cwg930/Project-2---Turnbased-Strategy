@@ -97,14 +97,20 @@ public class Knight : Unit {
 
 		Debug.Log ("you are dead");
 		myPlayer.unitDied ();
-			if((Lifebar.GetComponent<Renderer>().bounds.size.x<=0)||(Lifebar.transform.localScale.x<=0)){
+		amDead = true;
+		animator.SetBool("dead",true);
+		this.gameObject.GetComponent<Collider2D>().enabled=false;
+		Destroy(Lifebar_group);
+		StartCoroutine("waitForDeath");
+
+			/*if((Lifebar.GetComponent<Renderer>().bounds.size.x<=0)||(Lifebar.transform.localScale.x<=0)){
 				Debug.Log("your lifebar is depleted");
 				amDead = true;
 				animator.SetBool("dead",true);
 				this.gameObject.GetComponent<Collider2D>().enabled=false;
 				Destroy(Lifebar_group);
 				StartCoroutine("waitForDeath");
-			}
+			} */
 	}
 
 	IEnumerator waitForDeath()

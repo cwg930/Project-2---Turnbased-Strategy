@@ -24,26 +24,26 @@ public class ActionMenu : MonoBehaviour {
 
 	public void OnMoveClicked()
 	{
-		actingUnit.StartAction (Unit.Action.move);
+		actingUnit.StartAction (Unit.Action.move, gameObject);
 		//gameObject.SetActive (false);
 	}
 
 	public void OnAttackClicked()
 	{
-		actingUnit.StartAction (Unit.Action.attack);
+		actingUnit.StartAction (Unit.Action.attack, gameObject);
 		//gameObject.SetActive (false);
 	}
 
 	public void OnAbilityClicked()
 	{
-		actingUnit.StartAction (Unit.Action.ability);
+		actingUnit.StartAction (Unit.Action.ability, gameObject);
 		//gameObject.SetActive (false);
 	}
 
 	public void OnWaitClicked()
 	{
-		actingUnit.StartAction (Unit.Action.wait);
-		gameObject.SetActive (false);
+		actingUnit.StartAction (Unit.Action.wait, gameObject);
+		//gameObject.SetActive (false);
 	}
 
 }

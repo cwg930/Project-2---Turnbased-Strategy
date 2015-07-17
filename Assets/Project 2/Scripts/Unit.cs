@@ -61,7 +61,7 @@ public class Unit : Photon.MonoBehaviour {
 		circleCollider = GetComponent<CircleCollider2D> ();
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
-		moved = false;
+		moved = true;
 		isAttacking = false;
 		attackerDamage = 0;
 		hasMoved = false;
@@ -102,21 +102,34 @@ public class Unit : Photon.MonoBehaviour {
 		return healthValue;
 	}
 
-	public void StartAction(Action action)
+	public void StartAction(Action action, GameObject actionMenu)
 	{
 		switch (action) {
 		case Action.move:
+			if (!isAttacking)
 			StartCoroutine("WaitForMove");
+			else
+				Debug.Log("you must finish your attack before you can make a move");
 			break;
 		case Action.attack:
+			if (moved)
 			StartCoroutine("WaitForAttack");
+			else
+				Debug.Log("you must finish your move before you can make an attack");
 			break;
 		case Action.ability:
 		case Action.wait:
-			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
-			hasMoved = false;
-			hasAttacked = false;
-			myPlayer.isActionMenuActive = false;
+			if (!moved)
+				Debug.Log("you must finish your move before you can end your turn");
+			else if (isAttacking)
+				Debug.Log("you must finish your attack before you can end your turn");
+			else{
+				myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
+				hasMoved = false;
+				hasAttacked = false;
+				myPlayer.isActionMenuActive = false;
+				actionMenu.SetActive(false);
+			}
 			break;
 		default:
 			break;
@@ -155,20 +168,20 @@ public class Unit : Photon.MonoBehaviour {
 
 
 
-				else if (hit.collider != null && attackRange >= distance)
+				else if (hit.collider != null && attackRange >= distance && hit.collider.transform.tag.Equals("Player2"))
 				{
-					Debug.Log("collider tag " + hit.collider.tag + "- transform tag" + hit.collider.transform.name + "- gameobject tag" );
-					if (hit.collider.transform.tag.Equals("Player2"))
-					{
-						//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
-						photonView.RPC("damageEnemy", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
-						Debug.Log("enemy selected" );
-						HighlightMoveArea (validMoves, Color.white);
-						photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
-						hasAttacked = true;
-
-					}
+					Debug.Log("this unit ( " + transform.name + ") is attacking enemy unit (" + hit.collider.transform.name + ") hit is being confirmed" );
+					//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
+					photonView.RPC("damageEnemy", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
+					Debug.Log("enemy selected" );
+					HighlightMoveArea (validMoves, Color.white);
+					photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
+					hasAttacked = true;
 					isAttacking = false;
+				}
+				else{
+					Debug.Log("you have clicked on something within your range that is not an enemy unit");
+					HighlightMoveArea (validMoves, Color.white);
 				}
 
 				//moved = Move(validMoves,new IntegerLocation (target));
@@ -204,13 +217,6 @@ public class Unit : Photon.MonoBehaviour {
 			
 	}
 
-	IEnumerator waitForDeath2(Animator enemyAnimator)
-	{
-		Debug.Log(":(");
-		yield return new WaitForSeconds (.5f);
-
-
-	}
 
 	[PunRPC] public void setAttackAnimation()
 	{
@@ -528,7 +534,14 @@ public class Unit : Photon.MonoBehaviour {
 	void Life_Down(){
 		float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
 		float divisor = startingHealth / attackerDamage;
-		Lifebar.transform.localScale += new Vector3(-aux_d/divisor, 0, 0);// takes percentage based on damage
+		float newLifebarLength = aux_c;
+		newLifebarLength -= aux_d / divisor;
+		if (newLifebarLength < float.Epsilon)
+			Lifebar.transform.localScale = new Vector3(0, 0, 0);
+		else
+			Lifebar.transform.localScale -= new Vector3(aux_d / divisor, 0, 0);// takes percentage based on damage
+		//Lifebar.transform.localScale += new Vector3(-aux_d/divisor, 0, 0);// takes percentage based on damage
+		
 		Vector3 auxve = new Vector3(Lifebar.transform.position.x,Lifebar.transform.position.y,Lifebar.transform.position.z);
 		auxve.x=auxve.x-(aux_c - Lifebar.GetComponent<Renderer>().bounds.size.x)/2;
 		Lifebar.transform.position=auxve;
