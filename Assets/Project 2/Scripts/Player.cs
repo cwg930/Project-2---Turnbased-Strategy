@@ -33,6 +33,11 @@ public class Player : Photon.MonoBehaviour {
 	[HideInInspector]	public TurnManager myTurn;
 	public int turn;
 
+	public bool lostGame;
+	private bool wonGame;
+	private int StartingUnitCount;
+	private int DeadUnitCount;
+
 	/*
 	private float lastSynchronizationTime = 0f;
 	private float syncDelay = 0f;
@@ -52,6 +57,9 @@ public class Player : Photon.MonoBehaviour {
 		ready = false;
 		unitChoice = 0;
 		unitIsMoving = false;
+		lostGame = false;
+		StartingUnitCount = 0;
+		DeadUnitCount = 0;
 	}
 
 	void OnGUI()
@@ -111,6 +119,18 @@ public class Player : Photon.MonoBehaviour {
 			myStyle.fontSize = 36;
 			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "It is not your turn", myStyle);
 		}
+
+		if (photonView.isMine && lostGame) {
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 72;
+			GUI.Label (new Rect (Screen.width/2, Screen.height/2, 200, 40), "You Lose", myStyle);
+		}
+		else if (photonView.isMine && !lostGame && myTurn.gameOver) {
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 72;
+			GUI.Label (new Rect (Screen.width/2, Screen.height/2, 200, 40), "You Win!", myStyle);
+		}
+
 			
 	}
 
@@ -118,7 +138,12 @@ public class Player : Photon.MonoBehaviour {
 
 	void Update()
 	{
-		//Debug.Log ("turn :" + turn);
+		if (ready && photonView.isMine && StartingUnitCount == DeadUnitCount) {
+			Debug.Log ("you lost");
+			photonView.RPC("updateDeath", PhotonTargets.AllBuffered);
+		}
+
+			
 		//adds a knight to current player's team. will be replaced by ui unit selection
 		/*if (Input.GetKeyDown ("k") && myTurn.getTurn() == turn && photonView.isMine) { // player 1 recieves blue knight
 			if (turn == 1)
@@ -126,6 +151,12 @@ public class Player : Photon.MonoBehaviour {
 			else if (turn == 2)
 				addUnit (greenKnight);
 		} */
+	}
+
+	[PunRPC] public void updateDeath()
+	{
+		lostGame = true;
+		myTurn.endGame();
 	}
 
 	[PunRPC] public void setMyParent()
@@ -177,6 +208,7 @@ public class Player : Photon.MonoBehaviour {
 		//Debug.Log (newUnit.name);
 		units [index] = newUnit; // adds unit to game object array
 		index++;
+		StartingUnitCount++;
 		//Debug.Log ("index =" + index);
 		GameObject instance = PhotonNetwork.Instantiate(newUnit.name, loc, Quaternion.identity, 0) as GameObject;
 		//GameObject instance = PhotonNetwork.Instantiate(newUnit.name, Vector3.right * Random.Range(2,cols) + Vector3.up * Random.Range(2, rows), Quaternion.identity, 0) as GameObject;
@@ -306,6 +338,11 @@ public class Player : Photon.MonoBehaviour {
 
 			yield return null;
 		}
+	}
+
+	public void unitDied()
+	{
+		DeadUnitCount++;
 	}
 
 

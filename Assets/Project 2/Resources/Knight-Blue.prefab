@@ -269,11 +269,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   newAnimation: 0
+  attackRange: 0
   myPlayer: {fileID: 0}
   myDirection: 
   stopped: 0
   isAttacking: 0
-  beingAttacked: 0
+  attackValue: 5
+  Lifebar: {fileID: 0}
+  Lifebar_group: {fileID: 133570}
 --- !u!114 &11465820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -461,7 +464,19 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: attackValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: Lifebar_group
+      value: 
+      objectReference: {fileID: 133570}
+    - target: {fileID: 0}
+      propertyPath: Lifebar
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 183352}

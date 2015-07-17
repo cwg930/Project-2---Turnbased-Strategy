@@ -8,6 +8,7 @@ public class Unit : Photon.MonoBehaviour {
 	public int moves;
 	public LayerMask blockingLayer;
 	public bool newAnimation;
+	public int attackRange;
 
 	private ActionMenu actionMenu;
 	private Rigidbody2D rb2D;
@@ -18,6 +19,7 @@ public class Unit : Photon.MonoBehaviour {
 	protected float inverseMoveTime;
 	public string myDirection;
 	public bool stopped;
+	private bool isdead;
 
 	private string [] directions = {"right", "up", "left" , "down" , "attack"};
 	enum Facing  {right, up, left , down};
@@ -30,17 +32,35 @@ public class Unit : Photon.MonoBehaviour {
 	private Vector3 syncEndPosition = Vector3.zero;
 
 	public bool isAttacking;
-	public bool beingAttacked;
+	private int attackerDamage;
+
+	public int attackValue;
+	private int healthValue;
+	private int startingHealth;
+
+	//About progress-bar --
+	private float aux_d=0;//Initial lifebar width
+	public GameObject Lifebar;
+	public GameObject Lifebar_group;
+	private Vector3 initial_localscale;
+	//private float Lifebar_distance_y=0;
+	//private float Lifebar_back_distance_y=0;
+	//--
 
 
 	protected virtual void Start()
 	{
+		//Lifebar_distance_y = this.transform.position.y-Lifebar.transform.position.y;
+		aux_d = Lifebar.GetComponent<Renderer>().bounds.size.x;//lifebar width
+		initial_localscale = new Vector3 (Lifebar.transform.localScale.x,Lifebar.transform.localScale.y,Lifebar.transform.localScale.z);
+		//--
 		circleCollider = GetComponent<CircleCollider2D> ();
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moved = false;
 		isAttacking = false;
-		beingAttacked = false;
+		attackerDamage = 0;
+		isdead = false;
 		stopped = true;
 		newAnimation = false;
 		myDirection = directions [0];
@@ -55,12 +75,24 @@ public class Unit : Photon.MonoBehaviour {
 		GameObject go = GameObject.FindGameObjectWithTag ("Canvas");
 		actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu(Clone)").GetComponent<ActionMenu>();
 
+		healthValue = 50; //TODO read in health value by calculating from level
+		startingHealth = healthValue;
 	}
 
 	void Update ()
 	{
-	
+
 		// unused
+	}
+
+	public bool getDeathStatus()
+	{
+		return isdead;
+	}
+
+	public int getHealth()
+	{
+		return healthValue;
 	}
 
 	public void StartAction(Action action)
@@ -81,10 +113,10 @@ public class Unit : Photon.MonoBehaviour {
 
 	protected IEnumerator WaitForAttack ()
 	{
-		Animator animator = GetComponent<Animator>();
+
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
-		var validMoves = FindPath(new IntegerLocation(transform.position));
+		var validMoves = FindPath(new IntegerLocation(transform.position), attackRange);
 		HighlightMoveArea(validMoves, Color.red);
 		isAttacking = true;
 		
@@ -99,6 +131,8 @@ public class Unit : Photon.MonoBehaviour {
 					Debug.Log("collider tag " + hit.collider.tag + "- transform tag" + hit.collider.transform.name + "- gameobject tag" );
 					if (hit.collider.transform.tag.Equals("Player2"))
 					{
+						//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
+						photonView.RPC("damageEnemy", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
 						Debug.Log("enemy selected" );
 						HighlightMoveArea (validMoves, Color.white);
 						photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
@@ -115,6 +149,36 @@ public class Unit : Photon.MonoBehaviour {
 		photonView.RPC("stopAttackAnimation", PhotonTargets.AllBufferedViaServer);
 
 		
+	}
+
+	[PunRPC] public void damageEnemy(Vector3 enemyPosition)
+	{
+		RaycastHit2D hit = Physics2D.Raycast(enemyPosition, transform.position);
+		if (hit.collider != null) {
+			Unit enemyUnit = hit.collider.gameObject.GetComponent<Unit>();
+			Debug.Log("enemy is being damaged" + gameObject.name);
+			hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
+			enemyUnit.attackerDamage = attackValue;
+			enemyUnit.Life_Down();
+			if (hit.collider.gameObject.GetComponent<Unit>().healthValue <= 0)
+			{
+
+				enemyUnit.isdead = true;
+
+			//	Animator enemyAnimator = hit.collider.gameObject.GetComponent<Animator>();
+			//	StartCoroutine (waitForDeath(enemyAnimator));
+			}
+				
+		}
+			
+	}
+
+	IEnumerator waitForDeath2(Animator enemyAnimator)
+	{
+		Debug.Log(":(");
+		yield return new WaitForSeconds (.5f);
+
+
 	}
 
 	[PunRPC] public void setAttackAnimation()
@@ -143,12 +207,8 @@ public class Unit : Photon.MonoBehaviour {
 	void OnMouseDown()
 	{
 
-		if (!myPlayer.photonView.isMine && !beingAttacked) {
+		if (!myPlayer.photonView.isMine) {
 			Debug.Log ("This is not your unit to move buddy");
-			return;
-		}
-		else if (!myPlayer.photonView.isMine && beingAttacked) {
-			Debug.Log ("ATTACKING");
 			return;
 		}
 
@@ -296,7 +356,7 @@ public class Unit : Photon.MonoBehaviour {
 	{
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
-		var validMoves = FindPath(new IntegerLocation(transform.position));
+		var validMoves = FindPath(new IntegerLocation(transform.position), moves);
 		HighlightMoveArea(validMoves, Color.cyan);
 		moved = false;
 
@@ -354,7 +414,7 @@ public class Unit : Photon.MonoBehaviour {
 	* 		H(a,b) = |a.x - b.x| + |a.y - b.y|
 	* 
 	*/
-	private Dictionary<IntegerLocation, IntegerLocation> FindPath (IntegerLocation start)
+	private Dictionary<IntegerLocation, IntegerLocation> FindPath (IntegerLocation start, int limit)
 	{
 
 		Queue<IntegerLocation> frontier = new Queue<IntegerLocation> ();
@@ -370,7 +430,7 @@ public class Unit : Photon.MonoBehaviour {
 		while (frontier.Count > 0) {
 			var current = frontier.Dequeue();
 
-			if(Mathf.CeilToInt(Vector2.Distance(start.toVector2(),current.toVector2())) >= moves){
+			if(Mathf.CeilToInt(Vector2.Distance(start.toVector2(),current.toVector2())) >= limit){
 				return cameFrom;
 			}
 
@@ -422,5 +482,37 @@ public class Unit : Photon.MonoBehaviour {
 		}
 		return neighbors;
 	}
+
+	//--About_Lifebar--
+	void Life_Down(){
+		float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
+		float divisor = startingHealth / attackerDamage;
+		Lifebar.transform.localScale += new Vector3(-aux_d/divisor, 0, 0);// takes percentage based on damage
+		Vector3 auxve = new Vector3(Lifebar.transform.position.x,Lifebar.transform.position.y,Lifebar.transform.position.z);
+		auxve.x=auxve.x-(aux_c - Lifebar.GetComponent<Renderer>().bounds.size.x)/2;
+		Lifebar.transform.position=auxve;
+	}
+	
+	void Healing_(){
+		if(isdead==false){
+			if(Lifebar.transform.localScale.x>0){
+				float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
+				if(Lifebar.transform.localScale.x +aux_d/8 >= initial_localscale.x){
+					//Debug.Log(initial_localscale + " - " + Lifebar.transform.localScale.x +aux_d/4);
+					Lifebar.transform.localScale = new Vector3(initial_localscale.x, initial_localscale.y, initial_localscale.z);
+				}else{
+					Lifebar.transform.localScale += new Vector3(+aux_d/8, 0, 0);// 1/4 part
+				}
+				Vector3 auxve = new Vector3(Lifebar.transform.position.x,Lifebar.transform.position.y,Lifebar.transform.position.z);
+				auxve.x=auxve.x-(aux_c - Lifebar.GetComponent<Renderer>().bounds.size.x)/2;
+				Lifebar.transform.position=auxve;
+			}
+		}
+		//is_healing=false;
+	}
+	
+	//--
+
+
 
 }

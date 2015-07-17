@@ -42,4 +42,6 @@ MonoBehaviour:
   - makeAttack
   - setAttackAnimation
   - stopAttackAnimation
+  - damageEnemy
+  - updateDeath
   DisableAutoOpenWizard: 1

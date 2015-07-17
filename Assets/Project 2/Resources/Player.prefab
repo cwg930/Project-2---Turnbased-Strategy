@@ -43,8 +43,8 @@ MonoBehaviour:
   ready: 0
   unitIsMoving: 0
   blueKnight: {fileID: 183352, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
-  redKnight: {fileID: 120356, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
-  greenKnight: {fileID: 138638, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
+  redKnight: {fileID: 141592, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
+  greenKnight: {fileID: 142574, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
   bluePaladin: {fileID: 130922, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
   redPaladin: {fileID: 170850, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
   greenPaladin: {fileID: 112538, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
@@ -101,11 +101,11 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: greenKnight
       value: 
-      objectReference: {fileID: 138638, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
+      objectReference: {fileID: 142574, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
     - target: {fileID: 0}
       propertyPath: redKnight
       value: 
-      objectReference: {fileID: 120356, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
+      objectReference: {fileID: 141592, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
     - target: {fileID: 0}
       propertyPath: bluePaladin
       value: 

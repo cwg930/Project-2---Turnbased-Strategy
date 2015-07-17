@@ -8,6 +8,7 @@ public class Knight : Unit {
 
 	private string newDirection;
 	private bool attack;
+	private bool amDead;
 
 	private int cols = BoardManager.columns;
 
@@ -23,6 +24,7 @@ public class Knight : Unit {
 		setColor ();
 		facingRight = true;
 		attack = false;
+		amDead = false;
 		newDirection = "right";
 		if (transform.position.x > (cols / 2))
 			flip ();
@@ -52,10 +54,20 @@ public class Knight : Unit {
 	void Update()
 
 	{
+		if (getDeathStatus () && !amDead) {
+			Lifebar_Dead();
+		}
+
+		if (myPlayer.photonView.isMine)
+			Debug.Log ("my " + transform.name + " has " + getHealth () + "health");
+		else if (!myPlayer.photonView.isMine) {
+			Debug.Log ("enemy " + transform.name + " has " + getHealth () + "health");
+		}
+		//Debug.Log ("my health" + base.healthValue);
 		if (!myPlayer.photonView.isMine)
 			Debug.Log ("This is not your unit");
 
-		Debug.Log ("my direction: "+myDirection+ "new direction: " + newDirection + "move? "+ base.newAnimation);
+//		Debug.Log ("my direction: "+myDirection+ "new direction: " + newDirection + "move? "+ base.newAnimation);
 
 		// myPlayer.turn == myPlayer.myTurn.getTurn() &&
 		if (base.newAnimation && myPlayer.photonView.isMine) { // updates server with new animation
@@ -79,6 +91,26 @@ public class Knight : Unit {
 			
 			
 
+	}
+
+	void Lifebar_Dead(){
+
+		Debug.Log ("you are dead");
+		myPlayer.unitDied ();
+			if((Lifebar.GetComponent<Renderer>().bounds.size.x<=0)||(Lifebar.transform.localScale.x<=0)){
+				Debug.Log("your lifebar is depleted");
+				amDead = true;
+				animator.SetBool("dead",true);
+				this.gameObject.GetComponent<Collider2D>().enabled=false;
+				Destroy(Lifebar_group);
+				StartCoroutine("waitForDeath");
+			}
+	}
+
+	IEnumerator waitForDeath()
+	{
+		yield return new WaitForSeconds (5);
+		Destroy (gameObject);
 	}
 
 	[PunRPC] public void updateAnimation()
