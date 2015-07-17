@@ -9,6 +9,8 @@ public class Knight : Unit {
 	private string newDirection;
 	private bool attack;
 
+	private int cols = BoardManager.columns;
+
 	protected override void Start () {
 
 		base.Start ();
@@ -22,6 +24,8 @@ public class Knight : Unit {
 		facingRight = true;
 		attack = false;
 		newDirection = "right";
+		if (transform.position.x > (cols / 2))
+			flip ();
 
 	}
 
@@ -83,10 +87,7 @@ public class Knight : Unit {
 		if (myDirection.Equals ("right")) {
 			if (!facingRight) // flip
 			{
-				Vector3 theScale = transform.localScale;
-				theScale.x *= -1;
-				transform.localScale = theScale;
-				facingRight = true;
+				flip ();
 			}
 			animator.SetBool ("up", false);
 			animator.SetBool ("down", false);
@@ -95,10 +96,7 @@ public class Knight : Unit {
 		else if (myDirection.Equals ("left")) {
 			if (facingRight)
 			{
-				Vector3 theScale = transform.localScale;
-				theScale.x *= -1;
-				transform.localScale = theScale;
-				facingRight = false;
+				flip ();
 			}
 			animator.SetBool ("down", false);
 			animator.SetBool ("up", false);
@@ -132,6 +130,14 @@ public class Knight : Unit {
 				animator.SetBool ("attack", true);
 			attack = false;
 		}
+	}
+
+	public void flip ()
+	{
+		Vector3 theScale = transform.localScale;
+		theScale.x *= -1;
+		transform.localScale = theScale;
+		facingRight = false;
 	}
 
 }

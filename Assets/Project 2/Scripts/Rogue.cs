@@ -8,6 +8,8 @@ public class Rogue : Unit {
 	
 	private string newDirection;
 	private bool attack;
+
+	private int cols = BoardManager.columns;
 	
 	protected override void Start () {
 		
@@ -22,7 +24,8 @@ public class Rogue : Unit {
 		facingRight = true;
 		attack = false;
 		newDirection = "right";
-		
+		if (transform.position.x > (cols / 2))
+			flip ();
 	}
 	
 	private void setColor()
@@ -132,6 +135,13 @@ public class Rogue : Unit {
 				animator.SetBool ("attack", true);
 			attack = false;
 		}
+	}
+	public void flip ()
+	{
+		Vector3 theScale = transform.localScale;
+		theScale.x *= -1;
+		transform.localScale = theScale;
+		facingRight = false;
 	}
 	
 }

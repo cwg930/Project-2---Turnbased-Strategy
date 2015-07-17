@@ -29,6 +29,9 @@ public class Unit : Photon.MonoBehaviour {
 	private Vector3 syncStartPosition = Vector3.zero;
 	private Vector3 syncEndPosition = Vector3.zero;
 
+	public bool isAttacking;
+	public bool beingAttacked;
+
 
 	protected virtual void Start()
 	{
@@ -36,6 +39,8 @@ public class Unit : Photon.MonoBehaviour {
 		rb2D = GetComponent<Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 		moved = false;
+		isAttacking = false;
+		beingAttacked = false;
 		stopped = true;
 		newAnimation = false;
 		myDirection = directions [0];
@@ -48,7 +53,8 @@ public class Unit : Photon.MonoBehaviour {
 		}
 
 		GameObject go = GameObject.FindGameObjectWithTag ("Canvas");
-		actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu(Clone)").GetComponent<ActionMenu>();
+		actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu").GetComponent<ActionMenu>();
+
 	}
 
 	void Update ()
@@ -64,6 +70,8 @@ public class Unit : Photon.MonoBehaviour {
 			StartCoroutine("WaitForMove");
 			break;
 		case Action.attack:
+			StartCoroutine("WaitForAttack");
+			break;
 		case Action.ability:
 		case Action.wait:
 		default:
@@ -71,23 +79,60 @@ public class Unit : Photon.MonoBehaviour {
 		}
 	}
 
+	protected IEnumerator WaitForAttack ()
+	{
+		//Debug.Log ("waiting for move target");
+		yield return new WaitForSeconds (.1f);
+		var validMoves = FindPath(new IntegerLocation(transform.position));
+		HighlightMoveArea(validMoves, Color.red);
+		isAttacking = true;
+		
+		while (isAttacking) {
+			if (Input.GetMouseButtonDown (0))
+			{
+				Vector3 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				GameObject myEnemyObject = GameObject.FindGameObjectsWithTag("Player")[1];
+				Player myEnemy = myEnemyObject.GetComponent<Player>();
+				for (int i=0; i<6; i++)
+				{
+					if (myEnemy.getUnitatIndex(i).transform.position.Equals(target))
+					{
+						Debug.Log("Attack is made on enemy unit");
+						yield return new WaitForSeconds (1);
+						isAttacking = false;
+					}
+						
+				}
+				//moved = Move(validMoves,new IntegerLocation (target));
+			}	
+			yield return null;
+		}
+		
+		HighlightMoveArea (validMoves, Color.white);
+		
+	}
+
+
 	void OnMouseDown()
 	{
 
-		if (!myPlayer.photonView.isMine) {
+		if (!myPlayer.photonView.isMine && !beingAttacked) {
 			Debug.Log ("This is not your unit to move buddy");
 			return;
 		}
+		else if (!myPlayer.photonView.isMine && beingAttacked) {
+			Debug.Log ("ATTACKING");
+			return;
+		}
+
 
 		if (!myPlayer.ready) // player's team is not set up/ready, do not move selected unit
 			return;
 
 		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn && !myPlayer.unitIsMoving) { // if it is player's unit and is player's turn and a unit is not already moving
-			if ( myPlayer.photonView.isMine ) { //possibly not needed but good to have just in case
+
 //				StartCoroutine ("WaitForMove");
 				actionMenu.ShowMenu(this);
-			}
-
 		}
 			
 		else

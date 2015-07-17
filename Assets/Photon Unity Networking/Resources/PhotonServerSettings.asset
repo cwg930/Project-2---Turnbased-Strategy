@@ -39,4 +39,5 @@ MonoBehaviour:
   - setDirection
   - setStopped
   - setPlayerReady
+  - makeAttack
   DisableAutoOpenWizard: 1
