@@ -41,18 +41,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ready: 0
-  blueKnight: {fileID: 108840, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
-  redKnight: {fileID: 143780, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
-  greenKnight: {fileID: 170362, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
-  bluePaladin: {fileID: 151914, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
-  redPaladin: {fileID: 131298, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
-  greenPaladin: {fileID: 121800, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
-  blueMage: {fileID: 190674, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
-  redMage: {fileID: 107518, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
-  greenMage: {fileID: 126002, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
-  blueRogue: {fileID: 112510, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
-  greenRogue: {fileID: 143752, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
-  redRogue: {fileID: 190700, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
+  unitIsMoving: 0
+  blueKnight: {fileID: 183352, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
+  redKnight: {fileID: 120356, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
+  greenKnight: {fileID: 138638, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
+  bluePaladin: {fileID: 130922, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
+  redPaladin: {fileID: 170850, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
+  greenPaladin: {fileID: 112538, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
+  blueMage: {fileID: 184494, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
+  redMage: {fileID: 172022, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
+  greenMage: {fileID: 175682, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
+  blueRogue: {fileID: 168424, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
+  greenRogue: {fileID: 148070, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
+  redRogue: {fileID: 197734, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
   myTurn: {fileID: 0}
   turn: 0
 --- !u!114 &11461048
@@ -76,7 +77,7 @@ MonoBehaviour:
   ownershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  - {fileID: 467058, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
+  - {fileID: 0}
   - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
@@ -96,39 +97,39 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: blueKnight
       value: 
-      objectReference: {fileID: 108840, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
+      objectReference: {fileID: 183352, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
     - target: {fileID: 0}
       propertyPath: greenKnight
       value: 
-      objectReference: {fileID: 170362, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
+      objectReference: {fileID: 138638, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
     - target: {fileID: 0}
       propertyPath: redKnight
       value: 
-      objectReference: {fileID: 143780, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
+      objectReference: {fileID: 120356, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
     - target: {fileID: 0}
       propertyPath: bluePaladin
       value: 
-      objectReference: {fileID: 151914, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
+      objectReference: {fileID: 130922, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
     - target: {fileID: 0}
       propertyPath: redPaladin
       value: 
-      objectReference: {fileID: 131298, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
+      objectReference: {fileID: 170850, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
     - target: {fileID: 0}
       propertyPath: greenPaladin
       value: 
-      objectReference: {fileID: 121800, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
+      objectReference: {fileID: 112538, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
     - target: {fileID: 0}
       propertyPath: redMage
       value: 
-      objectReference: {fileID: 107518, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
+      objectReference: {fileID: 172022, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
     - target: {fileID: 0}
       propertyPath: greenMage
       value: 
-      objectReference: {fileID: 126002, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
+      objectReference: {fileID: 175682, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
     - target: {fileID: 0}
       propertyPath: blueMage
       value: 
-      objectReference: {fileID: 190674, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
+      objectReference: {fileID: 184494, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
     - target: {fileID: 0}
       propertyPath: ObservedComponents.Array.data[1]
       value: 
@@ -140,15 +141,15 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: blueRogue
       value: 
-      objectReference: {fileID: 112510, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
+      objectReference: {fileID: 168424, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
     - target: {fileID: 0}
       propertyPath: greenRogue
       value: 
-      objectReference: {fileID: 143752, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
+      objectReference: {fileID: 148070, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
     - target: {fileID: 0}
       propertyPath: redRogue
       value: 
-      objectReference: {fileID: 190700, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
+      objectReference: {fileID: 197734, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 107430}

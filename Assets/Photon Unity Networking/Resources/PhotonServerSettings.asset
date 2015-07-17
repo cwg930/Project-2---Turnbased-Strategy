@@ -15,7 +15,7 @@ MonoBehaviour:
   Protocol: 0
   ServerAddress: 
   ServerPort: 5055
-  AppID: c6692e62-e34e-4d0f-b68e-8c540405cb97
+  AppID: 2da04004-f28a-4b2d-bda5-e9d0c4317edb
   PreferredRegion: 1
   EnabledRegions: -1
   RpcList:
@@ -40,4 +40,6 @@ MonoBehaviour:
   - setStopped
   - setPlayerReady
   - makeAttack
+  - setAttackAnimation
+  - stopAttackAnimation
   DisableAutoOpenWizard: 1

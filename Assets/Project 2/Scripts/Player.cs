@@ -58,7 +58,7 @@ public class Player : Photon.MonoBehaviour {
 	{
 		if (turn > 2)
 			return;
-		if (!ready && myTurn.getTurn () == turn && photonView.isMine) {
+		if (!ready && myTurn.getTurn () == 0 && photonView.isMine && (turn == 1 || turn == 2)) {
 			if (GUI.Button (new Rect (10, 120, 150, 50), "Add Knight")) {
 				SelectKnight();
 			}
@@ -87,12 +87,26 @@ public class Player : Photon.MonoBehaviour {
 			GUI.Label(new Rect(200,10, 100, 30), "Place your Unit", myStyle);
 		}
 
-		if (myTurn.getTurn () == turn && photonView.isMine) {
+
+
+		if (photonView.isMine && myTurn.getTurn () == 0 && !ready) {
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 36;
+			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Please Add a Unit", myStyle);
+		} 
+		else if (photonView.isMine && myTurn.getTurn () == 0 && ready) {
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 36;
+			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Waiting for Opponent...", myStyle);
+		}
+
+		else if (myTurn.getTurn () == turn && photonView.isMine) {
 			GUIStyle myStyle = new GUIStyle ();
 			myStyle.fontSize = 36;
 			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "It is your turn", myStyle);
+			GUI.Label (new Rect (Screen.width/2, 0, 200, 40), "You have "+myTurn.movesPerTurn+ " move(s) left", myStyle);
 		} 
-		if (myTurn.getTurn () != turn && photonView.isMine){
+		else if (myTurn.getTurn () != turn && photonView.isMine){
 			GUIStyle myStyle = new GUIStyle ();
 			myStyle.fontSize = 36;
 			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "It is not your turn", myStyle);
@@ -172,27 +186,27 @@ public class Player : Photon.MonoBehaviour {
 	public void SelectKnight() 
 	{
 		unitChoice = 1;
-		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+		if (selectedLocation && myTurn.getTurn() == 0 && photonView.isMine)
 			StartCoroutine ("WaitForClick");
 	}
 
 	public void SelectPaladin() 
 	{
 		unitChoice = 2;
-		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+		if (selectedLocation && myTurn.getTurn() == 0 && photonView.isMine)
 			StartCoroutine ("WaitForClick");
 	}
 
 	public void SelectMage() 
 	{
 		unitChoice = 3;
-		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+		if (selectedLocation && myTurn.getTurn() == 0 && photonView.isMine)
 			StartCoroutine ("WaitForClick");
 	}
 	public void SelectRogue() 
 	{
 		unitChoice = 4;
-		if (selectedLocation && myTurn.getTurn() == turn && photonView.isMine)
+		if (selectedLocation && myTurn.getTurn() == 0 && photonView.isMine)
 			StartCoroutine ("WaitForClick");
 	}
 
@@ -205,6 +219,7 @@ public class Player : Photon.MonoBehaviour {
 	[PunRPC] public void setPlayerReady()
 	{
 		ready = true;
+		myTurn.playerReady ();
 	}
 
 	public GameObject getUnitatIndex(int i)

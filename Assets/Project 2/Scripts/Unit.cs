@@ -53,7 +53,7 @@ public class Unit : Photon.MonoBehaviour {
 		}
 
 		GameObject go = GameObject.FindGameObjectWithTag ("Canvas");
-		actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu").GetComponent<ActionMenu>();
+		actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu(Clone)").GetComponent<ActionMenu>();
 
 	}
 
@@ -81,6 +81,7 @@ public class Unit : Photon.MonoBehaviour {
 
 	protected IEnumerator WaitForAttack ()
 	{
+		Animator animator = GetComponent<Animator>();
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
 		var validMoves = FindPath(new IntegerLocation(transform.position));
@@ -90,26 +91,52 @@ public class Unit : Photon.MonoBehaviour {
 		while (isAttacking) {
 			if (Input.GetMouseButtonDown (0))
 			{
-				Vector3 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				GameObject myEnemyObject = GameObject.FindGameObjectsWithTag("Player")[1];
-				Player myEnemy = myEnemyObject.GetComponent<Player>();
-				for (int i=0; i<6; i++)
+				Vector3 pos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+				RaycastHit2D hit = Physics2D.Raycast(pos, transform.position);
+
+				if (hit.collider != null)
 				{
-					if (myEnemy.getUnitatIndex(i).transform.position.Equals(target))
+					Debug.Log("collider tag " + hit.collider.tag + "- transform tag" + hit.collider.transform.name + "- gameobject tag" );
+					if (hit.collider.transform.tag.Equals("Player2"))
 					{
-						Debug.Log("Attack is made on enemy unit");
-						yield return new WaitForSeconds (1);
-						isAttacking = false;
+						Debug.Log("enemy selected" );
+						HighlightMoveArea (validMoves, Color.white);
+						photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
+
 					}
-						
+					isAttacking = false;
 				}
+
 				//moved = Move(validMoves,new IntegerLocation (target));
 			}	
 			yield return null;
 		}
+		yield return new WaitForSeconds (1);
+		photonView.RPC("stopAttackAnimation", PhotonTargets.AllBufferedViaServer);
+
 		
-		HighlightMoveArea (validMoves, Color.white);
-		
+	}
+
+	[PunRPC] public void setAttackAnimation()
+	{
+		Animator animator = GetComponent<Animator> ();
+		if (myDirection.Equals ("down")) {
+			animator.SetBool ("attack", true);
+			animator.SetBool ("down_attack", true);
+		}
+			
+		else if (myDirection.Equals("up"))
+			animator.SetBool ("up_attack", true);
+		else
+			animator.SetBool ("attack", true);
+	}
+
+	[PunRPC] public void stopAttackAnimation()
+	{
+		Animator animator = GetComponent<Animator> ();
+		animator.SetBool ("attack", false);
+		animator.SetBool ("down_attack", false);
+		animator.SetBool ("up_attack", false);
 	}
 
 
