@@ -10,6 +10,7 @@ TagManager:
   - Floor
   - Canvas
   - UIActionMenu
+  - TurnManager
   layers:
   - Default
   - TransparentFX

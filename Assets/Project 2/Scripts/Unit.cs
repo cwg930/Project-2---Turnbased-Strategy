@@ -6,12 +6,14 @@ public class Unit : Photon.MonoBehaviour {
 
 	public float moveTime = 1f;
 	public int moves;
+	public int attackRange = 1;
 	public LayerMask blockingLayer;
 	public bool newAnimation;
 
 	private ActionMenu actionMenu;
 	private Rigidbody2D rb2D;
 	private bool moved;
+	private bool attacked;
 	public Player myPlayer;
 
 	protected CircleCollider2D circleCollider;
@@ -64,6 +66,8 @@ public class Unit : Photon.MonoBehaviour {
 			StartCoroutine("WaitForMove");
 			break;
 		case Action.attack:
+			StartCoroutine("WaitForAttack");
+			break;
 		case Action.ability:
 		case Action.wait:
 		default:
@@ -131,6 +135,14 @@ public class Unit : Photon.MonoBehaviour {
 		//photonView.RPC("makeSmoothMovement", PhotonTargets.MasterClient, path);
 
 		return true;
+	}
+
+	protected bool Attack(Dictionary<IntegerLocation, Unit> targets, IntegerLocation targetLoc)
+	{
+		if (targets.ContainsKey (targetLoc)) {
+			return true;
+		} else
+			return false;
 	}
 
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
@@ -241,24 +253,25 @@ public class Unit : Photon.MonoBehaviour {
 		
 	}
 
-/*	protected IEnumerator WaitForAttack()
+	protected IEnumerator WaitForAttack()
 	{
 		yield return new WaitForSeconds (.1f);
-		var validTargets = FindTargets(attackRange);
-		HighlightMoveArea(validMoves, Color.red);
-		
-		while (!moving) {
+		var validTargets = FindTargets(attackRange, true);
+		HighlightTargets(validTargets, Color.red);
+		attacked = false;
+
+		while (!attacked) {
 			if (Input.GetMouseButtonDown (0))
 			{
 				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				//moving = Move(validMoves,new IntegerLocation (target));
+				attacked = Attack(validTargets,new IntegerLocation (target));
 			}	
 			yield return null;
 		}
 		
-		HighlightMoveArea (validMoves, Color.white);
+		HighlightTargets (validTargets, Color.white);
 	}
-*/
+
 	/*	--may not be needed anymore
 	 *  calculates the area of the circle that corresponds to
 		the unit's movement radius 
@@ -351,4 +364,39 @@ public class Unit : Photon.MonoBehaviour {
 		return neighbors;
 	}
 
+	private Dictionary<IntegerLocation,Unit> FindTargets(int range, bool hostile)
+	{
+		GameObject turnManagerObject = GameObject.FindGameObjectWithTag ("TurnManager");
+		TurnManager turnManagerScript = (TurnManager)turnManagerObject.GetComponent<TurnManager> ();
+		ArrayList units = new ArrayList ();
+		Dictionary<IntegerLocation, Unit> targets = new Dictionary<IntegerLocation, Unit> ();
+		//Get enemies for attacks, friends for heals
+		if (myPlayer.photonView.isMine && hostile || myPlayer.tag == "Player1" && !hostile) {
+			foreach (GameObject go in turnManagerScript.player1Team) {
+				units.Add ((Unit)go.GetComponent<Unit> ());
+			}
+		} else if (myPlayer.tag == "Player1" && hostile || myPlayer.tag == "Player2" && !hostile) {
+			foreach (GameObject go in turnManagerScript.player2Team) {
+				units.Add ((Unit)go.GetComponent<Unit> ());
+			}
+		foreach (Unit u in units){
+			if(Vector2.Distance(transform.position,u.transform.position) <= range)
+			{
+				targets.Add(new IntegerLocation(u.transform.position),u);
+			}
+		}
+		return targets;
+	}
+
+	void HighlightTargets(Dictionary<IntegerLocation, Unit> targets, Color color)
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+		foreach(GameObject loc in board)
+		{
+			if(targets.ContainsKey(new IntegerLocation(loc.transform.position))){
+				var img = loc.GetComponent<SpriteRenderer>();
+				img.color = color;
+			}
+		}
+	}
 }
