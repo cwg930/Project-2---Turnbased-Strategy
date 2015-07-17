@@ -13,18 +13,19 @@ public class Player : Photon.MonoBehaviour {
 	public bool ready; // checks to see if you have spawned all units and are ready to start the game
 	private int unitChoice; // keeps track of which unit is chosen
 	public bool unitIsMoving;
+	public bool isActionMenuActive;
 
 	public GameObject blueKnight;
-	public GameObject redKnight;
 	public GameObject greenKnight;
+	public GameObject redKnight;
 
 	public GameObject bluePaladin;
-	public GameObject redPaladin;
 	public GameObject greenPaladin;
+	public GameObject redPaladin;
 
 	public GameObject blueMage;
-	public GameObject redMage;
 	public GameObject greenMage;
+	public GameObject redMage;
 
 	public GameObject blueRogue;
 	public GameObject greenRogue;
@@ -60,6 +61,7 @@ public class Player : Photon.MonoBehaviour {
 		lostGame = false;
 		StartingUnitCount = 0;
 		DeadUnitCount = 0;
+		isActionMenuActive = false;
 	}
 
 	void OnGUI()

@@ -25,19 +25,19 @@ public class ActionMenu : MonoBehaviour {
 	public void OnMoveClicked()
 	{
 		actingUnit.StartAction (Unit.Action.move);
-		gameObject.SetActive (false);
+		//gameObject.SetActive (false);
 	}
 
 	public void OnAttackClicked()
 	{
 		actingUnit.StartAction (Unit.Action.attack);
-		gameObject.SetActive (false);
+		//gameObject.SetActive (false);
 	}
 
 	public void OnAbilityClicked()
 	{
 		actingUnit.StartAction (Unit.Action.ability);
-		gameObject.SetActive (false);
+		//gameObject.SetActive (false);
 	}
 
 	public void OnWaitClicked()

@@ -15,6 +15,10 @@ public class Unit : Photon.MonoBehaviour {
 	private bool moved;
 	public Player myPlayer;
 
+	private bool hasMoved;
+	private bool hasAttacked;
+
+
 	protected CircleCollider2D circleCollider;
 	protected float inverseMoveTime;
 	public string myDirection;
@@ -60,8 +64,11 @@ public class Unit : Photon.MonoBehaviour {
 		moved = false;
 		isAttacking = false;
 		attackerDamage = 0;
+		hasMoved = false;
+		hasAttacked = false;
 		isdead = false;
 		stopped = true;
+
 		newAnimation = false;
 		myDirection = directions [0];
 		myPlayer = this.GetComponentInParent<Player> (); // gets the photon view of parent player class
@@ -106,6 +113,11 @@ public class Unit : Photon.MonoBehaviour {
 			break;
 		case Action.ability:
 		case Action.wait:
+			myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
+			hasMoved = false;
+			hasAttacked = false;
+			myPlayer.isActionMenuActive = false;
+			break;
 		default:
 			break;
 		}
@@ -119,14 +131,31 @@ public class Unit : Photon.MonoBehaviour {
 		var validMoves = FindPath(new IntegerLocation(transform.position), attackRange);
 		HighlightMoveArea(validMoves, Color.red);
 		isAttacking = true;
+
+		if (hasAttacked)
+		{
+			Debug.Log("you have already attacked this turn");
+			HighlightMoveArea (validMoves, Color.white);
+			isAttacking = false;
+		}
 		
 		while (isAttacking) {
 			if (Input.GetMouseButtonDown (0))
 			{
 				Vector3 pos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 				RaycastHit2D hit = Physics2D.Raycast(pos, transform.position);
+				int distance = (int)Vector3.Distance(transform.position,pos);
+				if (distance > attackRange)
+				{
+					Debug.Log("this attack is too far" + distance);
+					HighlightMoveArea (validMoves, Color.white);
+					isAttacking = false;
+					yield return null;
+				}
 
-				if (hit.collider != null)
+
+
+				else if (hit.collider != null && attackRange >= distance)
 				{
 					Debug.Log("collider tag " + hit.collider.tag + "- transform tag" + hit.collider.transform.name + "- gameobject tag" );
 					if (hit.collider.transform.tag.Equals("Player2"))
@@ -136,6 +165,7 @@ public class Unit : Photon.MonoBehaviour {
 						Debug.Log("enemy selected" );
 						HighlightMoveArea (validMoves, Color.white);
 						photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
+						hasAttacked = true;
 
 					}
 					isAttacking = false;
@@ -150,6 +180,7 @@ public class Unit : Photon.MonoBehaviour {
 
 		
 	}
+
 
 	[PunRPC] public void damageEnemy(Vector3 enemyPosition)
 	{
@@ -216,10 +247,15 @@ public class Unit : Photon.MonoBehaviour {
 		if (!myPlayer.ready) // player's team is not set up/ready, do not move selected unit
 			return;
 
-		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn && !myPlayer.unitIsMoving) { // if it is player's unit and is player's turn and a unit is not already moving
+		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && myPlayer.isActionMenuActive) {
+			Debug.Log("You cannot select another unit until you are done with this one");
+		}
+
+		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.isActionMenuActive) { // if it is player's unit and is player's turn and a unit is not already moving
 
 //				StartCoroutine ("WaitForMove");
 				actionMenu.ShowMenu(this);
+			myPlayer.isActionMenuActive = true;
 		}
 			
 		else
@@ -303,7 +339,7 @@ public class Unit : Photon.MonoBehaviour {
 				yield return null;
 			}
 		}
-		myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
+		hasMoved = true;
 		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, true); // update animation on server to stop animating when stopped
 		yield return new WaitForSeconds(.1f);
 		newAnimation = false;
@@ -359,10 +395,15 @@ public class Unit : Photon.MonoBehaviour {
 		var validMoves = FindPath(new IntegerLocation(transform.position), moves);
 		HighlightMoveArea(validMoves, Color.cyan);
 		moved = false;
+		if (hasMoved) {
+			moved = true;
+			Debug.Log("you have already moved this turn");
+		}
 
 		while (!moved) {
 			if (Input.GetMouseButtonDown (0))
 			{
+
 				var target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 				moved = Move(validMoves,new IntegerLocation (target));
 			}	
