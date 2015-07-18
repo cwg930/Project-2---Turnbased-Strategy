@@ -4,6 +4,7 @@ using System.Collections;
 public class GameManager : MonoBehaviour {
 
 	public static GameManager instance = null;
+	public GameObject UIManager;
 
 	private BoardManager boardScript;
 	// Use this for initialization
@@ -24,10 +25,12 @@ public class GameManager : MonoBehaviour {
 	void InitGame()
 	{
 		boardScript.SetupScene ();
+
+		Instantiate (UIManager);
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	/*void Update () {
 	
-	}
+	} */
 }

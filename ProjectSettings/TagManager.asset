@@ -4,7 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Player
+  - Player1
+  - Player2
+  - Wall
+  - Floor
+  - Canvas
+  - UIActionMenu
   layers:
   - Default
   - TransparentFX
@@ -15,7 +20,7 @@ TagManager:
   - 
   - 
   - BlockingLayer
-  - 
+  - Walkable
   - 
   - 
   - 

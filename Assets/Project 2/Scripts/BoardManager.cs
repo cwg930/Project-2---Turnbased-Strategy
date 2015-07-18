@@ -4,8 +4,8 @@ using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour {
 
-	public int columns = 15;
-	public int rows = 10;
+	public static int columns = 15;
+	public static int rows = 10;
 
 	public GameObject[] floorTiles;
 	public GameObject leftWall;
@@ -52,6 +52,7 @@ public class BoardManager : MonoBehaviour {
 				}
 
 				GameObject instance = Instantiate(toInstantiate,new Vector3(x,y,0f),Quaternion.identity) as GameObject;
+
 
 				instance.transform.SetParent(boardHolder);
 

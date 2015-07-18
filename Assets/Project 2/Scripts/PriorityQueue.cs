@@ -39,6 +39,9 @@ public class PriorityQueue<T>
 		heap [numItems] = new Tuple<T,int>(element, priority);
 		PercolateUp (numItems);
 		numItems++;
+		if (numItems >= heap.Length) {
+			Resize();
+		}
 	}
 	/* Remove the head element then
 	 * 	rearrange the heap
@@ -46,9 +49,10 @@ public class PriorityQueue<T>
 	 */
 	public T Dequeue()
 	{
-		Tuple<T,int> top = heap [0];
-		heap [0] = heap [numItems];
+		var top = heap [0];
 		numItems--;
+		heap [0] = heap [numItems];
+		heap [numItems] = null;
 		PercolateDown ();
 		return top.first;
 	}
@@ -59,7 +63,7 @@ public class PriorityQueue<T>
 	 */
 	public Tuple<T,int> DequeueWithPriority()
 	{
-		Tuple<T,int> top = heap [0];
+		var top = heap [0];
 		heap [0] = heap [numItems];
 		numItems--;
 		PercolateDown ();
@@ -77,21 +81,21 @@ public class PriorityQueue<T>
 		
 		while (true) {
 			u = v;
-			if(2*u + 1 <= numItems)
+			if(2*u + 1 < numItems)
 			{
 				if(heap[u].second >= heap[2*u].second)
 					v = 2*u;
 				if(heap[v].second >= heap[2*u+1].second)
 					v = 2*u+1;
 			}
-			else if (2*u <= numItems)
+			else if (2*u < numItems)
 			{
 				if(heap[u].second >= heap[2*u].second)
 					v = 2*u;
 			}
 			if (u != v)
 			{
-				Tuple<T, int> temp = heap[u];
+				var temp = heap[u];
 				heap[u] = heap[v];
 				heap[v] = temp;
 			}
@@ -102,16 +106,28 @@ public class PriorityQueue<T>
 		}
 	}
 	/*	Percolates the node at <index> up to it's 
-	 *	proper position recursively  
+	 *	proper position   
 	 */
 	private void PercolateUp(int index)
 	{
-		int parent = index / 2;
-		if (heap [index].second < heap [parent].second) {
-			Tuple<T, int> temp = heap[parent];
-			heap[parent] = heap[index];
-			heap[index] = temp;
-			PercolateUp(parent);
+		int m = index;
+		while (m>1) {
+			if(heap[m].second < heap[m == 2 ? 0:m/2].second){
+				var temp = heap[m/2];
+				heap[m/2] = heap[m];
+				heap[m] = temp;
+				m = m/2;
+			}
+			else{
+				return;
+			}
 		}
+	}
+
+	private void Resize()
+	{
+		Tuple<T, int>[] newHeap = new Tuple<T, int>[heap.Length * 2];
+		heap.CopyTo (newHeap,0);
+		heap = newHeap;
 	}
 }
