@@ -141,14 +141,14 @@ public class Unit : Photon.MonoBehaviour {
 
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
-		var validMoves = FindPath(new IntegerLocation(transform.position), attackRange);
-		HighlightMoveArea(validMoves, Color.red);
+		var validTargets = FindTargets(attackRange, true);
+		HighlightTargets(validTargets, Color.red);
 		isAttacking = true;
 
 		if (hasAttacked)
 		{
 			Debug.Log("you have already attacked this turn");
-			HighlightMoveArea (validMoves, Color.white);
+			HighlightTargets (validTargets, Color.white);
 			isAttacking = false;
 		}
 		
@@ -161,7 +161,7 @@ public class Unit : Photon.MonoBehaviour {
 				if (distance > attackRange)
 				{
 					Debug.Log("this attack is too far" + distance);
-					HighlightMoveArea (validMoves, Color.white);
+					HighlightTargets (validTargets, Color.white);
 					isAttacking = false;
 					yield return null;
 				}
@@ -174,14 +174,14 @@ public class Unit : Photon.MonoBehaviour {
 					//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
 					photonView.RPC("damageEnemy", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
 					Debug.Log("enemy selected" );
-					HighlightMoveArea (validMoves, Color.white);
+					HighlightTargets (validTargets, Color.white);
 					photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
 					hasAttacked = true;
 					isAttacking = false;
 				}
 				else{
 					Debug.Log("you have clicked on something within your range that is not an enemy unit");
-					HighlightMoveArea (validMoves, Color.white);
+					HighlightTargets (validTargets, Color.white);
 				}
 
 				//moved = Move(validMoves,new IntegerLocation (target));
@@ -528,6 +528,44 @@ public class Unit : Photon.MonoBehaviour {
 			}
 		}
 		return neighbors;
+	}
+
+	private Dictionary<IntegerLocation,Unit> FindTargets(int range, bool hostile)
+	{
+		GameObject[] unitObjects;
+		if (hostile)
+			unitObjects = GameObject.FindGameObjectsWithTag ("Player2");
+		else
+			unitObjects = GameObject.FindGameObjectsWithTag("Player1");
+		
+		ArrayList units = new ArrayList ();
+		foreach (GameObject go in unitObjects) {
+			units.Add((Unit)go.GetComponent<Unit>());
+		}
+		
+		
+		Dictionary<IntegerLocation, Unit> targets = new Dictionary<IntegerLocation, Unit> ();
+		//Get enemies for attacks, friends for heals
+		
+		foreach (Unit u in units){
+			if(Mathf.CeilToInt(Vector2.Distance(transform.position,u.transform.position)) <= range)
+			{
+				targets.Add(new IntegerLocation(u.transform.position),u);
+			}
+		}
+		return targets;
+	}
+	
+	void HighlightTargets(Dictionary<IntegerLocation, Unit> targets, Color color)
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+		foreach(GameObject loc in board)
+		{
+			if(targets.ContainsKey(new IntegerLocation(loc.transform.position))){
+				var img = loc.GetComponent<SpriteRenderer>();
+				img.color = color;
+			}
+		}
 	}
 
 	//--About_Lifebar--
