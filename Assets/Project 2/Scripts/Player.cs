@@ -69,23 +69,25 @@ public class Player : Photon.MonoBehaviour {
 		if (turn > 2)
 			return;
 		if (!ready && myTurn.getTurn () == 0 && photonView.isMine && (turn == 1 || turn == 2)) {
-			if (GUI.Button (new Rect (10, 120, 150, 50), "Add Knight")) {
+			int screenHeight = Screen.height - 110; // accounts for leave button
+			int buttonHeight = screenHeight/5;
+			if (GUI.Button (new Rect (10,Screen.height - screenHeight, 150, buttonHeight), "Add Knight")) {
 				SelectKnight();
 			}
 			
-			if (GUI.Button (new Rect (10, 190, 150, 50), "Add Paladin")) {
+			if (GUI.Button (new Rect (10,Screen.height- screenHeight + buttonHeight, 150, buttonHeight), "Add Paladin")) {
 				SelectPaladin();
 			}
 			
-			if (GUI.Button (new Rect (10, 260, 150, 50), "Add Mage")) {
+			if (GUI.Button (new Rect (10, Screen.height - screenHeight + buttonHeight*2, 150, buttonHeight), "Add Mage")) {
 				SelectMage();
 			}
 
-			if (GUI.Button (new Rect (10, 330, 150, 50), "Add Rogue")) {
+			if (GUI.Button (new Rect (10, Screen.height - screenHeight + buttonHeight*3, 150, buttonHeight), "Add Rogue")) {
 				SelectRogue();
 			}
 			
-			if (GUI.Button (new Rect (10, 400, 150, 50), "Ready")) {
+			if (GUI.Button (new Rect (10, Screen.height - screenHeight + buttonHeight*4, 150, buttonHeight), "Ready")) {
 				PlayerReady();
 			}
 		}

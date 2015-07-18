@@ -83,10 +83,10 @@ public class NetworkManager : Photon.MonoBehaviour {
 		switch (networkState) {
 			case NetworkStates.NotLoggedIn:
 			{
-				if (GUI.Button (new Rect (10, 10, 150, 30), "Login to Facebook")) {
+				if (GUI.Button (new Rect (10, 10, 150, 70), "Login to Facebook")) {
 					FB.Login ("email", LoginCallback);
 				}
-				if (GUI.Button(new Rect (10, 100, 300, 50), "Login")) { // TODO connect normal login to our database
+				if (GUI.Button(new Rect (10, 100, 300, 70), "Login")) { // TODO connect normal login to our database
 					PhotonNetwork.playerName = "Player " + (int)(Random.value*100);
 					PhotonNetwork.ConnectUsingSettings("1.0");
 				}
@@ -95,9 +95,9 @@ public class NetworkManager : Photon.MonoBehaviour {
 			case NetworkStates.InLobby:
 			{
 				inRoom = false;
-				stringToEdit = GUI.TextField (new Rect (10, 10, 200, 20), stringToEdit);
+				stringToEdit = GUI.TextField (new Rect (10, 10, 200, 70), stringToEdit);
 			// Create game button
-				if (GUI.Button (new Rect (10, 50, 150, 50), "Create Game"))
+				if (GUI.Button (new Rect (10, 100, 150, 70), "Create Game"))
 				{
 				Debug.Log("room name ="+ stringToEdit);
 					PhotonNetwork.CreateRoom (stringToEdit, true, true, 5);
@@ -107,7 +107,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 				// Join existing game button
 				if (roomsList != null) {
 					for (int i = 0; i < roomsList.Length; i++) {
-						if (GUI.Button (new Rect (10, 110 + (60 * i), 150, 50), "Join " + roomsList [i].name))
+						if (GUI.Button (new Rect (10, 110 + (80 * i), 150, 70), "Join " + roomsList [i].name))
 							PhotonNetwork.JoinRoom (roomsList [i].name);
 					}
 				}
@@ -124,7 +124,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 					GUILayout.Label(player.ToString());
 				}
 				
-				if (GUI.Button(new Rect (10, 70, 150, 30), "Leave"))
+				if (GUI.Button(new Rect (10, 20, 150, 70), "Leave"))
 				{
 					PhotonNetwork.LeaveRoom();
 				}
@@ -139,7 +139,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 		}
 		
 		if (PhotonNetwork.connected && !inRoom) {
-			if (GUI.Button(new Rect(10, Screen.height - 30, 150, 30), "Logout")) 
+			if (GUI.Button(new Rect(10, Screen.height - 90, 150, 70), "Logout")) 
 			{
 				if (FB.IsLoggedIn)
 					FB.Logout();
