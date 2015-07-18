@@ -107,7 +107,7 @@ public class NetworkManager : Photon.MonoBehaviour {
 				// Join existing game button
 				if (roomsList != null) {
 					for (int i = 0; i < roomsList.Length; i++) {
-						if (GUI.Button (new Rect (10, 110 + (80 * i), 150, 70), "Join " + roomsList [i].name))
+						if (GUI.Button (new Rect (10, 180 + (80 * i), 150, 70), "Join " + roomsList [i].name))
 							PhotonNetwork.JoinRoom (roomsList [i].name);
 					}
 				}
