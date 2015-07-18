@@ -264,7 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTime: .200000003
-  moves: 5
+  moves: 6
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -274,7 +274,8 @@ MonoBehaviour:
   myDirection: 
   stopped: 0
   isAttacking: 0
-  attackValue: 20
+  attackValue: 4
+  healthValue: 20
   Lifebar: {fileID: 185690}
   Lifebar_group: {fileID: 156718}
 --- !u!114 &11462420
@@ -471,6 +472,14 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: attackValue
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: moves
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: healthValue
       value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []

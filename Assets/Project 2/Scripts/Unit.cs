@@ -39,7 +39,7 @@ public class Unit : Photon.MonoBehaviour {
 	private int attackerDamage;
 
 	public int attackValue;
-	private int healthValue;
+	public int healthValue;
 	private int startingHealth;
 
 	//About progress-bar --
@@ -82,7 +82,7 @@ public class Unit : Photon.MonoBehaviour {
 		GameObject go = GameObject.FindGameObjectWithTag ("Canvas");
 		actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu(Clone)").GetComponent<ActionMenu>();
 
-		healthValue = 50; //TODO read in health value by calculating from level
+		//healthValue = 50; //TODO read in health value by calculating from level
 		startingHealth = healthValue;
 	}
 
