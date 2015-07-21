@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.UI; 
+
 using System.Collections;
 using Facebook;
 
@@ -9,8 +11,16 @@ public class NetworkManager : MonoBehaviour {
 	public GameObject playerPrefab;
 	public GameObject UnitManager;
 
+	public GameObject loginFacebook;
+	public GameObject loginNormal;
+	public GameObject CreateGame;
+	public GameObject Logout;
+	public GameObject Leave;
+
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
+
+
 
 	enum NetworkStates {
 		NotLoggedIn,
@@ -25,6 +35,13 @@ public class NetworkManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		FB.Init (SetInit, OnHideUnity);
+
+		loginFacebook = GameObject.Find("Login");
+		loginNormal = GameObject.Find ("LoginNormal");
+		CreateGame = GameObject.Find ("Create Game");
+		Logout = GameObject.Find("Logout");
+		Leave = GameObject.Find ("Leave");
+
 		networkState = NetworkStates.NotLoggedIn;
 	}
 	
@@ -81,20 +98,21 @@ public class NetworkManager : MonoBehaviour {
 		switch (networkState) {
 			case NetworkStates.NotLoggedIn:
 			{
-				if (GUI.Button (new Rect (10, 10, 150, 30), "Login to Facebook")) {
-					FB.Login ("email", LoginCallback);
-				}
-				if (GUI.Button(new Rect (10, 50, 150, 30), "Login")) {
-					PhotonNetwork.playerName = "Player " + (int)(Random.value*100);
-					PhotonNetwork.ConnectUsingSettings("1.0");
-				}
+				loginFacebook.SetActive(true);				
+				loginNormal.SetActive(true);
+				Logout.SetActive(false);
+				CreateGame.SetActive(false);
+				Leave.SetActive(false);
+
 				break;
 			}
 			case NetworkStates.InLobby:
 			{
-				// Create game button
-				if (GUI.Button (new Rect (10, 30, 150, 30), "Create Game"))
-					PhotonNetwork.CreateRoom (roomName, true, true, 5);
+				loginFacebook.SetActive(false);				
+				loginNormal.SetActive(false);
+				Logout.SetActive(true);
+				CreateGame.SetActive (true);
+				Leave.SetActive(false);
 
 				// Join existing game button
 				if (roomsList != null) {
@@ -107,6 +125,13 @@ public class NetworkManager : MonoBehaviour {
 			}
 			case NetworkStates.InRoom:
 			{
+
+				loginFacebook.SetActive(false);				
+				loginNormal.SetActive(false);
+				CreateGame.SetActive(false);
+				Logout.SetActive(false);
+				Leave.SetActive(true);	
+
 				GUILayout.Label("Your name: " + PhotonNetwork.playerName);
 				GUILayout.Label(PhotonNetwork.playerList.Length + " players in this room.");
 				GUILayout.Label("The others are:");
@@ -114,27 +139,26 @@ public class NetworkManager : MonoBehaviour {
 				{
 					GUILayout.Label(player.ToString());
 				}
-				
-				if (GUI.Button(new Rect (10, 70, 150, 30), "Leave"))
-				{
-					PhotonNetwork.LeaveRoom();
-				}
 				break;
 			}
 			case NetworkStates.Unknown:
 			{
+
+				loginFacebook.SetActive(false);				
+				loginNormal.SetActive(false);
+				CreateGame.SetActive(false);
+				Logout.SetActive(false);
+				Leave.SetActive(false);
+
 				GUILayout.Label("Unknown network state!");
 				break;
 			}
 		}
 		
 		if (PhotonNetwork.connected) {
-			if (GUI.Button(new Rect(10, 200, 150, 30), "Logout")) 
-			{
-				if (FB.IsLoggedIn)
-					FB.Logout();
-				PhotonNetwork.Disconnect();
-			}
+			loginFacebook.SetActive(false);				
+			loginNormal.SetActive(false);
+
 		}
 	}
 	
@@ -165,5 +189,33 @@ public class NetworkManager : MonoBehaviour {
 		//Debug.Log (myTeam.GetType);
 
 		//PhotonNetwork.Instantiate(playerPrefab.name, Vector3.right * Random.Range(0,cols) + Vector3.up * Random.Range(0,rows), Quaternion.identity, 0);
+	}
+
+	 public void loginFBClicked()
+     {
+         FB.Login ("email", LoginCallback);
+     }
+
+	public void loginNormalClicked()
+	{
+		PhotonNetwork.playerName = "Player " + (int)(Random.value*100);
+		PhotonNetwork.ConnectUsingSettings("1.0");
+	}
+
+	public void CreateGameClicked()
+	{
+		PhotonNetwork.CreateRoom (roomName, true, true, 5);
+	}
+
+	public void LogoutClicked()
+	{
+		if (FB.IsLoggedIn)
+			FB.Logout();
+		PhotonNetwork.Disconnect();
+	}
+
+	public void LeaveClicked()
+	{
+		PhotonNetwork.LeaveRoom();
 	}
 }
