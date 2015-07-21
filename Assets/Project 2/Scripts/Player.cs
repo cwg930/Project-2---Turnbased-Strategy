@@ -9,6 +9,9 @@ public class Player : Photon.MonoBehaviour {
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
 
+	private NetworkManager networkManager;
+	private UserData userData;
+
 	private bool selectedLocation; // checks to see if you have chosen a placement for spawned unit
 	public bool ready; // checks to see if you have spawned all units and are ready to start the game
 	private int unitChoice; // keeps track of which unit is chosen
@@ -62,6 +65,10 @@ public class Player : Photon.MonoBehaviour {
 		StartingUnitCount = 0;
 		DeadUnitCount = 0;
 		isActionMenuActive = false;
+
+		networkManager = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<NetworkManager>();
+		userData = networkManager.GetUserData ();
+		Debug.Log ("Player XP is " + userData.xp);
 	}
 
 	void OnGUI()

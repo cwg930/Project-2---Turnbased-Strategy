@@ -7,7 +7,6 @@ using PlayFab.Internal;
 
 public class NetworkManager : Photon.MonoBehaviour
 {
-
 	public GameObject playerPrefab;
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
@@ -18,8 +17,11 @@ public class NetworkManager : Photon.MonoBehaviour
 	private string password;
 	private string playfabUserID;
 	private PlayFabClientAPI playfab;
+
 	private const string PLAYFAB_TITLE_ID = "7F9B";
 	private const string PHOTON_APP_ID = "162022c9-6c24-4e0b-83d5-8abadadb972d";
+
+	private UserData userData;
 
 	enum NetworkStates
 	{
@@ -27,8 +29,8 @@ public class NetworkManager : Photon.MonoBehaviour
 		InLobby,
 		InRoom,
 		Unknown
-	}
-
+	};
+	
 	private NetworkStates networkState;
 
 	// Use this for initialization
@@ -60,14 +62,14 @@ public class NetworkManager : Photon.MonoBehaviour
 		}
 	}
 
-	void LoginCallback (FBResult result)
+	private void LoginCallback (FBResult result)
 	{
 		if (FB.IsLoggedIn) {
 			OnLoggedIn ();
 		}
 	}
 
-	void OnLoggedIn ()
+	private void OnLoggedIn ()
 	{
 		PhotonNetwork.AuthValues = new AuthenticationValues ();
 		PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.Facebook;
@@ -82,7 +84,7 @@ public class NetworkManager : Photon.MonoBehaviour
 		Debug.Log ("OnHideUnity()");
 	}
 
-	void OnGUI ()
+	private void OnGUI ()
 	{
 		GUI.Label (new Rect (10, 10, 500, 30), PhotonNetwork.connectionStateDetailed.ToString ());
 
@@ -199,24 +201,26 @@ public class NetworkManager : Photon.MonoBehaviour
 		PlayFabClientAPI.LoginWithPlayFab (request, OnPlayFabLoginSuccess, OnPlayFabError);
 	}
 
-	public void OnPlayFabLoginSuccess (LoginResult result)
+	private void OnPlayFabLoginSuccess (LoginResult result)
 	{
 		Debug.Log ("PlayFab Login Success");
-		playfabUserID = result.PlayFabId;
+		playfabUserID = result.PlayFabId;	// record our playfab user ID
+
+		StartCoroutine(GetPlayerData ());	// request the XP for this user
+
 		GetPhotonAuthenticationTokenRequest request = new GetPhotonAuthenticationTokenRequest ();
 		request.PhotonApplicationId = PHOTON_APP_ID;
 		// get an authentication ticket to pass on to Photon 
 		PlayFabClientAPI.GetPhotonAuthenticationToken (request, OnPhotonAuthenticationSuccess, OnPlayFabError);
 	}
 
-	public void OnPhotonAuthenticationSuccess (GetPhotonAuthenticationTokenResult result)
+	private void OnPhotonAuthenticationSuccess (GetPhotonAuthenticationTokenResult result)
 	{
 		Debug.Log ("Photon Authentication Success");
 		ConnectToMasterServer (playfabUserID, result.PhotonCustomAuthenticationToken);
-
 	}
 
-	public void ConnectToMasterServer (string id, string token)
+	private void ConnectToMasterServer (string id, string token)
 	{
 		PhotonNetwork.AuthValues = new AuthenticationValues ();
 		PhotonNetwork.AuthValues.AuthType = CustomAuthenticationType.Custom;
@@ -224,8 +228,43 @@ public class NetworkManager : Photon.MonoBehaviour
 		PhotonNetwork.ConnectUsingSettings ("1.0");
 	}
 
+	private void OnPlayFabGetUserInfo(GetUserCombinedInfoResult result)
+	{
+		Debug.Log ("Received Player Info");
+
+		// Get player's XP
+		UserDataRecord xp = null;
+		result.Data.TryGetValue ("XP", out xp);
+
+		// If player has no XP value, initialize it to 0
+		if (xp == null) {
+			UpdatePlayerXP (0);
+			userData.xp = 0;
+		} else {
+			userData.xp = int.Parse (xp.Value);
+		}
+		Debug.Log ("User XP = " + userData.xp);
+	}
+
+	public void UpdatePlayerXP(int xp) {
+		UpdateUserDataRequest updateReq = new UpdateUserDataRequest ();
+		updateReq.Data = new System.Collections.Generic.Dictionary<string, string> ();
+		updateReq.Data.Add("XP", xp.ToString());
+		PlayFabClientAPI.UpdateUserData (updateReq, OnUpdatePlayerXPSuccess, OnPlayFabError);
+	}
+
+	private IEnumerator GetPlayerData(float sec = 0) {
+		yield return new WaitForSeconds (sec);
+		GetUserCombinedInfoRequest infoReq = new GetUserCombinedInfoRequest ();
+		PlayFabClientAPI.GetUserCombinedInfo (infoReq, OnPlayFabGetUserInfo, OnPlayFabError);
+	}
+
+	private void OnUpdatePlayerXPSuccess(UpdateUserDataResult result) {
+		Debug.Log ("Updated player's XP value");
+	}
+
 	// Generic PlayFab callback for errors.
-	void OnPlayFabError (PlayFabError error)
+	private void OnPlayFabError (PlayFabError error)
 	{
 		Debug.Log (error.ErrorMessage);
 	}
@@ -235,19 +274,21 @@ public class NetworkManager : Photon.MonoBehaviour
 		GUI.TextField (new Rect (10, 10, 200, 20), createRoomName);
 	}
 
-	void OnReceivedRoomListUpdate ()
+	private void OnReceivedRoomListUpdate ()
 	{
 		roomsList = PhotonNetwork.GetRoomList ();
 	}
 
-	void OnJoinedRoom ()
+	private void OnJoinedRoom ()
 	{
 		GameObject turnManager = GameObject.Find ("TurnManager");
 		GameObject instance = PhotonNetwork.Instantiate (playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
-		instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player
+		instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player;
 	}
 
-
+	public UserData GetUserData() {
+		return userData;
+	}
 }
 
 
