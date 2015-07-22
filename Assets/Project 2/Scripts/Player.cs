@@ -5,7 +5,6 @@ public class Player : Photon.MonoBehaviour {
 
 	private string playerID;
 	private GameObject [] units;
-	private int index;
 	private int cols = BoardManager.columns;
 	private int rows = BoardManager.rows;
 
@@ -30,14 +29,21 @@ public class Player : Photon.MonoBehaviour {
 	public GameObject blueRogue;
 	public GameObject greenRogue;
 	public GameObject redRogue;
-	
+
+	public GameObject[] unitPrefabs;
+		
 	[HideInInspector]	public TurnManager myTurn;
 	public int turn;
 
 	public bool lostGame;
-	private bool wonGame;
+	public bool wonGame;
 	private int StartingUnitCount;
 	private int DeadUnitCount;
+
+	public bool unitHasMoved;
+	public bool unitHasAttacked;
+
+	public bool unitSelected;
 
 	/*
 	private float lastSynchronizationTime = 0f;
@@ -52,7 +58,6 @@ public class Player : Photon.MonoBehaviour {
 		photonView.RPC("setMyParent", PhotonTargets.AllBuffered);
 		turn = photonView.owner.ID;
 		Debug.Log ("Player " + turn);
-		index = 0;
 		units = new GameObject[6];
 		selectedLocation = true;
 		ready = false;
@@ -62,12 +67,20 @@ public class Player : Photon.MonoBehaviour {
 		StartingUnitCount = 0;
 		DeadUnitCount = 0;
 		isActionMenuActive = false;
+		unitHasMoved = false;
+		unitHasAttacked = false;
+		unitSelected = false;
 	}
 
 	void OnGUI()
 	{
-		if (turn > 2)
+		if (turn > 2 && photonView.isMine) {
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 36;
+			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Spectating...", myStyle);
 			return;
+		}
+			
 		if (!ready && myTurn.getTurn () == 0 && photonView.isMine && (turn == 1 || turn == 2)) {
 			int screenHeight = Screen.height - 110; // accounts for leave button
 			int buttonHeight = screenHeight/5;
@@ -106,10 +119,16 @@ public class Player : Photon.MonoBehaviour {
 			myStyle.fontSize = 36;
 			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Please Add a Unit", myStyle);
 		} 
-		else if (photonView.isMine && myTurn.getTurn () == 0 && ready) {
+		else if (photonView.isMine && myTurn.getTurn () == 0 && ready && !myTurn.gameOver) {
 			GUIStyle myStyle = new GUIStyle ();
 			myStyle.fontSize = 36;
 			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Waiting for Opponent...", myStyle);
+		} 
+		else if (photonView.isMine && myTurn.getTurn () == 0 && myTurn.gameOver) 
+		{
+			GUIStyle myStyle = new GUIStyle ();
+			myStyle.fontSize = 36;
+			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Game has ended", myStyle);
 		}
 
 		else if (myTurn.getTurn () == turn && photonView.isMine) {
@@ -142,9 +161,14 @@ public class Player : Photon.MonoBehaviour {
 
 	void Update()
 	{
-		if (ready && photonView.isMine && StartingUnitCount == DeadUnitCount) {
+		if (ready && photonView.isMine && StartingUnitCount == DeadUnitCount && !lostGame) {
 			Debug.Log ("you lost");
 			photonView.RPC("updateDeath", PhotonTargets.AllBuffered);
+		}
+
+		if (photonView.isMine && !lostGame && myTurn.gameOver && !wonGame) {
+			Debug.Log ("you won");
+			wonGame = true;
 		}
 
 			
@@ -155,6 +179,20 @@ public class Player : Photon.MonoBehaviour {
 			else if (turn == 2)
 				addUnit (greenKnight);
 		} */
+	}
+
+	public void DeSelectUnit()
+	{
+		Unit [] myUnits = gameObject.GetComponentsInChildren<Unit> ();
+		Debug.Log ("deselecting unit...");
+		foreach (Unit unit in myUnits) {
+			if (unit.selected)
+			{
+				Debug.Log(unit.name + " is deselected");
+				unit.selected = false;
+			}
+				
+		}
 	}
 
 	[PunRPC] public void updateDeath()
@@ -209,19 +247,29 @@ public class Player : Photon.MonoBehaviour {
 	}
 	*/
 		
-	//TODO give user option to select where new unit will be placed
 	public void addUnit(GameObject newUnit, Vector3 loc)
 	{
-		if (index >= 6)
+		if (StartingUnitCount >= 6)
 			return;
 		//Debug.Log (newUnit.name);
-		units [index] = newUnit; // adds unit to game object array
-		index++;
-		StartingUnitCount++;
-		//Debug.Log ("index =" + index);
+		photonView.RPC("updateStartingUnits", PhotonTargets.AllBuffered, newUnit.name);
+		//Debug.Log ("index =" + StartingUnitCount);
 		GameObject instance = PhotonNetwork.Instantiate(newUnit.name, loc, Quaternion.identity, 0) as GameObject;
 		//GameObject instance = PhotonNetwork.Instantiate(newUnit.name, Vector3.right * Random.Range(2,cols) + Vector3.up * Random.Range(2, rows), Quaternion.identity, 0) as GameObject;
 		instance.transform.SetParent (transform); // sets new unit as child of the player
+	}
+
+	[PunRPC] public void updateStartingUnits(string newUnit)
+	{
+
+		foreach(GameObject myUnit in unitPrefabs)
+		{
+			if (myUnit.name.Equals(newUnit))
+			{
+				units [StartingUnitCount] = myUnit; // adds unit to game object array
+				StartingUnitCount++;
+			}
+		}
 	}
 
 	public void SelectKnight() 

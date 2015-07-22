@@ -42,6 +42,9 @@ public class Unit : Photon.MonoBehaviour {
 	public int healthValue;
 	private int startingHealth;
 
+	public bool selected;
+	public bool unitHighlight;
+
 	//About progress-bar --
 	private float aux_d=0;//Initial lifebar width
 	public GameObject Lifebar;
@@ -68,6 +71,7 @@ public class Unit : Photon.MonoBehaviour {
 		hasAttacked = false;
 		isdead = false;
 		stopped = true;
+		selected = false;
 
 		newAnimation = false;
 		myDirection = directions [0];
@@ -86,12 +90,6 @@ public class Unit : Photon.MonoBehaviour {
 		startingHealth = healthValue;
 	}
 
-	void Update ()
-	{
-
-		// unused
-	}
-
 	public bool getDeathStatus()
 	{
 		return isdead;
@@ -106,20 +104,28 @@ public class Unit : Photon.MonoBehaviour {
 	{
 		switch (action) {
 		case Action.move:
-			if (!isAttacking)
-			StartCoroutine("WaitForMove");
-			else
+			if (hasMoved)
+				Debug.Log("you have already moved this unit");
+			else if (isAttacking)
 				Debug.Log("you must finish your attack before you can make a move");
+			else
+				StartCoroutine("WaitForMove");
 			break;
 		case Action.attack:
-			if (moved)
-			StartCoroutine("WaitForAttack");
-			else
+			if (!moved)
 				Debug.Log("you must finish your move before you can make an attack");
+
+			else if (hasAttacked)
+				Debug.Log("you have already attacked this turn");
+				else
+					StartCoroutine("WaitForAttack");
+
 			break;
 		case Action.ability:
 		case Action.wait:
-			if (!moved)
+			if (myPlayer.myTurn.gameOver)
+				actionMenu.SetActive(false);
+			else if (!moved)
 				Debug.Log("you must finish your move before you can end your turn");
 			else if (isAttacking)
 				Debug.Log("you must finish your attack before you can end your turn");
@@ -127,9 +133,17 @@ public class Unit : Photon.MonoBehaviour {
 				myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
 				hasMoved = false;
 				hasAttacked = false;
+				myPlayer.unitHasMoved = false;
+				myPlayer.unitHasAttacked = false;
 				myPlayer.isActionMenuActive = false;
+
 				actionMenu.SetActive(false);
+				selected = false;
+				HighlightUnit(Color.white);
+				myPlayer.unitSelected = false;
+				unitHighlight = false;
 			}
+
 			break;
 		default:
 			break;
@@ -144,6 +158,7 @@ public class Unit : Photon.MonoBehaviour {
 		var validTargets = FindTargets(attackRange, true);
 		HighlightTargets(validTargets, Color.red);
 		isAttacking = true;
+		myPlayer.unitHasAttacked = true;
 
 		if (hasAttacked)
 		{
@@ -175,6 +190,7 @@ public class Unit : Photon.MonoBehaviour {
 					photonView.RPC("damageEnemy", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
 					Debug.Log("enemy selected" );
 					HighlightTargets (validTargets, Color.white);
+					HighlightUnit(Color.yellow);
 					photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
 					hasAttacked = true;
 					isAttacking = false;
@@ -208,6 +224,9 @@ public class Unit : Photon.MonoBehaviour {
 			{
 
 				enemyUnit.isdead = true;
+
+				if (myPlayer.myTurn.gameOver )
+					HighlightUnit(Color.white);
 
 			//	Animator enemyAnimator = hit.collider.gameObject.GetComponent<Animator>();
 			//	StartCoroutine (waitForDeath(enemyAnimator));
@@ -253,19 +272,48 @@ public class Unit : Photon.MonoBehaviour {
 		if (!myPlayer.ready) // player's team is not set up/ready, do not move selected unit
 			return;
 
-		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && myPlayer.isActionMenuActive) {
-			Debug.Log("You cannot select another unit until you are done with this one");
+		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && (myPlayer.unitHasMoved || myPlayer.unitHasAttacked)) {
+			Debug.Log ("You cannot select another unit until you are done with this one");
+			return;
+		}
+		// !myPlayer.isActionMenuActive //old bool for menu now just use attack and move bools
+
+		// if it is player's unit and is this player's turn and any unit is not already moving, you can select the unit as long as they havent moved or attacked
+		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.unitHasMoved && !myPlayer.unitHasAttacked && !myPlayer.unitSelected) { 
+			Debug.Log("selecting new unit");
+//				StartCoroutine ("WaitForMove");
+			//HighlightUnit (Color.yellow);
+			selected = true;
+			actionMenu.ShowMenu (this);
+			myPlayer.isActionMenuActive = true;
+			myPlayer.unitSelected = true;
 		}
 
-		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.isActionMenuActive) { // if it is player's unit and is player's turn and a unit is not already moving
-
-//				StartCoroutine ("WaitForMove");
-				actionMenu.ShowMenu(this);
+		//selecting a new unit
+		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.unitHasMoved && !myPlayer.unitHasAttacked && myPlayer.unitSelected) {
+			Debug.Log("selecting another unit");
+			myPlayer.DeSelectUnit();
+			selected = true;
+			actionMenu.ShowMenu (this);
 			myPlayer.isActionMenuActive = true;
+			myPlayer.unitSelected = true;
 		}
 			
 		else
 			Debug.Log ("it is not my turn"); // if unit has not parent that means it is not the players unit	
+	}
+
+	public void HighlightUnit(Color color)
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+
+		foreach(GameObject loc in board)
+		{
+			if(gameObject.transform.position == loc.transform.position){
+				var img = loc.GetComponent<SpriteRenderer>();
+				img.color = color;
+			}
+		}
 	}
 
 	/* // updated movement of unit over network (not used but possibly useful)
@@ -350,6 +398,7 @@ public class Unit : Photon.MonoBehaviour {
 		yield return new WaitForSeconds(.1f);
 		newAnimation = false;
 		myPlayer.unitIsMoving = false;
+		HighlightUnit(Color.yellow);
 	}
 
 	[PunRPC] public void makeSmoothMovement(LinkedList<Vector2> path)
@@ -401,6 +450,7 @@ public class Unit : Photon.MonoBehaviour {
 		var validMoves = FindPath(new IntegerLocation(transform.position), moves);
 		HighlightMoveArea(validMoves, Color.cyan);
 		moved = false;
+		myPlayer.unitHasMoved = true;
 		if (hasMoved) {
 			moved = true;
 			Debug.Log("you have already moved this turn");
@@ -417,6 +467,7 @@ public class Unit : Photon.MonoBehaviour {
 		}
 
 		HighlightMoveArea (validMoves, Color.white);
+
 		
 	}
 

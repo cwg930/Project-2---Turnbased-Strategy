@@ -5,8 +5,7 @@ public class Mage : Unit {
 	
 	private Animator animator;
 	private bool facingRight;
-	
-	private string newDirection;
+
 	private bool attack;
 	private bool amDead;
 	
@@ -25,7 +24,6 @@ public class Mage : Unit {
 		facingRight = true;
 		attack = false;
 		amDead = false;
-		newDirection = "right";
 		if (transform.position.x > (cols / 2))
 			flip ();
 		
@@ -73,7 +71,6 @@ public class Mage : Unit {
 		if (base.newAnimation && myPlayer.photonView.isMine) { // updates server with new animation
 			Debug.Log ("update animation here");
 			photonView.RPC("updateAnimation", PhotonTargets.AllBufferedViaServer);
-			newDirection = myDirection;
 			//updateAnimation();
 		} else if (myPlayer.photonView.isMine && Input.GetKeyDown ("f")) { // can attack with sword 'f'
 			attack = true;

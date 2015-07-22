@@ -45,6 +45,7 @@ public class TurnManager : Photon.MonoBehaviour {
 	public void endGame()
 	{
 		gameOver = true;
+		currentPlayer = 0;
 	}
 
 	public int getTurn()
