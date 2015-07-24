@@ -80,7 +80,7 @@ public class Knight : Unit {
 
 		//else if the player has selected a unit (not this unit) and this unit is still (unselected) highlighted  or this has a (selected) highlight 
 		//and the player has not chosen this unit then remove the highlight
-		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && unitHighlight && myPlayer.unitSelected && !selected) {
+		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && (unitHighlight || selectedHighlighted) && myPlayer.unitSelected && !selected) {
 			HighlightUnit (Color.white);
 			unitHighlight = false;
 			selectedHighlighted = false;
