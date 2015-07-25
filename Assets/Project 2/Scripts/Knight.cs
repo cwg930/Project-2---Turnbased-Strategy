@@ -93,6 +93,7 @@ public class Knight : Unit {
 			unitHighlight = false;
 		}
 
+		 // low health to give a damage boost
 		if (healthValue < 5 && !lowHealth && !amDead && !getDeathStatus ()) {
 			Debug.Log("critically low health");
 			//attackValue = attackValue + (int) attackValue/2;
@@ -101,6 +102,7 @@ public class Knight : Unit {
 			img.color = Color.red;
 			lowHealth = true;
 		}
+
 
 		if (getDeathStatus () && !amDead) {
 			var img = GetComponent<SpriteRenderer>();

@@ -4,6 +4,9 @@ using Facebook;
 using PlayFab;
 using PlayFab.ClientModels;
 using PlayFab.Internal;
+using PlayFab;
+
+
 
 public class NetworkManager : Photon.MonoBehaviour
 {
@@ -18,8 +21,17 @@ public class NetworkManager : Photon.MonoBehaviour
 	private string playfabUserID;
 	private PlayFabClientAPI playfab;
 
+	// patrick's playfab title id and photon app id
+
 	private const string PLAYFAB_TITLE_ID = "7F9B";
 	private const string PHOTON_APP_ID = "162022c9-6c24-4e0b-83d5-8abadadb972d";
+
+	// kyle's playfab title id and photon app id
+
+//	private const string PLAYFAB_TITLE_ID = "5087";
+	//private const string PHOTON_APP_ID = "2da04004-f28a-4b2d-bda5-e9d0c4317edbd";
+
+
 
 	private UserData userData;
 
@@ -44,6 +56,7 @@ public class NetworkManager : Photon.MonoBehaviour
 		inRoom = false;
 		FB.Init (SetInit, OnHideUnity);
 		PlayFabSettings.TitleId = PLAYFAB_TITLE_ID;
+		//PlayFabSettings.UseDevelopmentEnvironment = false;
 		networkState = NetworkStates.NotLoggedIn;
 		//PhotonNetwork.ConnectUsingSettings("0.1");
 	}

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : Photon.MonoBehaviour {
 
@@ -47,6 +48,7 @@ public class Player : Photon.MonoBehaviour {
 	public bool unitHasAttacked;
 
 	public bool unitSelected;
+
 
 	/*
 	private float lastSynchronizationTime = 0f;
@@ -258,6 +260,15 @@ public class Player : Photon.MonoBehaviour {
 	{
 		if (StartingUnitCount >= 6)
 			return;
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+		foreach (GameObject pos in board) {
+			if (pos.transform.position == loc)
+			{
+				var img = pos.GetComponent<SpriteRenderer> ();
+				img.color = Color.white;
+			}
+				
+		}
 		//Debug.Log (newUnit.name);
 		photonView.RPC("updateStartingUnits", PhotonTargets.AllBuffered, newUnit.name);
 		//Debug.Log ("index =" + StartingUnitCount);
@@ -309,7 +320,8 @@ public class Player : Photon.MonoBehaviour {
 	public void PlayerReady()
 	{
 		photonView.RPC("setPlayerReady", PhotonTargets.AllBufferedViaServer);
-
+		ready = true;
+		//highlightUnitPlacement ();
 	}
 
 	[PunRPC] public void setPlayerReady()
@@ -328,6 +340,7 @@ public class Player : Photon.MonoBehaviour {
 		yield return new WaitForSeconds (.1f);
 		selectedLocation = false;
 		Debug.Log ("waiting");
+		highlightUnitPlacement (); 
 
 		while (!selectedLocation) {
 			bool blocked = false;
@@ -343,64 +356,166 @@ public class Player : Photon.MonoBehaviour {
 					yield return new WaitForSeconds (.1f);
 					continue;
 				}
+
+				if (photonView.isMine && turn == 1)
+				{
+					if (loc.x > cols/2)
+					{
+						yield return new WaitForSeconds (.1f);
+						continue;
+					}
+				}
+				else if (photonView.isMine && turn == 2)
+				{
+					if (loc.x < cols/2)
+					{
+						yield return new WaitForSeconds (.1f);
+						continue;
+					}
+				}
+
 				GameObject [] unit1Map = GameObject.FindGameObjectsWithTag("Player1");
 				GameObject [] unit2Map = GameObject.FindGameObjectsWithTag("Player2");
 
-				for (int i=0; i< unit1Map.Length; i++)
+				foreach(GameObject unit in unit1Map)
+					if (unit.transform.position == loc)
+						blocked = true;	
+
+				foreach(GameObject unit in unit2Map)
+					if (unit.transform.position == loc)
+						blocked = true;	
+
+				Debug.Log("past unit check");
+				//Vector3 [] myStartingPlacements = new Vector3 [rows*cols];
+				List<Vector3> myStartingPlacements = new List<Vector3>();
+				if (photonView.isMine && turn == 1)
 				{
-					if (unit1Map[i].transform.position == loc) // check if click is at same coordinates as unit from player 1
-					{
-						Debug.Log("you tried placing a unit where one already exists");
-						blocked = true;
-						break;
-					}
-						
+					for (int i=1; i< cols/2; i++)
+						for (int j=1; j<rows; j++)
+							if (i==1 || i==2 || i==4 || i==5)
+								if (j==1 || j==2 || j==4 || j==5 || j==7|| j==8)
+							{
+								myStartingPlacements.Add(new Vector3(i,j,0));
+							}
+				}
+				else if (photonView.isMine && turn == 2)
+				{
+					for (int i=cols/2; i< cols; i++)
+						for (int j=1; j<rows; j++)
+							if (i==9 || i==10 || i==12 || i==13)
+								if (j==1 || j==2 || j==4 || j==5 || j==7|| j==8)
+							{
+								myStartingPlacements.Add(new Vector3(i,j,0));
+							}
 				}
 
-				for (int i=0; i<unit2Map.Length; i++)
+
+				foreach(Vector3 pos in myStartingPlacements)
 				{
-					if (unit2Map[i].transform.position == loc) // check if click is at same coordinates as unit from player 2
+					if (loc == pos && !blocked)
 					{
-						blocked = true;
-						break;
+						Debug.Log("you have picked an allocated location");
+						if (turn == 1)
+						{
+							if (unitChoice == 1)
+								addUnit (redKnight, loc);
+							else if (unitChoice == 2)
+								addUnit (redPaladin, loc);
+							else if (unitChoice == 3)
+								addUnit(redMage, loc);
+							else if (unitChoice == 4)
+								addUnit(redRogue, loc);
+						}
+						
+						else if (turn == 2)
+						{
+							if (unitChoice == 1)
+								addUnit (greenKnight, loc);
+							else if (unitChoice == 2)
+								addUnit (greenPaladin, loc);
+							else if (unitChoice == 3)
+								addUnit(greenMage, loc);
+							else if (unitChoice == 4)
+								addUnit(greenRogue, loc);
+						}
+						
+						selectedLocation = true;
+						unhighlightUnitPlacement();
 					}
 				}
 					
-				
-				if (!blocked)
-				{
-					if (turn == 1)
-					{
-						if (unitChoice == 1)
-							addUnit (redKnight, loc);
-						else if (unitChoice == 2)
-							addUnit (redPaladin, loc);
-						else if (unitChoice == 3)
-							addUnit(redMage, loc);
-						else if (unitChoice == 4)
-							addUnit(redRogue, loc);
-					}
-						
-					else if (turn == 2)
-					{
-						if (unitChoice == 1)
-							addUnit (greenKnight, loc);
-						else if (unitChoice == 2)
-							addUnit (greenPaladin, loc);
-						else if (unitChoice == 3)
-							addUnit(greenMage, loc);
-						else if (unitChoice == 4)
-							addUnit(greenRogue, loc);
-					}
-					
-					selectedLocation = true;
-				}
-
-
-
 			}
 
 			yield return null;
+		}
+	}
+
+	private void highlightUnitPlacement()
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+		if (photonView.isMine && turn == 1 && !ready) {
+
+			List<Vector3> myStartingPlacements = new List<Vector3>();
+				for (int i=1; i< cols/2; i++)
+					for (int j=1; j<rows; j++)
+						if (i==1 || i==2 || i==4 || i==5)
+							if (j==1 || j==2 || j==4 || j==5 || j==7|| j==8)
+						{
+							myStartingPlacements.Add(new Vector3(i,j,0));
+						}
+			
+					
+			foreach (GameObject loc in board) {
+
+				if (loc.transform.position.x <= cols / 2 && loc.transform.position.y > 0) { // first 3rd of arena
+					foreach(Vector3 pos in myStartingPlacements)
+					{
+						if (loc.transform.position == pos){
+							var img = loc.GetComponent<SpriteRenderer> ();
+							img.color = Color.green;
+						}
+					}
+
+				}
+			}
+		} 
+
+		else if (photonView.isMine && turn == 2 && !ready) {
+
+			List<Vector3> myStartingPlacements = new List<Vector3>();
+			for (int i=cols/2; i< cols; i++)
+				for (int j=1; j<rows; j++)
+					if (i==9 || i==10 || i==12 || i==13)
+						if (j==1 || j==2 || j==4 || j==5 || j==7|| j==8)
+					{
+						myStartingPlacements.Add(new Vector3(i,j,0));
+					}
+
+			foreach (GameObject loc in board) {
+				
+				if (loc.transform.position.x >= cols / 2 && loc.transform.position.y > 0) { // first 3rd of arena
+					foreach(Vector3 pos in myStartingPlacements)
+					{
+						if (loc.transform.position == pos){
+							var img = loc.GetComponent<SpriteRenderer> ();
+							img.color = Color.green;
+						}
+					}
+					
+				}
+			}
+		}
+	}
+
+	private void unhighlightUnitPlacement()
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+		if (photonView.isMine) {
+			foreach(GameObject loc in board)
+			{
+				var img = loc.GetComponent<SpriteRenderer> ();
+				img.color = Color.white;
+			}
 		}
 	}
 
