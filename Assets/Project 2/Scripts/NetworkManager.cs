@@ -11,6 +11,8 @@ using PlayFab;
 public class NetworkManager : Photon.MonoBehaviour
 {
 	public GameObject playerPrefab;
+	public GameObject gameManager;
+
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
 	private bool inRoom;
@@ -293,6 +295,9 @@ public class NetworkManager : Photon.MonoBehaviour
 
 	private void OnJoinedRoom ()
 	{
+		Instantiate (gameManager, new Vector3 (0, 0, 0), Quaternion.identity);
+		GameObject background = GameObject.FindGameObjectWithTag ("Background");
+		background.SetActive (false);
 		GameObject turnManager = GameObject.Find ("TurnManager");
 		GameObject instance = PhotonNetwork.Instantiate (playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
 		instance.transform.SetParent (turnManager.transform); // sets new unit as child of the player;
