@@ -220,7 +220,7 @@ public class NetworkManager : Photon.MonoBehaviour
 		Debug.Log ("PlayFab Login Success");
 		playfabUserID = result.PlayFabId;	// record our playfab user ID
 
-		StartCoroutine(GetPlayerData ());	// request the XP for this user
+		StartCoroutine(GetPlayerXP ());	// request the XP for this user
 
 		GetPhotonAuthenticationTokenRequest request = new GetPhotonAuthenticationTokenRequest ();
 		request.PhotonApplicationId = PHOTON_APP_ID;
@@ -242,38 +242,67 @@ public class NetworkManager : Photon.MonoBehaviour
 		PhotonNetwork.ConnectUsingSettings ("1.0");
 	}
 
-	private void OnPlayFabGetUserInfo(GetUserCombinedInfoResult result)
-	{
-		Debug.Log ("Received Player Info");
+//	private void OnPlayFabGetUserInfo(GetUserCombinedInfoResult result)
+//	{
+//		Debug.Log ("Received Player Info");
+//
+//		// Get player's XP
+//		UserDataRecord xp = null;
+//		result.Data.TryGetValue ("XP", out xp);
+//
+//		// If player has no XP value, initialize it to 0
+//		if (xp == null) {
+//			UpdatePlayerXP (0);
+//			userData.xp = 0;
+//		} else {
+//			userData.xp = int.Parse (xp.Value);
+//		}
+//		Debug.Log ("User XP = " + userData.xp);
+//	}
 
-		// Get player's XP
-		UserDataRecord xp = null;
-		result.Data.TryGetValue ("XP", out xp);
+	private void OnPlayFabGetUserStatistics(GetUserStatisticsResult result) {
+		Debug.Log ("Received Player Stats");
 
-		// If player has no XP value, initialize it to 0
-		if (xp == null) {
-			UpdatePlayerXP (0);
-			userData.xp = 0;
-		} else {
-			userData.xp = int.Parse (xp.Value);
-		}
+		int xp;
+		result.UserStatistics.TryGetValue ("XP", out xp);
+
+		userData.xp = xp;
+
 		Debug.Log ("User XP = " + userData.xp);
 	}
 
+	
 	public void UpdatePlayerXP(int xp) {
-		UpdateUserDataRequest updateReq = new UpdateUserDataRequest ();
-		updateReq.Data = new System.Collections.Generic.Dictionary<string, string> ();
-		updateReq.Data.Add("XP", xp.ToString());
-		PlayFabClientAPI.UpdateUserData (updateReq, OnUpdatePlayerXPSuccess, OnPlayFabError);
+		UpdateUserStatisticsRequest updateReq = new UpdateUserStatisticsRequest ();
+		updateReq.UserStatistics = new System.Collections.Generic.Dictionary<string, int> ();
+		updateReq.UserStatistics.Add("XP", xp);
+		PlayFabClientAPI.UpdateUserStatistics (updateReq, OnUpdatePlayerXPSuccess, OnPlayFabError);
 	}
 
-	private IEnumerator GetPlayerData(float sec = 0) {
+//	public void UpdatePlayerXP(int xp) {
+//		UpdateUserDataRequest updateReq = new UpdateUserDataRequest ();
+//		updateReq.Data = new System.Collections.Generic.Dictionary<string, string> ();
+//		updateReq.Data.Add("XP", xp.ToString());
+//		PlayFabClientAPI.UpdateUserData (updateReq, OnUpdatePlayerXPSuccess, OnPlayFabError);
+//	}
+
+//	private IEnumerator GetPlayerData(float sec = 0) {
+//		yield return new WaitForSeconds (sec);
+//		GetUserCombinedInfoRequest infoReq = new GetUserCombinedInfoRequest ();
+//		PlayFabClientAPI.GetUserCombinedInfo (infoReq, OnPlayFabGetUserInfo, OnPlayFabError);
+//	}
+
+	private IEnumerator GetPlayerXP(float sec = 0) {
 		yield return new WaitForSeconds (sec);
-		GetUserCombinedInfoRequest infoReq = new GetUserCombinedInfoRequest ();
-		PlayFabClientAPI.GetUserCombinedInfo (infoReq, OnPlayFabGetUserInfo, OnPlayFabError);
+		GetUserStatisticsRequest xpReq = new GetUserStatisticsRequest ();
+		PlayFabClientAPI.GetUserStatistics (xpReq, OnPlayFabGetUserStatistics, OnPlayFabError);
 	}
 
-	private void OnUpdatePlayerXPSuccess(UpdateUserDataResult result) {
+//	private void OnUpdatePlayerXPSuccess(UpdateUserDataResult result) {
+//		Debug.Log ("Updated player's XP value");
+//	}
+
+	private void OnUpdatePlayerXPSuccess(UpdateUserStatisticsResult result) {
 		Debug.Log ("Updated player's XP value");
 	}
 
