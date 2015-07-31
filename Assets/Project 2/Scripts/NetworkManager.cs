@@ -335,6 +335,18 @@ public class NetworkManager : Photon.MonoBehaviour
 	public UserData GetUserData() {
 		return userData;
 	}
+
+	Rect ResizeGUI(Rect rect)
+	{
+		var FilScreenWidth = rect.width / 800;
+		var rectWidth = FilScreenWidth * Screen.width;
+		var FilScreenHeight = rect.height / 600;
+		var rectHeight = FilScreenHeight * Screen.height;
+		var rectX = (rect.x / 800) * Screen.width;
+		var rectY = (rect.y / 600) * Screen.height;
+		
+		return new Rect(rectX,rectY,rectWidth,rectHeight);
+	}
 }
 
 
