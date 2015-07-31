@@ -179,7 +179,8 @@ public class NetworkManager : Photon.MonoBehaviour
 				Destroy(board);
 				background.SetActive(true);
 				title.SetActive(true);
-				turnManager.currentPlayer = 0;
+				turnManager.currentPlayer = 0; // resets game when you leave
+				turnManager.gameOver = false;
 
 				GameObject go = GameObject.FindGameObjectWithTag ("Canvas");
 				ActionMenu actionMenu = (ActionMenu)go.transform.FindChild ("ActionMenu(Clone)").GetComponent<ActionMenu>();

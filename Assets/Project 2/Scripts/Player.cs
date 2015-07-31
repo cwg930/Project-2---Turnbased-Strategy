@@ -49,6 +49,8 @@ public class Player : Photon.MonoBehaviour {
 
 	public bool unitSelected;
 
+	private bool gainedExp = false;
+
 
 	/*
 	private float lastSynchronizationTime = 0f;
@@ -160,13 +162,23 @@ public class Player : Photon.MonoBehaviour {
 		else if (photonView.isMine && !lostGame && myTurn.gameOver) {
 			GUIStyle myStyle = new GUIStyle ();
 			myStyle.fontSize = 72;
-			GUI.Label (new Rect (Screen.width/2, Screen.height/2, 200, 40), "You Win!", myStyle);
+			GUI.Label (new Rect (Screen.width/2 - 200, Screen.height/3, 200, 40), "You Win!", myStyle);
+			myStyle.fontSize = 24;
+			GUI.Label (new Rect (100, Screen.height/2 + 60, 200, 40), "You've Gained 100 Experience points!", myStyle);
+			if (!gainedExp)
+			{
+				userData.xp += 100;
+				gainedExp = true;
+			}
+
+			GUI.Label (new Rect (100, (Screen.height/2) + 100, 200, 40), "You now have "+ userData.xp + " Experience points", myStyle);
+
 		}
 
 			
 	}
 
-	
+
 
 	void Update()
 	{
