@@ -95,8 +95,8 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 403374, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
+  - {fileID: 434644, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
   - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
@@ -156,7 +156,7 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: ObservedComponents.Array.data[1]
       value: 
-      objectReference: {fileID: 467058, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
+      objectReference: {fileID: 434644, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
     - target: {fileID: 0}
       propertyPath: ObservedComponents.Array.data[2]
       value: 
@@ -173,6 +173,10 @@ Prefab:
       propertyPath: redRogue
       value: 
       objectReference: {fileID: 116042, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
+    - target: {fileID: 0}
+      propertyPath: ObservedComponents.Array.data[0]
+      value: 
+      objectReference: {fileID: 403374, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 107430}
