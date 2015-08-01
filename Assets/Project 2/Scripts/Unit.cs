@@ -45,6 +45,9 @@ public class Unit : Photon.MonoBehaviour {
 	public bool selected;
 	public bool unitHighlight;
 
+	public AudioClip drawWeapon;
+	private AudioSource source;
+
 	//About progress-bar --
 	private float aux_d=0;//Initial lifebar width
 	public GameObject Lifebar;
@@ -57,6 +60,7 @@ public class Unit : Photon.MonoBehaviour {
 
 	protected virtual void Start()
 	{
+		source = GetComponent<AudioSource> ();
 		//Lifebar_distance_y = this.transform.position.y-Lifebar.transform.position.y;
 		aux_d = Lifebar.GetComponent<Renderer>().bounds.size.x;//lifebar width
 		initial_localscale = new Vector3 (Lifebar.transform.localScale.x,Lifebar.transform.localScale.y,Lifebar.transform.localScale.z);
@@ -166,6 +170,8 @@ public class Unit : Photon.MonoBehaviour {
 			HighlightTargets (validTargets, Color.white);
 			isAttacking = false;
 		}
+
+
 		
 		while (isAttacking) {
 			if (Input.GetMouseButtonDown (0))
@@ -173,9 +179,21 @@ public class Unit : Photon.MonoBehaviour {
 				Vector3 pos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 				RaycastHit2D hit = Physics2D.Raycast(pos, transform.position);
 				int distance = (int)Vector3.Distance(transform.position,pos);
+				int xdif = (int)Mathf.Abs(pos.x - transform.position.x);
+				int ydif = (int)Mathf.Abs(pos.y - transform.position.y);
+
+
 				if (distance > attackRange)
 				{
 					Debug.Log("this attack is too far" + distance);
+					HighlightTargets (validTargets, Color.white);
+					isAttacking = false;
+					yield return null;
+				}
+
+				if (xdif != 0 && ydif != 0)
+				{
+					Debug.Log("you cannot attack diagonal");
 					HighlightTargets (validTargets, Color.white);
 					isAttacking = false;
 					yield return null;

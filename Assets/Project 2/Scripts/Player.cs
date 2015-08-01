@@ -167,7 +167,8 @@ public class Player : Photon.MonoBehaviour {
 			GUI.Label (new Rect (100, Screen.height/2 + 60, 200, 40), "You've Gained 100 Experience points!", myStyle);
 			if (!gainedExp)
 			{
-				userData.xp += 100;
+				networkManager.UpdatePlayerXP(100);
+				//userData.xp += 100;
 				gainedExp = true;
 			}
 
