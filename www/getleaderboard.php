@@ -4,10 +4,10 @@ buildLeaderboardTable(getLeaderboardData());
 
 
 function getLeaderboardData() {
-	$TITLE_ID 	= '7f9b';
+	$TITLE_ID 	= '2B36';
 	$url 				= 'https://' . $TITLE_ID . '.playfabapi.com/Server/GetLeaderboard';
 	$maxResults = 100;
-	$playfabAPIKey = 'A6FOEM3RS3UT7N5PN46F561BB54BD3BUFZW4B6B8POGWWY5TEU';
+	$playfabAPIKey = '1ROBHII4AKJNC8P5NOIUK5QZ6AJ91QSXRDEEX87FQ8P4XHQZ9C';
 	$statisticName = 'XP';
 	
 	// The data to send to the API
