@@ -14,7 +14,7 @@ using PlayFab.ClientModels;
 
 public class PlayFabManager : MonoBehaviour {
 
-	public string TitleId;
+	private const string TitleId = "2B36";
 	
 	void Start () {
 

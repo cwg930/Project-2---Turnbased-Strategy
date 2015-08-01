@@ -32,13 +32,7 @@ public class NetworkManager : Photon.MonoBehaviour
 	private bool joinedRoom = false;
 
 	// Offical Battle Knights ID's
-	private const string PLAYFAB_TITLE_ID 	= "2B36";
-	private const string PHOTON_APP_ID 		= "a89a5e03-2c3b-4fc0-b01f-ce7d87bf5b5d";
-
-	// kyle's playfab title id and photon app id
-
-//	private const string PLAYFAB_TITLE_ID = "5087";
-	//private const string PHOTON_APP_ID = "2da04004-f28a-4b2d-bda5-e9d0c4317edbd";
+	private const string PHOTON_APP_ID 		= "a89a5e03-2c3b-4fc0-b01f-ce7d87bf5b5d";	
 
 	private UserData userData;
 
@@ -61,7 +55,6 @@ public class NetworkManager : Photon.MonoBehaviour
 		password = "Password";
 		playfabUserID = string.Empty;
 		FB.Init (SetInit, OnHideUnity);
-		PlayFabSettings.TitleId = PLAYFAB_TITLE_ID;
 		//PlayFabSettings.UseDevelopmentEnvironment = false;
 		networkState = NetworkStates.NotLoggedIn;
 		//PhotonNetwork.ConnectUsingSettings("0.1");
