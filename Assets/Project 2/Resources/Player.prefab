@@ -42,6 +42,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ready: 0
   unitIsMoving: 0
+  isActionMenuActive: 0
   blueKnight: {fileID: 103122, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
   greenKnight: {fileID: 142574, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
   redKnight: {fileID: 141592, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
@@ -54,9 +55,26 @@ MonoBehaviour:
   blueRogue: {fileID: 125812, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
   greenRogue: {fileID: 191028, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
   redRogue: {fileID: 116042, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
+  unitPrefabs:
+  - {fileID: 103122, guid: b874510bf5c8c444da2e1e92f0f51d18, type: 2}
+  - {fileID: 142574, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
+  - {fileID: 141592, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
+  - {fileID: 177636, guid: d8962971f7f6f6540b6aa48fd2c5ba11, type: 2}
+  - {fileID: 180626, guid: 8a6f40747071e004bb47f35bf4800cbb, type: 2}
+  - {fileID: 129470, guid: a4092cd673ace65489b7b45fdf440d4b, type: 2}
+  - {fileID: 126574, guid: 0f477c9b1e04c0d46a5c315f30fe41f0, type: 2}
+  - {fileID: 135028, guid: 8e79fe5a7e71f7a4f986e82cc27d523b, type: 2}
+  - {fileID: 129846, guid: 8b626e7520e78f047b93d3b262704d30, type: 2}
+  - {fileID: 125812, guid: b112af7140a3fab4dbcfdfcbe86377f6, type: 2}
+  - {fileID: 191028, guid: 1dcb7aa1d441b56429f802cd66f2f860, type: 2}
+  - {fileID: 116042, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
   myTurn: {fileID: 0}
   turn: 0
   lostGame: 0
+  wonGame: 0
+  unitHasMoved: 0
+  unitHasAttacked: 0
+  unitSelected: 0
 --- !u!114 &11461048
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -77,8 +95,8 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 403374, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
+  - {fileID: 434644, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
   - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
@@ -91,6 +109,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: unitPrefabs.Array.size
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: ObservedComponents.Array.size
       value: 3
@@ -134,7 +156,7 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: ObservedComponents.Array.data[1]
       value: 
-      objectReference: {fileID: 467058, guid: 6dda352b229ff6b4ea33ba97ea3f11fb, type: 2}
+      objectReference: {fileID: 434644, guid: b2d5991832958724f81fe8a5af8128e4, type: 2}
     - target: {fileID: 0}
       propertyPath: ObservedComponents.Array.data[2]
       value: 
@@ -151,6 +173,10 @@ Prefab:
       propertyPath: redRogue
       value: 
       objectReference: {fileID: 116042, guid: f7212f47dd9afa740a09957540773ad0, type: 2}
+    - target: {fileID: 0}
+      propertyPath: ObservedComponents.Array.data[0]
+      value: 
+      objectReference: {fileID: 403374, guid: 3b6126446e9b1634385b7bf835061f70, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 107430}

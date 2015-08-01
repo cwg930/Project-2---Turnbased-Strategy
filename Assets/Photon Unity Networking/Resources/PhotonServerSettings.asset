@@ -45,4 +45,6 @@ MonoBehaviour:
   - damageEnemy
   - updateDeath
   - updateAdditionalUnit
+  - updateVictoryAnimation
+  - updateStartingUnits
   DisableAutoOpenWizard: 1

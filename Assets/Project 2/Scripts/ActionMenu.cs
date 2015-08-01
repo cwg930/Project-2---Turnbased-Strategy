@@ -46,4 +46,9 @@ public class ActionMenu : MonoBehaviour {
 		//gameObject.SetActive (false);
 	}
 
+	public void DestroyActionMenu()
+	{
+		Destroy (gameObject);
+	}
+
 }

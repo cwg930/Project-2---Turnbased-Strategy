@@ -5,9 +5,8 @@ public class TurnManager : Photon.MonoBehaviour {
 
 	public int movesPerTurn;
 
-	private static int currentMove;
 
-	private  int currentPlayer;
+	public  int currentPlayer;
 	//public  int previousPlayer;
 
 	public GameObject [] player1Team;
@@ -45,6 +44,7 @@ public class TurnManager : Photon.MonoBehaviour {
 	public void endGame()
 	{
 		gameOver = true;
+		currentPlayer = 0;
 	}
 
 	public int getTurn()
