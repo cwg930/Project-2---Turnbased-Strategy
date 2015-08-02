@@ -56,7 +56,12 @@ public class Rogue : Unit {
 		
 		
 	}
-	
+
+	protected override IEnumerator WaitForAbility ()
+	{
+		throw new System.NotImplementedException ();
+	}
+
 	void Update()
 		
 	{

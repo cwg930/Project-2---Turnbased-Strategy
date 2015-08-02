@@ -181,6 +181,12 @@ public class Knight : Unit {
 			} */
 	}
 
+	protected override IEnumerator WaitForAbility ()
+	{
+		Debug.Log ("The knight's ability is applied passively at low health");
+		yield return null;
+	}
+
 	IEnumerator waitForDeath()
 	{
 		yield return new WaitForSeconds (5);

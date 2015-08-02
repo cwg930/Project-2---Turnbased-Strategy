@@ -47,4 +47,5 @@ MonoBehaviour:
   - updateAdditionalUnit
   - updateVictoryAnimation
   - updateStartingUnits
+  - healFriend
   DisableAutoOpenWizard: 1
