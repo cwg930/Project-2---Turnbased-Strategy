@@ -53,6 +53,9 @@ public class Player : Photon.MonoBehaviour {
 
 	private bool gainedExp = false;
 
+	private bool hasError = false;
+	private string errorMessage = "";
+
 
 	/*
 	private float lastSynchronizationTime = 0f;
@@ -64,9 +67,18 @@ public class Player : Photon.MonoBehaviour {
 
 	void Start()
 	{
-		photonView.RPC("setMyParent", PhotonTargets.AllBuffered);
+		//photonView.RPC("setMyParent", PhotonTargets.AllBuffered);
+		transform.SetParent (GameObject.Find ("TurnManager").transform);
+		myTurn = GetComponentInParent<TurnManager> ();
 		turn = photonView.owner.ID;
 		Debug.Log ("Player " + turn);
+		Debug.Log ("game started? " + myTurn.gameStarted);
+		Invoke ("joinCheck", 1);
+
+
+
+		string playerName = "Player" + turn;
+		transform.name = playerName;
 		units = new GameObject[6];
 		selectedLocation = true;
 		ready = false;
@@ -82,8 +94,18 @@ public class Player : Photon.MonoBehaviour {
 
 		networkManager = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<NetworkManager>();
 		audioManager = GameObject.Find ("AudioManager").GetComponent<AudioManager> ();
-		userData = networkManager.GetUserData ();
+		//userData = networkManager.GetUserData ();
 		Debug.Log ("Player XP is " + userData.xp);
+
+	}
+
+	public void joinCheck()
+	{
+		if (turn > 2 && myTurn.gameStarted && photonView.isMine) {
+			PhotonNetwork.LeaveRoom();
+		}
+		Debug.Log ("you have joined a room that has already started");
+		return;
 	}
 
 	void OnGUI()

@@ -389,10 +389,17 @@ public class NetworkManager : Photon.MonoBehaviour
 		Instantiate (gameManager, new Vector3 (0, 0, 0), Quaternion.identity);
 		background.SetActive (false);
 		title.SetActive (false);
-		GameObject turnManager = GameObject.Find ("TurnManager");
+		GameObject TurnManager = GameObject.Find ("TurnManager");
 		GameObject instance = PhotonNetwork.Instantiate (playerPrefab.name, Vector3.right * 0 + Vector3.up * 0, Quaternion.identity, 0) as GameObject;
-		instance.transform.SetParent (turnManager.transform); // sets the player as child of the turn manager;
+		instance.transform.SetParent (TurnManager.transform); // sets the player as child of the turn manager;
 		joinedRoom = true;
+	}
+
+	public void checkIfGameStarted()
+	{
+		Player player = GameObject.FindGameObjectWithTag ("Player").GetComponent<Player> ();
+		Debug.Log ("i am player number " + player.turn);
+		//PhotonNetwork.LeaveRoom();
 	}
 
 	public UserData GetUserData() {

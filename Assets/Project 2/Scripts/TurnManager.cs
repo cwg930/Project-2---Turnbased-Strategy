@@ -15,6 +15,7 @@ public class TurnManager : Photon.MonoBehaviour {
 	private int readyCheck;
 
 	public bool gameOver;
+	public bool gameStarted;
 
 	// Use this for initialization
 
@@ -31,14 +32,18 @@ public class TurnManager : Photon.MonoBehaviour {
 		readyCheck = 0;
 		movesPerTurn = 2;
 		gameOver = false;
+		gameStarted = false;
 	}
 
 
 	public void playerReady()
 	{
 		readyCheck++;
-		if (readyCheck == 2)
+		if (readyCheck == 2) {
 			currentPlayer = 1;
+			gameStarted = true;
+		}
+			
 	}
 
 	public void endGame()
