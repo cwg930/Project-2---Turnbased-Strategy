@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections;
 using Facebook;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -16,6 +18,13 @@ public class NetworkManager : Photon.MonoBehaviour
 	public GameObject title;
 	public TurnManager turnManager;
 
+	public GameObject CreateAccount;
+	public GameObject LoginUsername;
+	public GameObject LoginEmail;
+	public GameObject LoginFacebook;
+
+
+
 	private const string roomName = "RoomName";
 	private RoomInfo[] roomsList;
 
@@ -25,6 +34,7 @@ public class NetworkManager : Photon.MonoBehaviour
 	private string password;
 	private string playfabUserID;
 	private PlayFabClientAPI playfab;
+	
 
 	private string myErrorMessage;
 	private bool hasError = false;
@@ -60,6 +70,7 @@ public class NetworkManager : Photon.MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+
 		createRoomName = "Enter a Room Name";
 		username = "Username";
 		email = "Email";
@@ -67,6 +78,14 @@ public class NetworkManager : Photon.MonoBehaviour
 		playfabUserID = string.Empty;
 		FB.Init (SetInit, OnHideUnity);
 		PlayFabSettings.TitleId = PLAYFAB_TITLE_ID;
+
+		CreateAccount = GameObject.Find ("Create Account");
+		LoginUsername = GameObject.Find ("Login with Username");
+		LoginEmail = GameObject.Find ("Login with Email");
+		LoginFacebook = GameObject.Find ("Login with Facebook");
+
+		var myusername = EnterUsername.GetComponent<UIInput> ();
+		Debug.Log (myusername);
 		//PlayFabSettings.UseDevelopmentEnvironment = false;
 		networkState = NetworkStates.NotLoggedIn;
 		//PhotonNetwork.ConnectUsingSettings("0.1");
@@ -125,6 +144,7 @@ public class NetworkManager : Photon.MonoBehaviour
 		switch (networkState) {
 		case NetworkStates.NotLoggedIn:
 			{
+<<<<<<< Updated upstream
 			/*
 				if (GUI.Button (new Rect (10, 10, 150, 70), "Login to Facebook")) {
 					FB.Login ("email", LoginCallback);
@@ -149,11 +169,25 @@ public class NetworkManager : Photon.MonoBehaviour
 					request.Username = username;
 					request.Email = email;
 					request.Password = password;
+=======
+			CreateAccount.SetActive (true);
+			LoginEmail.SetActive (true);
+			LoginFacebook.SetActive (true);
+			LoginUsername.SetActive (true);
+		
+		
+			username = GUI.TextField (new Rect (10, 100, 200, 20), username);
+			email = GUI.TextField (new Rect (10, 130, 200, 20), email);
+			password = GUI.PasswordField (new Rect (10, 160, 200, 20), password, '*');
+>>>>>>> Stashed changes
 
-					PlayFabClientAPI.RegisterPlayFabUser (request, OnPlayFabRegisterSuccess, OnPlayFabError);
-				}
 
+<<<<<<< Updated upstream
 			if (GUI.Button (ResizeGUI(new Rect (10, 250, 150, 30)), "Login with Username")) {
+=======
+			/*
+			if (GUI.Button (new Rect (10, 250, 150, 30), "Login with Username")) {
+>>>>>>> Stashed changes
 				LoginWithPlayFabRequest request = new LoginWithPlayFabRequest ();
 				request.Username = username;
 				request.Password = password;
@@ -168,11 +202,13 @@ public class NetworkManager : Photon.MonoBehaviour
 				request.TitleId = PlayFabData.TitleId;
 				PlayFabClientAPI.LoginWithEmailAddress(request, OnPlayFabLoginSuccess, OnPlayFabError);
 			}
+			*/
 			
 			break;
 			}
 		case NetworkStates.InLobby:
 			{
+<<<<<<< Updated upstream
 				if (joinedRoom)
 			{
 				GameObject board = GameObject.Find("Board");
@@ -189,6 +225,13 @@ public class NetworkManager : Photon.MonoBehaviour
 				joinedRoom = false;
 
 			}
+=======
+			CreateAccount.SetActive (false);
+			LoginEmail.SetActive (false);
+			LoginFacebook.SetActive (false);
+			LoginUsername.SetActive (false);
+
+>>>>>>> Stashed changes
 				inRoom = false;
 			createRoomName = GUI.TextField (ResizeGUI(new Rect (10, 110, 150, 30)), createRoomName);
 				// Create game button
@@ -209,6 +252,11 @@ public class NetworkManager : Photon.MonoBehaviour
 			}
 		case NetworkStates.InRoom: // in room so instantiate player
 			{
+			CreateAccount.SetActive (false);
+			LoginEmail.SetActive (false);
+			LoginFacebook.SetActive (false);
+			LoginUsername.SetActive (false);
+
 				inRoom = true;
 				GUILayout.Label ("Your name: " + PhotonNetwork.playerName + " - " + playfabUserID );
 				GUILayout.Label (PhotonNetwork.playerList.Length + " players in this room.");
@@ -225,6 +273,10 @@ public class NetworkManager : Photon.MonoBehaviour
 			}
 		case NetworkStates.Unknown:
 			{
+			CreateAccount.SetActive (false);
+			LoginEmail.SetActive (false);
+			LoginFacebook.SetActive (false);
+			LoginUsername.SetActive (false);
 				GUILayout.Label ("Unknown network state!");
 				break;
 			}
@@ -381,6 +433,7 @@ public class NetworkManager : Photon.MonoBehaviour
 		return userData;
 	}
 
+<<<<<<< Updated upstream
 	Rect ResizeGUI(Rect rect)
 	{
 		var FilScreenWidth = rect.width / 800;
@@ -391,6 +444,45 @@ public class NetworkManager : Photon.MonoBehaviour
 		var rectY = (rect.y / 600) * Screen.height;
 		
 		return new Rect(rectX,rectY,rectWidth,rectHeight);
+=======
+	public void CreateAccountClicked()
+	{
+
+		RegisterPlayFabUserRequest request = new RegisterPlayFabUserRequest ();
+		request.TitleId = PlayFabSettings.TitleId;
+		
+		request.Username = username;
+		request.Email = email;
+		request.Password = password;
+		
+		PlayFabClientAPI.RegisterPlayFabUser (request, OnPlayFabRegisterSuccess, OnPlayFabError);
+	}
+
+	public void LoginUsernameClicked()
+	{
+
+
+		LoginWithPlayFabRequest request = new LoginWithPlayFabRequest ();
+		request.Username = username;
+		request.Password = password;
+		request.TitleId = PlayFabData.TitleId;  
+		PlayFabClientAPI.LoginWithPlayFab (request, OnPlayFabLoginSuccess, OnPlayFabError);
+	}
+
+	public void LoginEmailClicked()
+	{
+
+		LoginWithEmailAddressRequest request = new LoginWithEmailAddressRequest();
+		request.Email = email;
+		request.Password = password;
+		request.TitleId = PlayFabData.TitleId;
+		PlayFabClientAPI.LoginWithEmailAddress(request, OnPlayFabLoginSuccess, OnPlayFabError);
+	}
+
+	public void LoginFacebookClicked()
+	{
+		FB.Login ("email", LoginCallback);
+>>>>>>> Stashed changes
 	}
 }
 
