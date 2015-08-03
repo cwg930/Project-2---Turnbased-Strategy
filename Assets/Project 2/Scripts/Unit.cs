@@ -45,8 +45,8 @@ public class Unit : Photon.MonoBehaviour {
 	public bool selected;
 	public bool unitHighlight;
 
-	public AudioClip drawWeapon;
-	private AudioSource source;
+	private AudioManager audioManager;
+
 
 	//About progress-bar --
 	private float aux_d=0;//Initial lifebar width
@@ -60,7 +60,7 @@ public class Unit : Photon.MonoBehaviour {
 
 	protected virtual void Start()
 	{
-		source = GetComponent<AudioSource> ();
+		audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 		//Lifebar_distance_y = this.transform.position.y-Lifebar.transform.position.y;
 		aux_d = Lifebar.GetComponent<Renderer>().bounds.size.x;//lifebar width
 		initial_localscale = new Vector3 (Lifebar.transform.localScale.x,Lifebar.transform.localScale.y,Lifebar.transform.localScale.z);
@@ -119,7 +119,7 @@ public class Unit : Photon.MonoBehaviour {
 			if (!moved)
 				Debug.Log("you must finish your move before you can make an attack");
 
-			else if (hasAttacked)
+			else if (hasAttacked || isAttacking)
 				Debug.Log("you have already attacked this turn");
 				else
 					StartCoroutine("WaitForAttack");
@@ -171,7 +171,7 @@ public class Unit : Photon.MonoBehaviour {
 			isAttacking = false;
 		}
 
-
+		audioManager.playDrawWeapon ();
 		
 		while (isAttacking) {
 			if (Input.GetMouseButtonDown (0))
@@ -185,6 +185,7 @@ public class Unit : Photon.MonoBehaviour {
 
 				if (distance > attackRange)
 				{
+					audioManager.playSheathWeapon();
 					Debug.Log("this attack is too far" + distance);
 					HighlightTargets (validTargets, Color.white);
 					isAttacking = false;
@@ -193,6 +194,7 @@ public class Unit : Photon.MonoBehaviour {
 
 				if (xdif != 0 && ydif != 0)
 				{
+					audioManager.playSheathWeapon();
 					Debug.Log("you cannot attack diagonal");
 					HighlightTargets (validTargets, Color.white);
 					isAttacking = false;
@@ -203,6 +205,7 @@ public class Unit : Photon.MonoBehaviour {
 
 				else if (hit.collider != null && attackRange >= distance && hit.collider.transform.tag.Equals("Player2"))
 				{
+					audioManager.playAttackHit();
 					Debug.Log("this unit ( " + transform.name + ") is attacking enemy unit (" + hit.collider.transform.name + ") hit is being confirmed" );
 					//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
 					photonView.RPC("damageEnemy", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
@@ -214,8 +217,11 @@ public class Unit : Photon.MonoBehaviour {
 					isAttacking = false;
 				}
 				else{
+					audioManager.playSheathWeapon();
 					Debug.Log("you have clicked on something within your range that is not an enemy unit");
 					HighlightTargets (validTargets, Color.white);
+					isAttacking = false;
+					yield return null;
 				}
 
 				//moved = Move(validMoves,new IntegerLocation (target));
@@ -240,7 +246,7 @@ public class Unit : Photon.MonoBehaviour {
 			enemyUnit.Life_Down();
 			if (hit.collider.gameObject.GetComponent<Unit>().healthValue <= 0)
 			{
-
+				audioManager.playDeathSound();
 				enemyUnit.isdead = true;
 
 				if (myPlayer.myTurn.gameOver )
@@ -373,6 +379,7 @@ public class Unit : Photon.MonoBehaviour {
 		return true;
 	}
 
+
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
 	{
 
@@ -381,6 +388,7 @@ public class Unit : Photon.MonoBehaviour {
 		myPlayer.unitIsMoving = true;
 		foreach (Vector3 loc in path) {
 			newAnimation = true;
+			audioManager.playFootsteps();
 
 			if (rb2D.position.x > loc.x) // if next location is left of starting location
 				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[2]);
@@ -395,10 +403,6 @@ public class Unit : Photon.MonoBehaviour {
 				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[1]);
 
 			//Debug.Log(myDirection);
-			
-
-
-
 
 			float sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
 

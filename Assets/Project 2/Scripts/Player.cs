@@ -12,6 +12,8 @@ public class Player : Photon.MonoBehaviour {
 	private NetworkManager networkManager;
 	private UserData userData;
 
+	private AudioManager audioManager;
+
 	private bool selectedLocation; // checks to see if you have chosen a placement for spawned unit
 	public bool ready; // checks to see if you have spawned all units and are ready to start the game
 	private int unitChoice; // keeps track of which unit is chosen
@@ -79,6 +81,7 @@ public class Player : Photon.MonoBehaviour {
 		unitSelected = false;
 
 		networkManager = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<NetworkManager>();
+		audioManager = GameObject.Find ("AudioManager").GetComponent<AudioManager> ();
 		userData = networkManager.GetUserData ();
 		Debug.Log ("Player XP is " + userData.xp);
 	}
@@ -186,11 +189,15 @@ public class Player : Photon.MonoBehaviour {
 		if (ready && photonView.isMine && StartingUnitCount == DeadUnitCount && !lostGame) {
 			Debug.Log ("you lost");
 			photonView.RPC("updateDeath", PhotonTargets.AllBuffered);
+			audioManager.source.Stop();
+			audioManager.loopVictoryMusic();
 		}
 
 		if (photonView.isMine && !lostGame && myTurn.gameOver && !wonGame) {
 			Debug.Log ("you won");
 			wonGame = true;
+			audioManager.source.Stop();
+			audioManager.loopVictoryMusic();
 		}
 
 			

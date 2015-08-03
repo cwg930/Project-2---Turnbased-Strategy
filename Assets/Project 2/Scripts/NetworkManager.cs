@@ -31,6 +31,8 @@ public class NetworkManager : Photon.MonoBehaviour
 	private bool inRoom = false;
 	private bool joinedRoom = false;
 
+	private AudioManager audioManager;
+
 
 
 	// patrick's playfab title id and photon app id
@@ -60,6 +62,8 @@ public class NetworkManager : Photon.MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		audioManager = GameObject.Find ("AudioManager").GetComponent<AudioManager> ();
+		audioManager.loopMenuMusic ();
 		createRoomName = "Enter a Room Name";
 		username = "Username";
 		email = "Email";
@@ -143,6 +147,7 @@ public class NetworkManager : Photon.MonoBehaviour
 			password = GUI.PasswordField (ResizeGUI(new Rect (10, 160, 200, 20)), password, '*');
 
 			if (GUI.Button (ResizeGUI(new Rect (10, 210, 150, 30)), "Create Account")) {
+				audioManager.playClick();
 					RegisterPlayFabUserRequest request = new RegisterPlayFabUserRequest ();
 					request.TitleId = PlayFabSettings.TitleId;
 
@@ -154,6 +159,7 @@ public class NetworkManager : Photon.MonoBehaviour
 				}
 
 			if (GUI.Button (ResizeGUI(new Rect (10, 250, 150, 30)), "Login with Username")) {
+				audioManager.playClick();
 				LoginWithPlayFabRequest request = new LoginWithPlayFabRequest ();
 				request.Username = username;
 				request.Password = password;
@@ -162,6 +168,7 @@ public class NetworkManager : Photon.MonoBehaviour
 			}
 
 			if (GUI.Button (ResizeGUI(new Rect (10, 290, 150, 30)), "Login with Email")) {
+				audioManager.playClick();
 				LoginWithEmailAddressRequest request = new LoginWithEmailAddressRequest();
 				request.Email = email;
 				request.Password = password;
@@ -177,6 +184,8 @@ public class NetworkManager : Photon.MonoBehaviour
 			{
 				GameObject board = GameObject.Find("Board");
 				Destroy(board);
+				audioManager.source.Stop();
+				audioManager.loopMenuMusic();
 				background.SetActive(true);
 				title.SetActive(true);
 				turnManager.currentPlayer = 0; // resets game when you leave
@@ -193,6 +202,7 @@ public class NetworkManager : Photon.MonoBehaviour
 			createRoomName = GUI.TextField (ResizeGUI(new Rect (10, 110, 150, 30)), createRoomName);
 				// Create game button
 			if (GUI.Button (ResizeGUI(new Rect (10, 50, 150, 50)), "Create Game")) {
+				audioManager.playClick();
 					Debug.Log ("room name = " + createRoomName);
 					PhotonNetwork.CreateRoom (createRoomName, true, true, 5);
 				}
@@ -202,7 +212,11 @@ public class NetworkManager : Photon.MonoBehaviour
 				if (roomsList != null) {
 					for (int i = 0; i < roomsList.Length; i++) {
 					if (GUI.Button (ResizeGUI(new Rect (10, 180 + (80 * i), 150, 70)), "Join " + roomsList [i].name))
-							PhotonNetwork.JoinRoom (roomsList [i].name);
+					{
+						audioManager.playClick();
+						PhotonNetwork.JoinRoom (roomsList [i].name);
+					}
+							
 					}
 				}
 				break;
@@ -218,6 +232,7 @@ public class NetworkManager : Photon.MonoBehaviour
 				}
 				
 			if (GUI.Button (ResizeGUI(new Rect (10, 70, 150, 30)), "Leave")) {
+				audioManager.playClick();
 					PhotonNetwork.LeaveRoom ();
 				}
 				break;
@@ -232,6 +247,7 @@ public class NetworkManager : Photon.MonoBehaviour
 		
 		if (PhotonNetwork.connected && !inRoom) {
 			if (GUI.Button (ResizeGUI(new Rect (10, Screen.height - 70, 150, 30)), "Logout")) {
+				audioManager.playClick();
 				if (FB.IsLoggedIn)
 					FB.Logout ();
 				PhotonNetwork.Disconnect ();
@@ -368,6 +384,8 @@ public class NetworkManager : Photon.MonoBehaviour
 
 	private void OnJoinedRoom ()
 	{
+		audioManager.source.Stop();
+		audioManager.loopGameMusic();
 		Instantiate (gameManager, new Vector3 (0, 0, 0), Quaternion.identity);
 		background.SetActive (false);
 		title.SetActive (false);
