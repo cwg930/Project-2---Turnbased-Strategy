@@ -20,21 +20,24 @@ public class AudioManager : MonoBehaviour {
 	{
 		source.clip = inMenuMusic;
 		source.Play ();
-		Invoke ("inMenuMusic", inMenuMusic.length);
+		source.loop = true;
+		//Invoke ("inMenuMusic", inMenuMusic.length);
 	}
 
 	public void loopGameMusic()
 	{
 		source.clip = inGameMusic;
 		source.Play ();
-		Invoke ("loopGameMusic", inGameMusic.length);
+		source.loop = true;
+		//Invoke ("loopGameMusic", inGameMusic.length);
 	}
 
 	public void loopVictoryMusic()
 	{
 		source.clip = victoryMusic;
 		source.Play ();
-		Invoke ("loopVictoryMusic", victoryMusic.length);
+		source.loop = true;
+		//Invoke ("loopVictoryMusic", victoryMusic.length);
 	}
 	
 	public void playClick()
