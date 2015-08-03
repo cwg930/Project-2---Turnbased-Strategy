@@ -203,7 +203,7 @@ public class Mage : Unit {
 				Vector3 pos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 				RaycastHit2D hit = Physics2D.Raycast(pos, transform.position);
 				int distance = (int)Vector3.Distance(transform.position,pos);
-				if (distance > attackRange)
+				if (distance > abilityRange)
 				{
 					Debug.Log("this attack is too far" + distance);
 					HighlightTargets (validTargets, Color.white);
@@ -213,7 +213,7 @@ public class Mage : Unit {
 				
 				
 				
-				else if (hit.collider != null && attackRange >= distance && hit.collider.transform.tag.Equals("Player2"))
+				else if (hit.collider != null && attackRange >= distance && hit.collider.transform.tag.Equals("Player1"))
 				{
 					Debug.Log("this unit ( " + transform.name + ") is healing friendly unit (" + hit.collider.transform.name + ") hit is being confirmed" );
 					//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
@@ -310,23 +310,10 @@ public class Mage : Unit {
 	{
 		RaycastHit2D hit = Physics2D.Raycast(friendPosition, transform.position);
 		if (hit.collider != null) {
-			Unit enemyUnit = hit.collider.gameObject.GetComponent<Unit>();
+			Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
 			Debug.Log("friend is being healed" + gameObject.name);
-			hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
-			enemyUnit.attackerDamage = -attackValue;
-			enemyUnit.Life_Down();
-			if (hit.collider.gameObject.GetComponent<Unit>().healthValue <= 0)
-			{
-				
-				enemyUnit.isdead = true;
-				
-				if (myPlayer.myTurn.gameOver )
-					HighlightUnit(Color.white);
-				
-				//	Animator enemyAnimator = hit.collider.gameObject.GetComponent<Animator>();
-				//	StartCoroutine (waitForDeath(enemyAnimator));
-			}
-			
+			targetUnit.healthValue += abilityPower;
+			targetUnit.Healing_();
 		}
 	}
 

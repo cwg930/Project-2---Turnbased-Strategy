@@ -305,6 +305,7 @@ MonoBehaviour:
   attackerDamage: 0
   attackValue: 10
   healthValue: 8
+  abilityPower: 15
   selected: 0
   unitHighlight: 0
   Lifebar: {fileID: 168976}
@@ -491,6 +492,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: abilityRange
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: abilityPower
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -97,7 +97,7 @@ public class Knight : Unit {
 		if (healthValue < 5 && !lowHealth && !amDead && !getDeathStatus ()) {
 			Debug.Log("critically low health");
 			//attackValue = attackValue + (int) attackValue/2;
-			attackValue *= 10;
+			attackValue += abilityPower;
 			var img = GetComponent<SpriteRenderer>();
 			img.color = Color.red;
 			lowHealth = true;

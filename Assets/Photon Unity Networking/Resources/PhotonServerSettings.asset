@@ -48,4 +48,6 @@ MonoBehaviour:
   - updateVictoryAnimation
   - updateStartingUnits
   - healFriend
+  - swapPos
+  - reduceDamage
   DisableAutoOpenWizard: 1

@@ -42,6 +42,7 @@ public abstract class Unit : Photon.MonoBehaviour {
 
 	public int attackValue;
 	public int healthValue;
+	public int abilityPower;
 	private int startingHealth;
 
 	public bool selected;
@@ -647,7 +648,7 @@ public abstract class Unit : Photon.MonoBehaviour {
 		Lifebar.transform.position=auxve;
 	}
 	
-	void Healing_(){
+	public void Healing_(){
 		if(isdead==false){
 			if(Lifebar.transform.localScale.x>0){
 				float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
