@@ -40,6 +40,7 @@ public class TurnManager : Photon.MonoBehaviour {
 	{
 		readyCheck++;
 		if (readyCheck == 2) {
+			readyCheck = 0;
 			currentPlayer = 1;
 			gameStarted = true;
 		}
@@ -50,6 +51,7 @@ public class TurnManager : Photon.MonoBehaviour {
 	{
 		gameOver = true;
 		currentPlayer = 0;
+		movesPerTurn = 2;
 	}
 
 	public int getTurn()
