@@ -153,7 +153,7 @@ public class Player : Photon.MonoBehaviour {
 		if (photonView.isMine && myTurn.getTurn () == 0 && !ready) {
 			GUIStyle myStyle = new GUIStyle ();
 			myStyle.fontSize = 36;
-			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Please Add a Unit", myStyle);
+			GUI.Label (new Rect (0, Screen.height - 40, 200, 40), "Please Add 6 Units", myStyle);
 		} 
 		else if (photonView.isMine && myTurn.getTurn () == 0 && ready && !myTurn.gameOver) {
 			GUIStyle myStyle = new GUIStyle ();
@@ -189,17 +189,21 @@ public class Player : Photon.MonoBehaviour {
 			myStyle.fontSize = 72;
 			GUI.Label (new Rect (Screen.width/2 - 200, Screen.height/3, 200, 40), "You Win!", myStyle);
 			myStyle.fontSize = 24;
-			GUI.Label (new Rect (100, Screen.height/2 + 60, 200, 40), "You've Gained 100 Experience points!", myStyle);
+			GUI.Label (new Rect (Screen.width/2 - 200, Screen.height/2 + 60, 200, 40), "You've Gained 100 Experience points!", myStyle);
 			if (!gainedExp)
 			{
-				networkManager.UpdatePlayerXP(100);
+				networkManager.addPlayerXP(100);
 				//userData.xp += 100;
 				gainedExp = true;
+				networkManager.getPlayerExp();
+
 			}
 
-			GUI.Label (new Rect (100, (Screen.height/2) + 100, 200, 40), "You now have "+ userData.xp + " Experience points", myStyle);
+			GUI.Label (new Rect (Screen.width/2 - 200, (Screen.height/2) + 100, 200, 40), "You now have "+ networkManager.getXP() + " Experience points", myStyle);
+			GUI.Label (new Rect (Screen.width/2 - 200, (Screen.height/2) + 140, 200, 40), "You are now level "+ networkManager.getXP()/100 , myStyle);
 
 		}
+
 
 			
 	}
@@ -225,7 +229,7 @@ public class Player : Photon.MonoBehaviour {
 			
 		//adds a knight to current player's team. will be replaced by ui unit selection
 		/*if (Input.GetKeyDown ("k") && myTurn.getTurn() == turn && photonView.isMine) { // player 1 recieves blue knight
-			if (turn == 1)
+			if (turn == 1)move
 				addUnit (redKnight);
 			else if (turn == 2)
 				addUnit (greenKnight);
@@ -300,8 +304,12 @@ public class Player : Photon.MonoBehaviour {
 		
 	public void addUnit(GameObject newUnit, Vector3 loc)
 	{
-		if (StartingUnitCount >= 6)
+		if (StartingUnitCount >= 6) {
 			return;
+		} else if (StartingUnitCount == 5) {
+			PlayerReady();
+		}
+			
 		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
 		foreach (GameObject pos in board) {
 			if (pos.transform.position == loc)
@@ -482,7 +490,7 @@ public class Player : Photon.MonoBehaviour {
 						}
 						
 						selectedLocation = true;
-						unhighlightUnitPlacement();
+						unhighlightBoard();
 					}
 				}
 					
@@ -549,7 +557,7 @@ public class Player : Photon.MonoBehaviour {
 		}
 	}
 
-	private void unhighlightUnitPlacement()
+	public void unhighlightBoard()
 	{
 		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
 		if (photonView.isMine) {

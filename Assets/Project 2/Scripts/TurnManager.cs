@@ -52,6 +52,9 @@ public class TurnManager : Photon.MonoBehaviour {
 		gameOver = true;
 		currentPlayer = 0;
 		movesPerTurn = 2;
+		GameObject actionMenu = GameObject.Find ("ActionMenu(Clone)");
+		actionMenu.SetActive (false);
+
 	}
 
 	public int getTurn()

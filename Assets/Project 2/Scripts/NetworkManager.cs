@@ -279,7 +279,7 @@ public class NetworkManager : Photon.MonoBehaviour
 		Debug.Log ("PlayFab Login Success");
 		playfabUserID = result.PlayFabId;	// record our playfab user ID
 
-		StartCoroutine(GetPlayerXP ());	// request the XP for this user
+		StartCoroutine(CoGetPlayerXP ());	// request the XP for this user
 
 		GetPhotonAuthenticationTokenRequest request = new GetPhotonAuthenticationTokenRequest ();
 		request.PhotonApplicationId = PHOTON_APP_ID;
@@ -339,6 +339,17 @@ public class NetworkManager : Photon.MonoBehaviour
 		PlayFabClientAPI.UpdateUserStatistics (updateReq, OnUpdatePlayerXPSuccess, OnPlayFabError);
 	}
 
+	public void addPlayerXP(int xp)
+	{
+		UpdatePlayerXP (userData.xp + xp);
+	}
+
+	public int getXP()
+	{
+		return userData.xp;
+	}
+
+
 //	public void UpdatePlayerXP(int xp) {
 //		UpdateUserDataRequest updateReq = new UpdateUserDataRequest ();
 //		updateReq.Data = new System.Collections.Generic.Dictionary<string, string> ();
@@ -352,10 +363,15 @@ public class NetworkManager : Photon.MonoBehaviour
 //		PlayFabClientAPI.GetUserCombinedInfo (infoReq, OnPlayFabGetUserInfo, OnPlayFabError);
 //	}
 
-	private IEnumerator GetPlayerXP(float sec = 0) {
+	private IEnumerator CoGetPlayerXP(float sec = 0) {
 		yield return new WaitForSeconds (sec);
 		GetUserStatisticsRequest xpReq = new GetUserStatisticsRequest ();
 		PlayFabClientAPI.GetUserStatistics (xpReq, OnPlayFabGetUserStatistics, OnPlayFabError);
+	}
+
+	public void getPlayerExp()
+	{
+		StartCoroutine(CoGetPlayerXP ());
 	}
 
 //	private void OnUpdatePlayerXPSuccess(UpdateUserDataResult result) {

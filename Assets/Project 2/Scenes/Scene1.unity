@@ -220,8 +220,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1151, y: 624}
+  m_AnchoredPosition: {x: 4.57763963e-05, y: -.000690460205}
+  m_SizeDelta: {x: 800, y: 450.140015}
   m_Pivot: {x: .50000006, y: .5}
 --- !u!114 &182248255
 MonoBehaviour:
@@ -296,6 +296,22 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ed8ed0978ce354f52ad13cd06789d022, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &616277586 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 125338, guid: 56105dd8f6c61c94783e964c13525a71, type: 2}
+  m_PrefabInternal: {fileID: 1954277495}
+--- !u!114 &616277587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 616277586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd3a76a2a80298b449580618f640caab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  message: 
 --- !u!1 &1476836003
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,8 +343,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -1.52587891e-05, y: 3.81469999e-06}
-  m_SizeDelta: {x: 766, y: 325}
+  m_AnchoredPosition: {x: 2.28881836e-05, y: .000682835234}
+  m_SizeDelta: {x: 800, y: 450.140015}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1476836005
 MonoBehaviour:
@@ -343,7 +359,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300000, guid: e09ba018db16b45448397113858d9e9d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 225c5f6527d707a40abecffee065e789, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -402,7 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -492,7 +508,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -846,7 +862,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 8, y: 273}
+  m_AnchoredPosition: {x: -1.90730007e-05, y: 195.600006}
   m_SizeDelta: {x: 248, y: 41}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &2063208912

@@ -46,7 +46,7 @@ public class Unit : Photon.MonoBehaviour {
 	public bool unitHighlight;
 
 	private AudioManager audioManager;
-
+	private DisplayMessage displayMessage;
 
 	//About progress-bar --
 	private float aux_d=0;//Initial lifebar width
@@ -61,6 +61,7 @@ public class Unit : Photon.MonoBehaviour {
 	protected virtual void Start()
 	{
 		audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+		displayMessage = GameObject.Find ("TurnManager").GetComponent<DisplayMessage> ();
 		//Lifebar_distance_y = this.transform.position.y-Lifebar.transform.position.y;
 		aux_d = Lifebar.GetComponent<Renderer>().bounds.size.x;//lifebar width
 		initial_localscale = new Vector3 (Lifebar.transform.localScale.x,Lifebar.transform.localScale.y,Lifebar.transform.localScale.z);
@@ -109,18 +110,30 @@ public class Unit : Photon.MonoBehaviour {
 		switch (action) {
 		case Action.move:
 			if (hasMoved)
+			{
 				Debug.Log("you have already moved this unit");
+				displayMessage.displayErrorMessage("you have already moved this unit", 2);
+			}
+				
 			else if (isAttacking)
+			{
 				Debug.Log("you must finish your attack before you can make a move");
+				displayMessage.displayErrorMessage("you must finish your attack before you can make a move", 2);
+			}
+				
 			else
 				StartCoroutine("WaitForMove");
 			break;
 		case Action.attack:
-			if (!moved)
+			if (myPlayer.unitIsMoving)
 				Debug.Log("you must finish your move before you can make an attack");
 
 			else if (hasAttacked || isAttacking)
+			{
 				Debug.Log("you have already attacked this turn");
+				displayMessage.displayErrorMessage("you have already attacked this turn", 2);
+			}
+				
 				else
 					StartCoroutine("WaitForAttack");
 
@@ -129,23 +142,12 @@ public class Unit : Photon.MonoBehaviour {
 		case Action.wait:
 			if (myPlayer.myTurn.gameOver)
 				actionMenu.SetActive(false);
-			else if (!moved)
-				Debug.Log("you must finish your move before you can end your turn");
+			else if (myPlayer.unitIsMoving)
+				Debug.Log("wait until you finish moving");
 			else if (isAttacking)
 				Debug.Log("you must finish your attack before you can end your turn");
 			else{
-				myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
-				hasMoved = false;
-				hasAttacked = false;
-				myPlayer.unitHasMoved = false;
-				myPlayer.unitHasAttacked = false;
-				myPlayer.isActionMenuActive = false;
-
-				actionMenu.SetActive(false);
-				selected = false;
-				HighlightUnit(Color.white);
-				myPlayer.unitSelected = false;
-				unitHighlight = false;
+				waitSelected();
 			}
 
 			break;
@@ -154,9 +156,27 @@ public class Unit : Photon.MonoBehaviour {
 		}
 	}
 
+	private void waitSelected()
+	{
+		myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
+		hasMoved = false;
+		hasAttacked = false;
+		myPlayer.unitHasMoved = false;
+		myPlayer.unitHasAttacked = false;
+		myPlayer.isActionMenuActive = false;
+
+		GameObject actionMenu = GameObject.Find ("ActionMenu(Clone)");
+		actionMenu.SetActive(false);
+		selected = false;
+		HighlightUnit(Color.white);
+		myPlayer.unitSelected = false;
+		unitHighlight = false;
+	}
+
 	protected IEnumerator WaitForAttack ()
 	{
-
+		myPlayer.unhighlightBoard ();
+		HighlightUnit(Color.yellow);
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
 		var validTargets = FindTargets(attackRange, true);
@@ -215,6 +235,8 @@ public class Unit : Photon.MonoBehaviour {
 					photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
 					hasAttacked = true;
 					isAttacking = false;
+					if (hasMoved) // has attacked and moved auto select wait
+						waitSelected();
 				}
 				else{
 					audioManager.playSheathWeapon();
@@ -317,6 +339,7 @@ public class Unit : Photon.MonoBehaviour {
 		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.unitHasMoved && !myPlayer.unitHasAttacked && myPlayer.unitSelected) {
 			Debug.Log("selecting another unit");
 			myPlayer.DeSelectUnit();
+			myPlayer.unhighlightBoard();
 			selected = true;
 			actionMenu.ShowMenu (this);
 			myPlayer.isActionMenuActive = true;
@@ -419,8 +442,11 @@ public class Unit : Photon.MonoBehaviour {
 		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, true); // update animation on server to stop animating when stopped
 		yield return new WaitForSeconds(.1f);
 		newAnimation = false;
+		myPlayer.unitHasMoved = true;
 		myPlayer.unitIsMoving = false;
 		HighlightUnit(Color.yellow);
+		if (hasAttacked) // moved and attacked
+			waitSelected ();
 	}
 
 	[PunRPC] public void makeSmoothMovement(LinkedList<Vector2> path)
@@ -472,13 +498,12 @@ public class Unit : Photon.MonoBehaviour {
 		var validMoves = FindPath(new IntegerLocation(transform.position), moves);
 		HighlightMoveArea(validMoves, Color.cyan);
 		moved = false;
-		myPlayer.unitHasMoved = true;
 		if (hasMoved) {
 			moved = true;
 			Debug.Log("you have already moved this turn");
 		}
 
-		while (!moved) {
+		while (!moved && selected) {
 			if (Input.GetMouseButtonDown (0))
 			{
 
