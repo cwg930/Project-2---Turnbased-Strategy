@@ -4,10 +4,10 @@ buildLeaderboardTable(getLeaderboardData());
 
 
 function getLeaderboardData() {
-	$TITLE_ID 	= '7f9b';
+	$TITLE_ID 	= '2B36';
 	$url 				= 'https://' . $TITLE_ID . '.playfabapi.com/Server/GetLeaderboard';
 	$maxResults = 100;
-	$playfabAPIKey = 'A6FOEM3RS3UT7N5PN46F561BB54BD3BUFZW4B6B8POGWWY5TEU';
+	$playfabAPIKey = '1ROBHII4AKJNC8P5NOIUK5QZ6AJ91QSXRDEEX87FQ8P4XHQZ9C';
 	$statisticName = 'XP';
 	
 	// The data to send to the API
@@ -56,8 +56,8 @@ function buildLeaderboardTable($leaderboard) {
 	$out .= '</head>';
 	$out .= '<body>';
 	$out .= '  <div align="center">';
-	$out .= '    <a href="play.html"><button type="button" class="btn btn2 navbar-btn"">Play Battle Knights</button></a>';
-	$out .= '    <a href="getleaderboard.php""><button type="button"" class="btn btn2 navbar-btn">View Leaderboard</button></a>';
+	$out .= '    <a href="http://www.battleknights.co.nf/play.html"><button type="button" class="btn btn2 navbar-btn"">Play Battle Knights</button></a>';
+	$out .= '    <a href="http://www.battleknights.freevar.com/getleaderboard.php""><button type="button"" class="btn btn2 navbar-btn">View Leaderboard</button></a>';
 	$out .= '  </div>';
 	$out .= '  <table class="table table-striped">';
 	$out .= '    <thead><tr>';
