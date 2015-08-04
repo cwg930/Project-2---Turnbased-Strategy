@@ -32,20 +32,11 @@ public class NetworkManager : Photon.MonoBehaviour
 	private bool joinedRoom = false;
 
 	private AudioManager audioManager;
-
-
-
+	
 	// patrick's playfab title id and photon app id
 
-	private const string PLAYFAB_TITLE_ID = "7F9B";
-	private const string PHOTON_APP_ID = "162022c9-6c24-4e0b-83d5-8abadadb972d";
-
-	// kyle's playfab title id and photon app id
-
-//	private const string PLAYFAB_TITLE_ID = "5087";
-	//private const string PHOTON_APP_ID = "2da04004-f28a-4b2d-bda5-e9d0c4317edbd";
-
-
+	private const string PLAYFAB_TITLE_ID = "2B36";
+	private const string PHOTON_APP_ID = "a89a5e03-2c3b-4fc0-b01f-ce7d87bf5b5d";
 
 	private UserData userData;
 
@@ -324,7 +315,10 @@ public class NetworkManager : Photon.MonoBehaviour
 		Debug.Log ("Received Player Stats");
 
 		int xp;
-		result.UserStatistics.TryGetValue ("XP", out xp);
+		if (!result.UserStatistics.TryGetValue ("XP", out xp)) {
+			xp = 0;
+			UpdatePlayerXP(xp);
+		}
 
 		userData.xp = xp;
 
