@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class Rogue : Unit {
-	
+
+	public int abilityUses;
 	private Animator animator;
 	private bool facingRight;
 	
@@ -56,7 +57,77 @@ public class Rogue : Unit {
 		
 		
 	}
-	
+
+	protected override IEnumerator WaitForAbility ()
+	{
+		//Debug.Log ("waiting for move target");
+		yield return new WaitForSeconds (.1f);
+		var validTargets = FindTargets(abilityRange, true);
+		HighlightTargets(validTargets, Color.blue);
+		isAttacking = true;
+		myPlayer.unitHasAttacked = true;
+		
+		if (hasAttacked) {
+			Debug.Log ("you have already attacked this turn");
+			HighlightTargets (validTargets, Color.white);
+			isAttacking = false;
+		} else if (abilityUses == 0) {
+			Debug.Log("Cannot use this ability anymore");
+			HighlightTargets(validTargets, Color.white);
+			isAttacking = false;
+		}
+		
+		while (isAttacking) {
+			if (Input.GetMouseButtonDown (0))
+			{
+				Vector3 pos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+				RaycastHit2D hit = Physics2D.Raycast(pos, transform.position);
+				int distance = (int)Vector3.Distance(transform.position,pos);
+				if (distance > abilityRange)
+				{
+					Debug.Log("this attack is too far" + distance);
+					HighlightTargets (validTargets, Color.white);
+					isAttacking = false;
+					yield return null;
+				}
+				
+				
+				else if (hit.collider != null && attackRange >= distance && hit.collider.transform.tag.Equals("Player2"))
+				{
+					Debug.Log("this unit ( " + transform.name + ") is switching positions with friendly unit (" + hit.collider.transform.name + ") hit is being confirmed" );
+					//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
+					photonView.RPC("reduceDamage", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
+					Debug.Log("friend selected" );
+					HighlightTargets (validTargets, Color.white);
+					HighlightUnit(Color.yellow);
+					photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
+					hasAttacked = true;
+					isAttacking = false;
+				}
+				else{
+					Debug.Log("you have clicked on something within your range that is not an enemy unit");
+					HighlightTargets (validTargets, Color.white);
+				}
+				
+				//moved = Move(validMoves,new IntegerLocation (target));
+			}	
+			yield return null;
+		}
+		yield return new WaitForSeconds (1);
+		photonView.RPC("stopAttackAnimation", PhotonTargets.AllBufferedViaServer);
+	}
+
+	[PunRPC] void reduceDamage(Vector3 targetPos)
+	{
+		RaycastHit2D hit = Physics2D.Raycast(targetPos, transform.position);
+		if (hit.collider != null) {
+			Unit targetUnit = hit.collider.gameObject.GetComponent<Unit>();
+			Debug.Log("reducing damage value of " + gameObject.name);
+			targetUnit.attackValue -= abilityPower;
+			abilityUses--;
+		}
+	}
+
 	void Update()
 		
 	{

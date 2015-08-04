@@ -295,12 +295,19 @@ MonoBehaviour:
     m_Bits: 256
   newAnimation: 0
   attackRange: 3
+  abilityRange: 3
+  abilityHostile: 0
   myPlayer: {fileID: 0}
   myDirection: 
   stopped: 0
+  isdead: 0
   isAttacking: 0
+  attackerDamage: 0
   attackValue: 10
   healthValue: 8
+  abilityPower: 15
+  selected: 0
+  unitHighlight: 0
   Lifebar: {fileID: 194684}
   Lifebar_group: {fileID: 151898}
 --- !u!212 &21204784
@@ -481,6 +488,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: moves
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: abilityRange
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: abilityPower
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

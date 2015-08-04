@@ -295,14 +295,22 @@ MonoBehaviour:
     m_Bits: 256
   newAnimation: 0
   attackRange: 1
+  abilityRange: 1
+  abilityHostile: 0
   myPlayer: {fileID: 0}
   myDirection: 
   stopped: 0
+  isdead: 0
   isAttacking: 0
-  attackValue: 4
+  attackerDamage: 0
+  attackValue: 5
   healthValue: 20
+  abilityPower: 4
+  selected: 0
+  unitHighlight: 0
   Lifebar: {fileID: 116606}
   Lifebar_group: {fileID: 142506}
+  abilityUses: 3
 --- !u!212 &21205838
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -477,6 +485,22 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: healthValue
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: abilityRange
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: abilityPower
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: attackValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: abilityUses
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

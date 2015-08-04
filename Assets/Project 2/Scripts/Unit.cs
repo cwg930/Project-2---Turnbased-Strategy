@@ -2,13 +2,15 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Unit : Photon.MonoBehaviour {
+public abstract class Unit : Photon.MonoBehaviour {
 
 	public float moveTime = 1f;
 	public int moves;
 	public LayerMask blockingLayer;
 	public bool newAnimation;
 	public int attackRange;
+	public int abilityRange;
+	public bool abilityHostile;
 
 	private ActionMenu actionMenu;
 	private Rigidbody2D rb2D;
@@ -16,14 +18,14 @@ public class Unit : Photon.MonoBehaviour {
 	public Player myPlayer;
 
 	private bool hasMoved;
-	private bool hasAttacked;
+	protected bool hasAttacked;
 
 
 	protected CircleCollider2D circleCollider;
 	protected float inverseMoveTime;
 	public string myDirection;
 	public bool stopped;
-	private bool isdead;
+	public bool isdead;
 
 	private string [] directions = {"right", "up", "left" , "down" , "attack"};
 	enum Facing  {right, up, left , down};
@@ -36,10 +38,11 @@ public class Unit : Photon.MonoBehaviour {
 	private Vector3 syncEndPosition = Vector3.zero;
 
 	public bool isAttacking;
-	private int attackerDamage;
+	public int attackerDamage;
 
 	public int attackValue;
 	public int healthValue;
+	public int abilityPower;
 	private int startingHealth;
 
 	public bool selected;
@@ -139,6 +142,13 @@ public class Unit : Photon.MonoBehaviour {
 
 			break;
 		case Action.ability:
+			if(!moved)
+				Debug.Log("finish move before attack");
+			if(hasAttacked)
+				Debug.Log("You have already made an action this turn");
+			else
+				StartCoroutine("WaitForAbility");
+			break;
 		case Action.wait:
 			if (myPlayer.myTurn.gameOver)
 				actionMenu.SetActive(false);
@@ -155,8 +165,11 @@ public class Unit : Photon.MonoBehaviour {
 			break;
 		}
 	}
+	
+	protected abstract IEnumerator WaitForAbility();
 
-	private void waitSelected()
+
+		private void waitSelected()
 	{
 		myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
 		hasMoved = false;
@@ -303,6 +316,27 @@ public class Unit : Photon.MonoBehaviour {
 		animator.SetBool ("attack", false);
 		animator.SetBool ("down_attack", false);
 		animator.SetBool ("up_attack", false);
+	}
+
+	[PunRPC] public void stopWalkAnimation()
+	{
+		Animator animator = GetComponent<Animator> ();
+		animator.SetBool ("walk", false);
+	}
+
+
+	[PunRPC] public void setWalkkAnimation()
+	{
+		Animator animator = GetComponent<Animator> ();
+		animator.SetBool ("walk", true);
+		StartCoroutine ("waitToStop");
+	}
+
+	private IEnumerator waitToStop()
+	{
+		yield return new WaitForSeconds (1);
+		photonView.RPC("stopWalkAnimation", PhotonTargets.AllBufferedViaServer);
+
 	}
 
 
@@ -628,7 +662,7 @@ public class Unit : Photon.MonoBehaviour {
 		return neighbors;
 	}
 
-	private Dictionary<IntegerLocation,Unit> FindTargets(int range, bool hostile)
+	protected Dictionary<IntegerLocation,Unit> FindTargets(int range, bool hostile)
 	{
 		GameObject[] unitObjects;
 		if (hostile)
@@ -654,7 +688,7 @@ public class Unit : Photon.MonoBehaviour {
 		return targets;
 	}
 	
-	void HighlightTargets(Dictionary<IntegerLocation, Unit> targets, Color color)
+	protected void HighlightTargets(Dictionary<IntegerLocation, Unit> targets, Color color)
 	{
 		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
 		foreach(GameObject loc in board)
@@ -667,7 +701,7 @@ public class Unit : Photon.MonoBehaviour {
 	}
 
 	//--About_Lifebar--
-	void Life_Down(){
+	public void Life_Down(){
 		float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
 		float divisor = startingHealth / attackerDamage;
 		float newLifebarLength = aux_c;
@@ -683,7 +717,7 @@ public class Unit : Photon.MonoBehaviour {
 		Lifebar.transform.position=auxve;
 	}
 	
-	void Healing_(){
+	public void Healing_(){
 		if(isdead==false){
 			if(Lifebar.transform.localScale.x>0){
 				float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
