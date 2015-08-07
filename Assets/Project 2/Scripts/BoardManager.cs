@@ -17,6 +17,8 @@ public class BoardManager : MonoBehaviour {
 	public GameObject bottomLeftWall;
 	public GameObject bottomRightWall;
 
+	public GameObject customFLoorTile;
+
 	
 	private Transform boardHolder;
 
@@ -29,7 +31,8 @@ public class BoardManager : MonoBehaviour {
 
 			for(int y = -1; y < rows + 1; y++) {
 
-				toInstantiate = floorTiles[Random.Range(0,floorTiles.Length)];
+				//toInstantiate = floorTiles[Random.Range(0,floorTiles.Length)];
+				toInstantiate = customFLoorTile;
 
 				if(x == -1 || y == -1 || x == columns || y == rows){
 					if(x == -1 && y == -1){

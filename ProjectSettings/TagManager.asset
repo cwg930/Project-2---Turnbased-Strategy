@@ -10,6 +10,8 @@ TagManager:
   - Floor
   - Canvas
   - UIActionMenu
+  - UIElement
+  - Background
   layers:
   - Default
   - TransparentFX

@@ -45,4 +45,11 @@ MonoBehaviour:
   - damageEnemy
   - updateDeath
   - updateAdditionalUnit
+  - updateVictoryAnimation
+  - updateStartingUnits
+  - healFriend
+  - swapPos
+  - reduceDamage
+  - setWalkkAnimation
+  - stopWalkAnimation
   DisableAutoOpenWizard: 1

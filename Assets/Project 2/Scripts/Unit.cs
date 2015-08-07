@@ -2,13 +2,15 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Unit : Photon.MonoBehaviour {
+public abstract class Unit : Photon.MonoBehaviour {
 
 	public float moveTime = 1f;
 	public int moves;
 	public LayerMask blockingLayer;
 	public bool newAnimation;
 	public int attackRange;
+	public int abilityRange;
+	public bool abilityHostile;
 
 	private ActionMenu actionMenu;
 	private Rigidbody2D rb2D;
@@ -16,14 +18,14 @@ public class Unit : Photon.MonoBehaviour {
 	public Player myPlayer;
 
 	private bool hasMoved;
-	private bool hasAttacked;
+	protected bool hasAttacked;
 
 
 	protected CircleCollider2D circleCollider;
 	protected float inverseMoveTime;
 	public string myDirection;
 	public bool stopped;
-	private bool isdead;
+	public bool isdead;
 
 	private string [] directions = {"right", "up", "left" , "down" , "attack"};
 	enum Facing  {right, up, left , down};
@@ -36,11 +38,18 @@ public class Unit : Photon.MonoBehaviour {
 	private Vector3 syncEndPosition = Vector3.zero;
 
 	public bool isAttacking;
-	private int attackerDamage;
+	public int attackerDamage;
 
 	public int attackValue;
 	public int healthValue;
+	public int abilityPower;
 	private int startingHealth;
+
+	public bool selected;
+	public bool unitHighlight;
+
+	private AudioManager audioManager;
+	private DisplayMessage displayMessage;
 
 	//About progress-bar --
 	private float aux_d=0;//Initial lifebar width
@@ -54,6 +63,8 @@ public class Unit : Photon.MonoBehaviour {
 
 	protected virtual void Start()
 	{
+		audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+		displayMessage = GameObject.Find ("TurnManager").GetComponent<DisplayMessage> ();
 		//Lifebar_distance_y = this.transform.position.y-Lifebar.transform.position.y;
 		aux_d = Lifebar.GetComponent<Renderer>().bounds.size.x;//lifebar width
 		initial_localscale = new Vector3 (Lifebar.transform.localScale.x,Lifebar.transform.localScale.y,Lifebar.transform.localScale.z);
@@ -68,6 +79,7 @@ public class Unit : Photon.MonoBehaviour {
 		hasAttacked = false;
 		isdead = false;
 		stopped = true;
+		selected = false;
 
 		newAnimation = false;
 		myDirection = directions [0];
@@ -86,12 +98,6 @@ public class Unit : Photon.MonoBehaviour {
 		startingHealth = healthValue;
 	}
 
-	void Update ()
-	{
-
-		// unused
-	}
-
 	public bool getDeathStatus()
 	{
 		return isdead;
@@ -106,51 +112,99 @@ public class Unit : Photon.MonoBehaviour {
 	{
 		switch (action) {
 		case Action.move:
-			if (!isAttacking)
-			StartCoroutine("WaitForMove");
-			else
+			if (hasMoved)
+			{
+				Debug.Log("you have already moved this unit");
+				displayMessage.displayErrorMessage("you have already moved this unit", 2);
+			}
+				
+			else if (isAttacking)
+			{
 				Debug.Log("you must finish your attack before you can make a move");
+				displayMessage.displayErrorMessage("you must finish your attack before you can make a move", 2);
+			}
+				
+			else
+				StartCoroutine("WaitForMove");
 			break;
 		case Action.attack:
-			if (moved)
-			StartCoroutine("WaitForAttack");
-			else
+			if (myPlayer.unitIsMoving)
 				Debug.Log("you must finish your move before you can make an attack");
+
+			else if (hasAttacked || isAttacking)
+			{
+				Debug.Log("you have already attacked this turn");
+				displayMessage.displayErrorMessage("you have already attacked this turn", 2);
+			}
+				
+				else
+					StartCoroutine("WaitForAttack");
+
 			break;
 		case Action.ability:
+			if(!moved)
+				Debug.Log("finish move before attack");
+			if(hasAttacked)
+				Debug.Log("You have already made an action this turn");
+			else
+				StartCoroutine("WaitForAbility");
+			break;
 		case Action.wait:
-			if (!moved)
-				Debug.Log("you must finish your move before you can end your turn");
+			if (myPlayer.myTurn.gameOver)
+				actionMenu.SetActive(false);
+			else if (myPlayer.unitIsMoving)
+				Debug.Log("wait until you finish moving");
 			else if (isAttacking)
 				Debug.Log("you must finish your attack before you can end your turn");
 			else{
-				myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
-				hasMoved = false;
-				hasAttacked = false;
-				myPlayer.isActionMenuActive = false;
-				actionMenu.SetActive(false);
+				waitSelected();
 			}
+
 			break;
 		default:
 			break;
 		}
 	}
+	
+	protected abstract IEnumerator WaitForAbility();
+
+
+		private void waitSelected()
+	{
+		myPlayer.photonView.RPC("makingMove", PhotonTargets.AllBuffered); // player has made a move update the turnmanager on the server
+		hasMoved = false;
+		hasAttacked = false;
+		myPlayer.unitHasMoved = false;
+		myPlayer.unitHasAttacked = false;
+		myPlayer.isActionMenuActive = false;
+
+		GameObject actionMenu = GameObject.Find ("ActionMenu(Clone)");
+		actionMenu.SetActive(false);
+		selected = false;
+		HighlightUnit(Color.white);
+		myPlayer.unitSelected = false;
+		unitHighlight = false;
+	}
 
 	protected IEnumerator WaitForAttack ()
 	{
-
+		myPlayer.unhighlightBoard ();
+		HighlightUnit(Color.yellow);
 		//Debug.Log ("waiting for move target");
 		yield return new WaitForSeconds (.1f);
-		var validMoves = FindPath(new IntegerLocation(transform.position), attackRange);
-		HighlightMoveArea(validMoves, Color.red);
+		var validTargets = FindTargets(attackRange, true);
+		HighlightTargets(validTargets, Color.red);
 		isAttacking = true;
+		myPlayer.unitHasAttacked = true;
 
 		if (hasAttacked)
 		{
 			Debug.Log("you have already attacked this turn");
-			HighlightMoveArea (validMoves, Color.white);
+			HighlightTargets (validTargets, Color.white);
 			isAttacking = false;
 		}
+
+		audioManager.playDrawWeapon ();
 		
 		while (isAttacking) {
 			if (Input.GetMouseButtonDown (0))
@@ -158,10 +212,24 @@ public class Unit : Photon.MonoBehaviour {
 				Vector3 pos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 				RaycastHit2D hit = Physics2D.Raycast(pos, transform.position);
 				int distance = (int)Vector3.Distance(transform.position,pos);
+				int xdif = (int)Mathf.Abs(pos.x - transform.position.x);
+				int ydif = (int)Mathf.Abs(pos.y - transform.position.y);
+
+
 				if (distance > attackRange)
 				{
+					audioManager.playSheathWeapon();
 					Debug.Log("this attack is too far" + distance);
-					HighlightMoveArea (validMoves, Color.white);
+					HighlightTargets (validTargets, Color.white);
+					isAttacking = false;
+					yield return null;
+				}
+
+				if (xdif != 0 && ydif != 0)
+				{
+					audioManager.playSheathWeapon();
+					Debug.Log("you cannot attack diagonal");
+					HighlightTargets (validTargets, Color.white);
 					isAttacking = false;
 					yield return null;
 				}
@@ -170,18 +238,25 @@ public class Unit : Photon.MonoBehaviour {
 
 				else if (hit.collider != null && attackRange >= distance && hit.collider.transform.tag.Equals("Player2"))
 				{
+					audioManager.playAttackHit();
 					Debug.Log("this unit ( " + transform.name + ") is attacking enemy unit (" + hit.collider.transform.name + ") hit is being confirmed" );
 					//hit.collider.gameObject.GetComponent<Unit>().healthValue -= attackValue;
 					photonView.RPC("damageEnemy", PhotonTargets.AllBufferedViaServer, hit.collider.transform.position);
 					Debug.Log("enemy selected" );
-					HighlightMoveArea (validMoves, Color.white);
+					HighlightTargets (validTargets, Color.white);
+					HighlightUnit(Color.yellow);
 					photonView.RPC("setAttackAnimation", PhotonTargets.AllBufferedViaServer);
 					hasAttacked = true;
 					isAttacking = false;
+					if (hasMoved) // has attacked and moved auto select wait
+						waitSelected();
 				}
 				else{
+					audioManager.playSheathWeapon();
 					Debug.Log("you have clicked on something within your range that is not an enemy unit");
-					HighlightMoveArea (validMoves, Color.white);
+					HighlightTargets (validTargets, Color.white);
+					isAttacking = false;
+					yield return null;
 				}
 
 				//moved = Move(validMoves,new IntegerLocation (target));
@@ -206,8 +281,11 @@ public class Unit : Photon.MonoBehaviour {
 			enemyUnit.Life_Down();
 			if (hit.collider.gameObject.GetComponent<Unit>().healthValue <= 0)
 			{
-
+				audioManager.playDeathSound();
 				enemyUnit.isdead = true;
+
+				if (myPlayer.myTurn.gameOver )
+					HighlightUnit(Color.white);
 
 			//	Animator enemyAnimator = hit.collider.gameObject.GetComponent<Animator>();
 			//	StartCoroutine (waitForDeath(enemyAnimator));
@@ -240,6 +318,27 @@ public class Unit : Photon.MonoBehaviour {
 		animator.SetBool ("up_attack", false);
 	}
 
+	[PunRPC] public void stopWalkAnimation()
+	{
+		Animator animator = GetComponent<Animator> ();
+		animator.SetBool ("walk", false);
+	}
+
+
+	[PunRPC] public void setWalkkAnimation()
+	{
+		Animator animator = GetComponent<Animator> ();
+		animator.SetBool ("walk", true);
+		StartCoroutine ("waitToStop");
+	}
+
+	private IEnumerator waitToStop()
+	{
+		yield return new WaitForSeconds (1);
+		photonView.RPC("stopWalkAnimation", PhotonTargets.AllBufferedViaServer);
+
+	}
+
 
 	void OnMouseDown()
 	{
@@ -253,19 +352,49 @@ public class Unit : Photon.MonoBehaviour {
 		if (!myPlayer.ready) // player's team is not set up/ready, do not move selected unit
 			return;
 
-		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && myPlayer.isActionMenuActive) {
-			Debug.Log("You cannot select another unit until you are done with this one");
+		if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && (myPlayer.unitHasMoved || myPlayer.unitHasAttacked)) {
+			Debug.Log ("You cannot select another unit until you are done with this one");
+			return;
+		}
+		// !myPlayer.isActionMenuActive //old bool for menu now just use attack and move bools
+
+		// if it is player's unit and is this player's turn and any unit is not already moving, you can select the unit as long as they havent moved or attacked
+		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.unitHasMoved && !myPlayer.unitHasAttacked && !myPlayer.unitSelected) { 
+			Debug.Log("selecting new unit");
+//				StartCoroutine ("WaitForMove");
+			//HighlightUnit (Color.yellow);
+			selected = true;
+			actionMenu.ShowMenu (this);
+			myPlayer.isActionMenuActive = true;
+			myPlayer.unitSelected = true;
 		}
 
-		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn() == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.isActionMenuActive) { // if it is player's unit and is player's turn and a unit is not already moving
-
-//				StartCoroutine ("WaitForMove");
-				actionMenu.ShowMenu(this);
+		//selecting a new unit
+		else if (myPlayer.photonView.isMine && myPlayer.myTurn.getTurn () == myPlayer.turn && !myPlayer.unitIsMoving && !myPlayer.unitHasMoved && !myPlayer.unitHasAttacked && myPlayer.unitSelected) {
+			Debug.Log("selecting another unit");
+			myPlayer.DeSelectUnit();
+			myPlayer.unhighlightBoard();
+			selected = true;
+			actionMenu.ShowMenu (this);
 			myPlayer.isActionMenuActive = true;
+			myPlayer.unitSelected = true;
 		}
 			
 		else
 			Debug.Log ("it is not my turn"); // if unit has not parent that means it is not the players unit	
+	}
+
+	public void HighlightUnit(Color color)
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+
+		foreach(GameObject loc in board)
+		{
+			if(gameObject.transform.position == loc.transform.position){
+				var img = loc.GetComponent<SpriteRenderer>();
+				img.color = color;
+			}
+		}
 	}
 
 	/* // updated movement of unit over network (not used but possibly useful)
@@ -307,6 +436,7 @@ public class Unit : Photon.MonoBehaviour {
 		return true;
 	}
 
+
 	protected virtual IEnumerator SmoothMovement(LinkedList<Vector2> path) // using vector2
 	{
 
@@ -315,6 +445,7 @@ public class Unit : Photon.MonoBehaviour {
 		myPlayer.unitIsMoving = true;
 		foreach (Vector3 loc in path) {
 			newAnimation = true;
+			audioManager.playFootsteps();
 
 			if (rb2D.position.x > loc.x) // if next location is left of starting location
 				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[2]);
@@ -329,10 +460,6 @@ public class Unit : Photon.MonoBehaviour {
 				photonView.RPC("setDirection", PhotonTargets.AllBufferedViaServer, directions[1]);
 
 			//Debug.Log(myDirection);
-			
-
-
-
 
 			float sqrRemainingDistance = (transform.position - loc).sqrMagnitude;
 
@@ -349,7 +476,11 @@ public class Unit : Photon.MonoBehaviour {
 		photonView.RPC("setStopped", PhotonTargets.AllBufferedViaServer, true); // update animation on server to stop animating when stopped
 		yield return new WaitForSeconds(.1f);
 		newAnimation = false;
+		myPlayer.unitHasMoved = true;
 		myPlayer.unitIsMoving = false;
+		HighlightUnit(Color.yellow);
+		if (hasAttacked) // moved and attacked
+			waitSelected ();
 	}
 
 	[PunRPC] public void makeSmoothMovement(LinkedList<Vector2> path)
@@ -406,7 +537,7 @@ public class Unit : Photon.MonoBehaviour {
 			Debug.Log("you have already moved this turn");
 		}
 
-		while (!moved) {
+		while (!moved && selected) {
 			if (Input.GetMouseButtonDown (0))
 			{
 
@@ -417,6 +548,7 @@ public class Unit : Photon.MonoBehaviour {
 		}
 
 		HighlightMoveArea (validMoves, Color.white);
+
 		
 	}
 
@@ -530,8 +662,46 @@ public class Unit : Photon.MonoBehaviour {
 		return neighbors;
 	}
 
+	protected Dictionary<IntegerLocation,Unit> FindTargets(int range, bool hostile)
+	{
+		GameObject[] unitObjects;
+		if (hostile)
+			unitObjects = GameObject.FindGameObjectsWithTag ("Player2");
+		else
+			unitObjects = GameObject.FindGameObjectsWithTag("Player1");
+		
+		ArrayList units = new ArrayList ();
+		foreach (GameObject go in unitObjects) {
+			units.Add((Unit)go.GetComponent<Unit>());
+		}
+		
+		
+		Dictionary<IntegerLocation, Unit> targets = new Dictionary<IntegerLocation, Unit> ();
+		//Get enemies for attacks, friends for heals
+		
+		foreach (Unit u in units){
+			if(Mathf.CeilToInt(Vector2.Distance(transform.position,u.transform.position)) <= range)
+			{
+				targets.Add(new IntegerLocation(u.transform.position),u);
+			}
+		}
+		return targets;
+	}
+	
+	protected void HighlightTargets(Dictionary<IntegerLocation, Unit> targets, Color color)
+	{
+		GameObject[] board = GameObject.FindGameObjectsWithTag ("Floor");
+		foreach(GameObject loc in board)
+		{
+			if(targets.ContainsKey(new IntegerLocation(loc.transform.position))){
+				var img = loc.GetComponent<SpriteRenderer>();
+				img.color = color;
+			}
+		}
+	}
+
 	//--About_Lifebar--
-	void Life_Down(){
+	public void Life_Down(){
 		float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
 		float divisor = startingHealth / attackerDamage;
 		float newLifebarLength = aux_c;
@@ -547,7 +717,7 @@ public class Unit : Photon.MonoBehaviour {
 		Lifebar.transform.position=auxve;
 	}
 	
-	void Healing_(){
+	public void Healing_(){
 		if(isdead==false){
 			if(Lifebar.transform.localScale.x>0){
 				float aux_c = Lifebar.GetComponent<Renderer>().bounds.size.x;
