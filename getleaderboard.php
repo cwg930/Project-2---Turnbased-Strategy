@@ -56,7 +56,7 @@ function buildLeaderboardTable($leaderboard) {
 	$out .= '</head>';
 	$out .= '<body>';
 	$out .= '  <div align="center">';
-	$out .= '    <a href="http://www.battleknights.co.nf/play.html"><button type="button" class="btn btn2 navbar-btn"">Play Battle Knights</button></a>';
+	$out .= '    <a href="http://http://cwg930.github.io/Project-2---Turnbased-Strategy/play.html"><button type="button" class="btn btn2 navbar-btn"">Play Battle Knights</button></a>';
 	$out .= '    <a href="http://www.battleknights.freevar.com/getleaderboard.php""><button type="button"" class="btn btn2 navbar-btn">View Leaderboard</button></a>';
 	$out .= '  </div>';
 	$out .= '  <table class="table table-striped">';
